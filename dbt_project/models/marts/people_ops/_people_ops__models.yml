@@ -1,0 +1,253 @@
+version: 2
+
+models:
+  - name: dim_employees
+    description: >
+      A timeseries model of employees using data from the dbt Labs organization
+      ADP instance. ADP was adopted by the organization circa April 2021 and
+      snapshotting of historical data was implemented in January 2023 for
+      reports to relationships and February 2023 for department and business
+      unit associations. As a result, some columns are missing historical data.
+      To access the current employee roster, use `worker_status = 'Active' and
+      is_most_recent_employee_record = true`.
+
+      ** Department data is not currently handled as a timeseries, but will be
+      updated to a timeseries after the organization snapshot gathers some data**
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - worker_id
+            - valid_from
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - worker_id
+            - is_most_recent_employee_record
+          config:
+            where: "is_most_recent_employee_record = true"
+    columns:
+      - name: worker_id
+        tests:
+          - not_null
+      - name: business_entity_id
+        tests:
+          - not_null:
+              config:
+                # Business entities were implemented sometime between
+                # 10-26-2022 and 10-31-2022. These filters remove the
+                # expectations of business entity id for records prior to that
+                # implementation.
+                where: (last_working_date is null or last_working_date > '2022-10-27') and worker_assignment_id not in ('9200112778693_91', '47730575N', '9200112778719_661')
+      - name: technical_classification
+        tests:
+          - not_null:
+              config:
+                where: (last_working_date is null or last_working_date > '2022-10-27') and worker_assignment_id not in ('9200112778693_91', '47730575N', '9200112778719_661')
+                # When this test warns, contact Morgan R in charge of DEI data to resolve.
+                severity: warn
+      - name: department_unit_id
+        tests:
+          - not_null:
+              config:
+                where: worker_status != 'Terminated' and worker_assignment_id is not null
+      - name: is_most_recent_employee_record
+        description: >
+          A boolean field to identify the most recent record for a `worker_id`.
+      - name: job_title
+        tests:
+          - not_null:
+              config:
+                # Job titles may be null before ADP migration
+                where: valid_to > '2021-12-06'
+      - name: preferred_first_name
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: worker_status
+        description: The status of the work assignment record.
+        tests:
+          - accepted_values:
+              values: ['Active', 'Terminated']
+      - name: job_start_date
+        description: The minimum "valid_from" date per Job Title. Should be thought of as date worker started that specific role, not specific assignment
+      - name: last_working_date
+        description: >
+          The last day an employee works at and has access to dbt Labs systems.
+          This may differ from the termination date depending on the nature of
+          the employee's departure.
+      - name: termination_date
+        description: >
+          The last day an employee is on payroll and receiving a paycheck. This
+          is the legal last day of employment.
+      - name: official_termination_date
+        description: >
+          A coalesce statement giving preference to the termination_date over
+          the last_working_date.
+
+  - name: fct_hiring_opportunities
+    description: This model includes all hiring opportunities, the roles they applied for, and their current statuses (e.g. current stage name, when they were archived, archived reason, etc).
+    columns:
+      - name: opportunity_id
+        tests:
+          - unique
+          - not_null
+      - name: team_name
+        description: The team that owns the role that the opportunity applied to.
+      - name: role_title
+        description: The role that the opportunity applied for.
+      - name: location
+        description: The location of the role that the opportunity applied for.
+      - name: level
+        description: The level of the role that the opportunity applied for.
+      - name: current_stage_name
+        description: The current stage that the opportunity is in. If they were archived (either hired or did not move on) then this will be `Archived` or `Hired`.
+      - name: stage_name_before_archived
+        description: If an opportunity was archived (either hired or did not move on), then this shows the last stage they were in before they were archived.
+      - name: stage_bucketed
+        description: '{{ doc("lever_stage_bucketed") }}'
+      - name: stage_pipeline
+        description: '{{ doc("lever_stage_pipeline") }}'
+      - name: stage_index
+        description: '{{ doc("lever_stage_index") }}'
+      - name: stage_bucketed_index
+        description: '{{ doc("lever_stage_bucketed_index") }}'
+      - name: days_since_last_interaction
+        description: If an opportunity is not archived, then this looks at how long it has been since a dbt Labs team member has last interacted with them.
+      - name: days_in_pipeline
+        description: This measures how many days an opportunity was in the pipeline. If they are not archived, then this will continue to increase until they are archived.
+
+  - name: fct_hiring_pipeline
+    description: This model represents every opportunity in our hiring pipeline, their stages, how long they were in each stage for, and if they progressed to the next round.
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+      - name: stage_name
+        description: The stage that the opportunity was in at this moment.
+      - name: days_in_stage
+        description: The total days an opportunity spent in this stage or, if it is their current stage, then how many days they have been in this stage. If it is an archive event, then this will be null.
+      - name: stage_bucketed
+        description: '{{ doc("lever_stage_bucketed") }}'
+      - name: stage_pipeline
+        description: '{{ doc("lever_stage_pipeline") }}'
+      - name: stage_index
+        description: '{{ doc("lever_stage_index") }}'
+      - name: stage_bucketed_index
+        description: '{{ doc("lever_stage_bucketed_index") }}'
+      - name: moved_to_next_round
+        description: 1 or 0 to indicate if the opportunity moved to the next stage or if they were archived (i.e. did not progress). If this is NULL, then it means that they're still in this stage.
+    
+  - name: fct_hiring_requisitions
+    description: This model represents all hiring requisitions. The requisition details may vary from actual offer details
+    columns:
+      - name: requisition_id
+        tests:
+          - unique
+          - not_null
+      - name: requisition_code
+        description: Corresponds to a Seat in the Financial Planning model. Is not unique
+      - name: seat_occurrence
+        description: Can be used to filter to only the most recent occurrence of the requisition code, seat_occurrence = 1
+
+  - name: fct_greenhouse_job_openings
+    description: >
+      All Job Openings in Greenhouse regardless of Status or data cleanliness, with associated Job Level Data.
+      It is important to include all openings, including those where job_id_error = true so we can identify where source data needs to be updated
+    columns:
+      - name: job_opening_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_greenhouse_job_offers
+    description: All Job Offers in greenhouse regardless of Status or data cleanliness, with associated Job Level Data.
+    columns:
+      - name: offer_id
+        tests:
+          - unique
+          - not_null
+      - name: salary
+        meta:
+          masking_policy: finance_number
+      - name: equity_amount
+        meta:
+          masking_policy: finance_number
+      - name: signing_bonus_amount
+        meta:
+          masking_policy: finance_number
+      - name: commission_amount
+        meta:
+          masking_policy: finance_number
+
+  - name: rpt_demographics_by_department
+    description: >
+      Demographic data aggregated by *current* org membership at the
+      monthly grain. An employee is counted between their first full month of
+      employement up until the month of their termination. Data is sourced from
+      both ADP and survey results. We assume demographics are slowly changing
+      values and always sum the totals by an employee's current identity. A
+      temporary caveat for this dataset: employees are only counted as a
+      member of their current department. This will be updated with the
+      integration of the adp_worker_assigned_organizational_unit snapshot to
+      `dim_employees`. 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date_month
+            - org
+            - technical_classification
+
+  - name: dim_employee_roster
+    description: This is a current roster of employees
+    columns:
+      - name: worker_id
+        tests:
+          - unique
+          - not_null
+      - name: last_working_date
+        meta:
+          masking_policy: finance_date
+      - name: termination_date
+        meta:
+          masking_policy: finance_date
+      - name: official_termination_date
+        meta:
+          masking_policy: finance_date
+      - name: final_termination_month
+        meta:
+          masking_policy: finance_date
+      - name: employee_rank_termination_month
+        meta:
+          masking_policy: finance_date
+      - name: transfer_out_date
+        meta:
+          masking_policy: finance_date
+      - name: adp_salary
+        meta:
+          masking_policy: finance_number
+
+  - name: dim_employee_daily_summary
+    description: >
+      A daily record of employee information
+
+      ** Department data is not currently handled as a timeseries, but will be
+      updated to a timeseries after the organization snapshot gathers some data**
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date_day
+            - worker_id
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - worker_id
+            - is_most_recent_record
+          config:
+            where: "is_most_recent_record = true"
+    columns:
+      - name: worker_id
+        tests:
+          - not_null
+      - name: is_most_recent_record
+        description: >
+          A boolean field to identify the most recent record for a `worker_id`.

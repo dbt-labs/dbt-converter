@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_dbt_cloud_admin__environments
+    columns:
+      - name: environment_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_dbt_cloud_admin__jobs
+    columns:
+      - name: job_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_dbt_cloud_admin__runs
+    columns:
+      - name: run_id
+        tests:
+          - not_null
+          - unique

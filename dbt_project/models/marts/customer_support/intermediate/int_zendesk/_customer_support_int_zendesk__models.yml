@@ -1,0 +1,121 @@
+version: 2
+
+models:
+
+  - name: int__zendesk_ticket_events_unioned
+    description: "This model unions all events on a ticket (e.g. email messages, chat messages, and when the ticket was solved/closed."
+    columns:
+      - name: ticket_comment_id
+        tests:
+          - not_null
+          - unique
+      - name: created_at
+        description: "The time that the event occurred. The timezone is in America/New_York."
+
+  - name: int__zendesk_ticket_events_enriched
+    description: > 
+      This model executes any joins and enriches the ticket events by
+      adding in the assignee, escalation groups, roles, ticket status, etc
+    columns:
+      - name: ticket_comment_id
+        tests:
+          - not_null
+          - unique
+      - name: created_at
+        description: "The time that the event occurred. The timezone is in America/New_York."
+
+  - name: int__zendesk_ticket_events_windowed
+    description: > 
+      This model adds row number counts and timestamps 
+      (e.g. ticket_comment_number, conversation_created_at)
+    columns:
+      - name: ticket_comment_id
+        tests:
+          - not_null
+          - unique
+      - name: created_at
+        description: "The time that the event occurred. The timezone is in America/New_York."
+
+  - name: int__zendesk_ticket_jira_issue_historized
+    description: > 
+      This model prepares Jira issue's Zendesk ticket updates for the support ticket lifecycle.
+      It creates one row per Zendesk ticket addition/removal to a Jira issue.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ticket_id
+            - issue_id
+            - updated_at
+    columns:
+      - name: ticket_id
+        description: The unique identifier of the ticket defined by Zendesk
+        tests:
+          - not_null
+      - name: issue_id
+        description: The unique identifier of the issue defined by Jira
+        tests:
+          - not_null
+      - name: updated_at
+        description: Timestamp of the Jira issue update
+        tests:
+          - not_null
+      - name: update_type
+        description: |
+          Type of update:
+          - Addition: the Zendesk ticket was added to the issue
+          - Removal: the Zendesk ticket was removed from the issue
+        tests:
+          - accepted_values:
+              values: ['addition', 'removal']
+      - name: jira_issue_ids
+        description: Array of the Jira issues associated to the support ticket at the time of the update
+      - name: n_ticket_jira_update
+        description: Chronological number of update for a given support ticket.
+
+  - name: int__zendesk_ticket_jira_issue_updates
+    description: > 
+      This model prepares Jira issue's Zendesk ticket updates for the support ticket lifecycle.
+      It creates one row per Zendesk ticket Jira update with the full list of associated Jira issues at the time.  
+
+      Note: this model has to be kept separate. For opaque reasons, Snowflake does not handle 
+      non-recursive CTEs correctly when using recursive with clause. Error encountered:
+      "SQL execution internal error: Processing aborted due to error xxxxxx:xxxxxxxxxx; incident xxxxxxx."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ticket_id
+            - issue_id
+            - updated_at
+    columns:
+      - name: ticket_id
+        description: The unique identifier of the ticket defined by Zendesk
+        tests:
+          - not_null
+      - name: issue_id
+        description: The unique identifier of the issue defined by Jira
+        tests:
+          - not_null
+      - name: updated_at
+        description: Timestamp of the Jira issue update
+        tests:
+          - not_null
+      - name: update_type
+        description: |
+          Type of update:
+          - Addition: the Zendesk ticket was added to the issue
+          - Removal: the Zendesk ticket was removed from the issue
+        tests:
+          - accepted_values:
+              values: ['addition', 'removal']
+      - name: n_ticket_jira_update
+        description: Chronological number of update for a given support ticket.
+
+  - name: int__zendesk_tickets_joined
+    description: >
+      Join Zendesk tickets to users and csat to get parity before joining with intercom.
+      This is similar to this model https://github.com/fivetran/dbt_zendesk/blob/master/models/zendesk__ticket_enriched.sql
+    columns:
+      - name: ticket_id
+        tests:
+          - not_null
+          - unique

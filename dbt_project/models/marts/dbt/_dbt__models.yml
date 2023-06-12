@@ -1,0 +1,690 @@
+version: 2
+
+models:
+  - name: dim_dbt_cities
+    columns:
+      - name: city_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_dbt_projects
+    columns:
+      - name: project_id
+        tests:
+          - unique
+          - not_null
+
+      - name: models
+        description: Number of enabled models, as of last invocation
+      - name: tests
+        description: Number of enabled tests, as of last invocation
+      - name: snapshots
+        description: Number of enabled snapshots, as of last invocation
+      - name: analyses
+        description: Number of analyses, as of last invocation
+      - name: macros
+        description: >
+          Number of macros, as of last invocation. Includes macros from 
+          dbt global project + adapter (~150) as well as installed packages.
+      - name: operations
+        description: Number of project hooks (`on-run-start `or `on-run-end`) in most recent invocation
+      - name: seeds
+        description: Number of enabled seeds, as of last invocation
+      - name: sources
+        description: Number of enabled sources, as of last invocation
+      - name: exposures
+        description: Number of exposures, as of last invocation
+      - name: metrics
+        description: Number of metrics, as of last invocation
+
+      - name: dbt_minor_version
+        description: >
+          {{ doc('dbt_minor_version') }}
+          This value is the highest version from any invocation of this project.
+
+      - name: project_complexity
+        description: >
+          {{ doc('dbt_project_complexity') }}
+          This value is the highest score from any invocation of this project.
+
+      - name: last_cloud_account_plan
+        description: >
+          The most recent value of the cloud account's plan (described below)
+          '{{ doc("cloud_plan") }}'
+
+      - name: last_cloud_account_plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+
+  - name: fct_dbt_package_installs
+    description: >
+      {{ doc('fct_dbt_package_installs') }}
+
+      {{ doc('dbt_invocations') }}
+
+    columns:
+      - name: event_id
+        tests:
+          - not_null
+
+      - name: invocation_id
+        description: >
+          The invocation_id for a package installing invocation (dbt run or dbt deps) except for
+          RPC invocations. RPC invocation_ids will be replaced with their task's event_id.
+
+      - name: project_id
+        description: >
+          A hashed ID based on the name of the "root" project, as defined in a
+          `dbt_project.yml` file. Two separate projects with the same name
+          (e.g. `my_first_project`) will be tracked as one project.
+
+      - name: full_package_name
+        description: >
+          The identifier for the package — may or may not be hashed. Where
+          possible, this has been mapped to the format
+          `package_owner/package_name`. See above for more details¹.
+
+      - name: package_installation_method
+        description: Based on the syntax used in packages.yml file
+        tests:
+          - accepted_values:
+              values: ['hub', 'git', 'local', 'tarball']
+              severity: warn
+
+      - name: package_version
+        description: >
+          Either:
+            - A hash of the package version number, OR
+            - For projects using dbt v0.17.0 and installing via hub, the actual
+            version number for the package is shown
+
+      - name: dbt_version
+        description: The version of dbt used when this package was installed.
+
+      - name: package_owner
+        description:
+          The package owner (according to their GitHub organization name), when available¹
+
+      - name: package_repo_name
+        description: >
+          The github repo name, when available¹
+
+      - name: package_name
+        description: >
+          The package name as stored in the dbt_project.yml file¹
+
+  - name: fct_dbt_invocations
+    description: >
+      One row per invocation (dbt command). This could either be in the form of
+      a standard invocation, or an individual task under the `dbt rpc`
+      invocation. {{ doc('dbt_invocations') }}
+    columns:
+      - name: invocation_id
+        description: >
+          The invocation_id for an invocation except for RPC invocations. RPC
+          invocation_ids will be replaced with their task's event_id.
+        tests:
+          - unique
+          - not_null
+
+      - name: parent_invocation_id
+        description: The original invocation_id of any RPC task in this table.
+    
+      - name: dbt_minor_version
+        description: "{{ doc('dbt_minor_version') }}"
+
+      - name: adapter
+        description: The name of the adapter as defined in the source code.
+
+      - name: adapter_support
+        description: "{{ doc('adapter_support') }}"
+
+      - name: adapter_label
+        description: "{{ doc('adapter_label') }}"
+
+      - name: project_count_models
+        description: "{{ doc('dbt_resource_counts') }}"
+
+# Not including explicit documentation for each project_count_* because the documentation in dbt_resource_counts covers all
+# In dbt docs, the overall explanation will appear at the top of the section. 
+
+      - name: complexity
+        description: "{{ doc('dbt_project_complexity') }}"
+
+      - name: distribution
+        description: "The type of distribution used to run a dbt invocation. 
+          Currently this is either 'core' or 'cloud'"
+        tests:
+          - accepted_values:
+              values: ['core', 'cloud']
+
+      - name: product
+        description: "Generalized product name for use in identifying product split"
+        tests:
+          - accepted_values:
+              values: ['core', 'scheduler', 'ide']
+
+      - name: plan
+        description: '{{ doc("cloud_plan") }}'
+
+      - name: plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+      
+      - name: is_completed_invocation
+        description: >
+          Invocations that have an end event. RPC task invocations do not
+          currently count as a completed invocation because we do not have
+          information about the status of the run.
+
+      - name: ended_at
+        description: >
+          This would only have an ended_at for standard invocations to preserve 
+          the integrity of analytics related to invocation timings. We currently
+          do not track end events for RPC tasks.
+
+      - name: languages_used
+        description: >
+          {{ doc('languages_used') }}
+
+      - name: count_models
+        description: >
+          {{ doc('count_models') }}
+
+      - name: count_changed
+        description: >
+          {{ doc('count_changed') }}
+
+      - name: count_skip
+        description: >
+          {{ doc('count_skip') }}
+
+      - name: count_error
+        description: >
+          {{ doc('count_error') }}
+
+      - name: count_succeed
+        description: >
+          {{ doc('count_succeed') }}
+
+      - name: count_view_models
+        description: >
+          {{ doc('count_view_models') }}
+
+      - name: count_table_models
+        description: >
+          {{ doc('count_table_models') }}
+
+      - name: count_incremental_models
+        description: >
+          {{ doc('count_incremental_models') }}
+
+      - name: count_custom_materialization_models
+        description: >
+          {{ doc('count_custom_materialization_models') }}
+
+      - name: count_seeds
+        description: >
+          {{ doc('count_seeds') }}
+
+      - name: count_snapshots
+        description: >
+          {{ doc('count_snapshots') }}
+
+      - name: count_python
+        description: >
+          {{ doc('count_python') }}
+
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}
+
+  - name: fct_dbt_project_activity
+    description: >
+      One row per project per day, between a project's first invocation and 30 days
+      after its last one.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      
+      - name: active
+        description: dbt Project has run at least one invocation on this day.
+
+      - name: changed
+        description: > 
+          dbt Project has changed (new model added or change detected in hashed model contents)
+          at least one model on this day.  Upstream calcs in fct_dbt_invocations and dbt_model_summary.
+
+      - name: mature
+        description: dbt Project changed less than 5% of it's total models on this day.
+
+      - name: adapter
+        description: >
+          This adapter used by this project on this day. When multiple adapters
+          are recorded, the mode is used
+
+      - name: adapter_support
+        description: "{{ doc('adapter_support') }}"
+
+      - name: adapter_label
+        description: "{{ doc('adapter_label') }}"
+
+      - name: languages_used
+        description: >
+          {{ doc('languages_used') }}
+
+      - name: max_project_count_models
+        description: "{{ doc('dbt_resource_counts') }}"
+
+# Not including explicit documentation for each max_project_count_* because the documentation in dbt_resource_counts covers all
+# In dbt docs, the overall explanation will appear at the top of the section. 
+
+      - name: max_project_count_models_smoothed
+        description: >
+          These smoothed versions of project size maximums replace intermediate
+          nulls with the last non-null run. 
+
+      - name: dbt_minor_version
+        description: >
+          {{ doc('dbt_minor_version') }}
+
+          On a given day, a project is associated with a minor version based on
+          the minimum minor version used in any invocation within a trailing
+          7-day period. No one has upgraded until _everyone_ has upgraded.
+
+      - name: project_complexity
+        description: >
+          {{ doc('dbt_project_complexity') }}
+
+          On a given day, a project's score is the maximum complexity score from
+          any invocation within a trailing 7-day period. 1 or 0.
+
+      - name: languages_used
+        description: >
+          {{ doc('languages_used') }}
+
+      - name: invocations
+        description: >
+          {{ doc('dbt_project_invocations') }} on this day?
+      - name: t7d_invocations
+        description: >
+          {{ doc('dbt_project_invocations') }} within a trailing 7-day period?
+      - name: t30d_invocations
+        description: >
+          {{ doc('dbt_project_invocations') }} within a trailing 30-day period?
+
+      - name: active
+        description: >
+          {{ doc('dbt_project_active') }} on this day?
+      - name: t7d_active
+        description: >
+          {{ doc('dbt_project_active') }} within a trailing 7-day period?
+      - name: t7d_active_total
+        description: >
+          Total number of projects that, on this day, have been active at least
+          once within a trailing 7-day period. Useful for calculating percentages in Looker.
+      - name: t30d_active
+        description: >
+          {{ doc('dbt_project_active') }} within a trailing 30-day period?
+      - name: t30d_active_total
+        description: >
+          Total number of projects that, on this day, have been active at least
+          once within a trailing 30-day period. Useful for calculating percentages in Looker.
+
+      - name: changed
+        description: >
+          {{ doc('dbt_project_changed') }} on this day?
+      - name: t30d_changed
+        description: >
+          {{ doc('dbt_project_changed') }} within a trailing 30-day period?
+
+      - name: mature
+        description: >
+          {{ doc('dbt_project_mature') }} on this day?
+      - name: t30d_mature
+        description: >
+          {{ doc('dbt_project_mature') }} within a trailing 30-day period?
+
+      - name: used_cli
+        description: "1 when this project invoked dbt via the CLI on this day, otherwise 0"
+
+      - name: used_cloud_scheduler
+        description: "1 when this project invoked dbt via the Cloud scheduler on this day, otherwise 0"
+
+      - name: used_cloud_ide
+        description: "1 when this project invoked dbt via the Cloud IDE on this day, otherwise 0"
+
+      - name: activity_category
+        description: >
+          This field categorizes each activity day into buckets with respect to
+          their WAP status. This allows us to flag how this day contributes to
+          the overall WAP number. The statuses are:
+            - `new` - first time a project appears in the WAP count
+            - `retained` - a project continues to appear in the WAP count
+            - `churned` - a project used to count in WAP and doesn't anymore
+            - `revived` - a project that had stopped appearing is now active again
+
+      - name: count_non_transient_users
+        description: >
+          Count of distinct Snowplow user_ids where is_transient is false.
+          Not a measure of dbt Cloud users.
+      - name: max_cloud_account_id
+        description: >
+          The simple maximum cloud_account_id found on a given day (as opposed to the last cloud_account_id found).
+
+  - name: dbt_docs_sessions
+    description: >
+      All sessions which included an `identify` event from our `dbt-docs`
+      tracking. **[2020-06-30] N.B.** All prior versions of dbt do not preserve
+      user or session cookies between `.getdbt.com` sessions and `dbt-docs`
+      sessions. We are planning to change this in a forthcoming dbt release.
+
+    columns:
+      - name: id
+        description: Surrogate key of `project_id` + `session_id`
+        tests:
+          - not_null
+          - unique:
+              severity: warn
+
+  - name: fct_dbt_docs_viewer_activity
+    description: >
+      One row per user (`inferred_user_id`) per day, between their first-ever view
+      of the auto-generated dbt docs site (like you right now!) and 30 days after
+      their last one.
+
+    columns:
+      - name: id
+        description: Surrogate key of `project_id`, `inferred_user_id`, `date_day`
+        tests:
+          - unique
+          - not_null
+      - name: project_id
+        description: >
+          Unique ID for the dbt project. Foreign key to `fct_dbt_projects`, `fct_dbt_project_activity`, etc.
+          Based on the `identify` event in dbt-docs snowplow tracking, which fires for both
+          self-hosted and dbt Cloud-hosted docs.
+      - name: inferred_user_id
+        description: >
+          Anonymous ID (snowplow cookie), inferred during snowplow sessionization.
+          Although we track views of dbt Cloud-hosted docs, it is tricky to tie
+          these views to dbt Cloud users.
+        tests:
+          - not_null
+
+      - name: sessions
+        description: >
+          {{ doc('dbt_docs_sessions') }} on this day?
+      - name: t7d_sessions
+        description: >
+          {{ doc('dbt_docs_sessions') }} within a trailing 7-day period?
+      - name: t30d_sessions
+        description: >
+          {{ doc('dbt_docs_sessions') }} within a trailing 30-day period?
+
+      - name: t30d_time_engaged_in_s
+        description: >
+          {{ doc('dbt_docs_time_engaged_in_s') }} on this day?
+      - name: t7d_dbt_docs_time_engaged_in_s
+        description: >
+          {{ doc('dbt_docs_time_engaged_in_s') }} within a trailing 7-day period?
+      - name: t30d_dbt_docs_time_engaged_in_s
+        description: >
+          {{ doc('dbt_docs_time_engaged_in_s') }} within a trailing 30-day period?
+
+      - name: active
+        description: >
+          {{ doc('dbt_docs_active') }} on this day?
+      - name: t7d_active
+        description: >
+          {{ doc('dbt_docs_active') }} within a trailing 7-day period?
+      - name: t30d_active
+        description: >
+          {{ doc('dbt_docs_active') }} within a trailing 30-day period?
+
+  - name: dim_dbt_versions
+    description: One row per version of dbt, including prereleases.
+    columns:
+      - name: dbt_invocation_version
+        description: >
+          Foreign key to `fct_dbt_invocations.dbt_version`
+        tests:
+          - unique
+          - not_null
+      - name: tag_name
+        description: Original tag from GitHub release
+      - name: dbt_semantic_version
+        description: >
+          Consistent between prereleases and final, in format `Major.Minor.Patch`
+      - name: is_prerelease
+        description: Whether the version is a prerelease (from GitHub)
+      - name: prerelease_suffix
+        description: >
+          If prerelease: `a1`, `b2`, `rc3`, etc
+      - name: is_latest
+        description: >
+          Whether this is the latest release of this semantic version.
+          Final releases for all past versions, most recent prererelease for
+          versions still in development.
+
+  - name: dim_dbt_minor_versions
+    description: >
+      One row per minor version and the day of its final release.
+      {{ doc('dbt_minor_version') }}
+
+  - name: dbt_cloud_runtime_image_versions
+    description: >
+      One row per dbt Cloud runtime image, and information about the
+      dbt Core version included in it.
+    columns:
+      - name: version_image_name
+        tests:
+          - unique
+          - not_null
+
+  - name: dbt_model_summary
+    description: >
+      One row per dbt invocation, with summary statistics on the count and nature of models included
+    columns:
+      - name: invocation_id
+      - name: max_collector_tstamp
+
+      - name: model_complexity
+        description: >
+          The maximum model complexity within the invocation
+          {{ doc('model_complexity') }}
+
+      - name: languages_used
+        description: >
+          {{ doc('languages_used') }}
+          
+      - name: count_models
+        description: >
+          {{ doc('count_models') }}
+
+      - name: count_changed
+        description: >
+          {{ doc('count_changed') }}
+
+      - name: count_skip
+        description: >
+          {{ doc('count_skip') }}
+
+      - name: count_error
+        description: >
+          {{ doc('count_error') }}
+
+      - name: count_succeed
+        description: >
+          {{ doc('count_succeed') }}
+
+      - name: count_view_models
+        description: >
+          {{ doc('count_view_models') }}
+
+      - name: count_table_models
+        description: >
+          {{ doc('count_table_models') }}
+
+      - name: count_incremental_models
+        description: >
+          {{ doc('count_incremental_models') }}
+
+      - name: count_custom_materialization_models
+        description: >
+          {{ doc('count_custom_materialization_models') }}
+
+      - name: count_seeds
+        description: >
+          {{ doc('count_seeds') }}
+
+      - name: count_snapshots
+        description: >
+          {{ doc('count_snapshots') }}
+
+      - name: count_python
+        description: >
+          {{ doc('count_python') }}
+      
+  - name: fct_dbt_model_runs
+    description: >
+      One row per dbt model run, including metadata on materialization and run success. 
+    columns:
+      - name: event_id
+        description: >
+          The event id for the model runs. This currently does not have a unique test because a single model can belong to multiple projects. This will be resolved and addressed once we bring in the `wh_adapter_id`.
+        tests:
+          - not_null
+      - name: invocation_id
+        description: >
+          The unique identifier for the invocation through which the model was run
+      - name: collector_tstamp
+      - name: dvce_created_tstamp
+      - name: dvce_sent_tstamp
+      - name: model_id
+        description: >
+          The unique identifier for the individual model
+      - name: run_status
+        description: >
+          An indication of the success of the invoked run
+      - name: execution_time
+        description: >
+          Time in seconds to execute the model
+      - name: content 
+        description: >
+          An indicator hashed from the code in the model
+      - name: model_index
+      - name: model_total
+      - name: materialization
+        description: >
+          The materialization of the model
+      - name: language
+        description: >
+          The programming language of the model
+      - name: model_complexity
+        description: >
+          {{ doc('model_complexity') }}
+      - name: skipped
+        description: >
+          A boolean indicator of whether the model was skipped when run
+      - name: error 
+        description: >
+          The error message given if the model errored during the run
+      - name: project_id
+        description: >
+          The unique identifier of the dbt project in which the model can be found
+        
+  - name: fct_core_run_metrics
+    description: >
+      One row per dbt invocation, with summary statistics on the duration and the result of the invocation.
+    columns:
+      - name: unique_id_sk
+        description: >
+          The unique ID for records in this table. Surrogate key of `project_rank_id_sk` and `cloud_account_id`.
+        tests:
+          - unique
+          - not_null
+      - name: project_rank_id_sk
+        description: >
+          The combination of `inferred_project_id` and `run_rank`, used as unique key in the upstream model.
+        tests:
+          - not_null
+      - name: invocation_id
+        description: >
+          The invocation_id for this invocation. Foreign key to `fct_dbt_invocations`.
+        tests:
+          - not_null
+      - name: adapter_unique_id
+        description: >
+          MD5 hash of the warehouse connection parameter that best uniquely identifies a group of people 
+          working together on the same dbt project. Introduced in v0.21 in August 2021.
+        tests:
+          - not_null
+      - name: inferred_project_id
+        description: MD5 hash of `adapter_unique_id` and `project_id`.
+        tests:
+          - not_null
+      - name: date_day
+        description: The day this invocation was started.
+        tests:
+          - not_null
+      - name: started_at
+        description: The timestamp that this invocation was started.
+        tests:
+          - not_null
+      - name: ended_at
+        description: The timestamp that this invocation was ended.
+      - name: duration_in_sec
+        description: >
+          The seconds between the timestamp that this invocation was started 
+          and the timestamp when it ended, if available.
+      - name: duration_tier
+        description: Used to categorize duration into buckets.
+        tests:
+          - accepted_values:
+              values: ['0-60 seconds', '60-120 seconds', '120-240 seconds', '240-360 seconds', '360-720 seconds', '720-1200 seconds', '1200+ seconds', null]
+      - name: end_state
+        description: The state of this invocation at its end. `ok` indicates success, `error` indicates failure.
+        tests:
+          - accepted_values:
+              values: ['ok', 'error', null]
+      - name: is_failed_run
+        description: >
+          If the `end_state` value is not 'ok' for this invocation, this value will be '1'. 
+          Can be used to aggregate metrics.
+        tests:
+          - not_null
+      - name: is_successful_run
+        description: >
+          If the `end_state` value is 'ok' for this invocation, this value will be '1'. 
+          Can be used to aggregate metrics.
+        tests:
+          - not_null
+      - name: dbt_version
+        description: >
+          The version of dbt used when this invocation was run. 
+          Foreign key to `dim_dbt_versions.dbt_invocation_version`.
+        tests:
+          - not_null
+      - name: type
+        description: Indicates whether this was an invocation run in dbt core vs. dbt Cloud.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['core_run']
+      - name: run_rank
+        description: >
+          This is used to rank invocations for each `inferred_project_id` 
+          by the descending order of the `started_at` timestamp.
+          Can be used to identify the most recent core invocation for this `inferred_project_id`, 
+          or the first core invocation this `inferred_project_id`.
+        tests:
+          - not_null
+      - name: cloud_account_id
+        description: >
+          The cloud account that this core invocation is attributed to. 
+          Foreign key to `fct_cloud_accounts`. This model uses 
+          the `int_dbt_adapter_project_account_mappings` model to connect 
+          the `adapter_unique_id` and `date_day` value combination to a cloud_account_id
+          where possible.

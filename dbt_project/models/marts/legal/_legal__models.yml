@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: fct_notion_legal_document_submissions
+    description: >
+      Tracking of submissions of legal documents to be signed by the legal team
+    columns:
+      - name: legal_document_submission_id
+        tests:
+          - not_null
+          - unique

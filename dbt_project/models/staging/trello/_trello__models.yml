@@ -1,0 +1,22 @@
+version: 2
+
+models:
+
+  - name: stg_trello_boards
+    description: ""
+    columns: 
+      - name: board_id
+        tests:
+          - not_null
+          - unique
+          
+  - name: stg_trello_members
+    description: "Trello users, who are also potential card members (owners)"
+    columns:
+      - name: member_id
+        tests:
+          - unique
+          - not_null
+      - name: name
+        tests:
+          - not_null

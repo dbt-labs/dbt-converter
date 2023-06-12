@@ -1,0 +1,1 @@
+{"name": "active_cloud_users", "description": "'The sum total of dbt Cloud users that logged in and interacted with at least one feature during the specified time grain.'\n", "type": "measure_proxy", "type_params": {"measure": {"name": "active_cloud_users"}}, "constraint": {"where": "is_active = 1", "linkable_names": ["is_active"], "sql_params": {"param_items": []}}}

@@ -1,0 +1,34 @@
+
+version: 2
+
+models:
+  - name: int_github_issues
+    description: >
+      All issues and pull requests, plus context derived from labels
+      (triage, team assignment) and nice-to-haves (GitHub URL)`
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+
+  - name: int_issue_label_history
+    description: >
+      This is `stg_github__issue_label_history` converted into the more 
+      traditional type 2 slowly changing dimension format with start and end 
+      dates.
+    columns:
+      - name: issue_label_history_id
+        tests:
+          - unique
+          - not_null
+
+  - name: int_github_users_prep
+    description: >
+      This model (previously dim_github_users) was moved to an intermediate step so that it could
+      aggregate user milestones from commits and pull requests
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null

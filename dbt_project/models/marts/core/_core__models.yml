@@ -1,0 +1,211 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: >
+      This model is a collected list of all of our paying dbt Cloud customers
+      and their associated entity identifiers. We define a customer as someone
+      who has paid us to use dbt Cloud. For on-prem customers, they
+      will not have an associated account_id because we do not have access to
+      that data (yet).
+    columns:
+      - name: customer_id
+        description: '{{ doc("customer_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: customer_id_type
+        description: '{{ doc("customer_id_type") }}'
+        tests:
+          - accepted_values:
+              values: ['salesforce_account_id', 'stripe_customer_id', 'stripe_customer_id - missing from cloud_account_mappings', 'salesforce_account_id - missing from cloud_account_mappings']
+      - name: customer_start
+        description: >
+          The start date of a customer's paying relationship with us. This is the first revenue 
+          recognition date on the Cloud account.
+      - name: customer_end
+        description: "The end date of a customer's paying relationship with us."
+      - name: latest_arr
+        description: "The latest ARR that is/was associated with a given customer."
+
+  - name: fct_customer_csat
+    description: >
+      CSAT from Delighted for Zendesk tickets and Pro-Serv hourly engagements.
+    columns:
+      - name: response_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_customer_nps
+    description: >
+      Net Promoter Score (NPS) survey submissions for dbt Cloud, Group Training, and Rapid Onboarding.
+    columns:
+      - name: unique_id
+        description: |
+          Unique identifier of an NPS survey submission. Depending on the source, corresponds to:
+          - Delighted: surrogate key of the unique identifier `response_id` of the record
+          - Pendo: surrogate key based off of the `visitor_id`, `timestamp`, `account_id`, 
+          `server_name`, `poll_id`, `guide_id`, `user_agent`, `remote_ip`.
+          - Google Forms & Typeform: surrogate key based off of the `response_row_id`, 
+          `submitted_by_org_name`, `submitted_at` of the Google Sheet where data is stored
+        tests:
+          - unique
+          - not_null
+      - name: feedback_source
+        description: Product or service on which NPS survey was submitted (dbt Cloud, training, ...)
+      - name: score
+        description: Rating between 0-10 answering how likely the user would be to recommend to the product/service.
+      - name: comment
+        description: Optional comment left to explain the score given to the product or service.
+      - name: created_at
+        description: Timestamp of the NPS survey submission.
+      - name: name
+        description: Full name of the person who submitted the NPS survey.
+      - name: email
+        description: >
+          Email address of the person who submitted the NPS survey. 
+          When in-app, corresponds to the email associated with the user's account.
+      - name: account_plan
+        description: '{{ doc("cloud_plan") }}'
+      - name: account_plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+      - name: is_multi_tenant
+        description: Boolean indicating whether the survey was taken on a multi-tenant (True) or single-tenant (False).
+      - name: user_license_type
+        description: The license type assigned to the user in the account
+      - name: survey_platform
+        description: Name of the third-party application used to present & collect the NPS results.
+      - name: survey_page_url
+        description: Web address of the page on which the survey was shown & submitted, if applicable.
+      - name: survey_page
+        description: Name of the web page on which the survey was shown & submitted, if applicable.
+      - name: nps_category
+        description: |
+          The NPS score of a response bucketed into 3 categories: Detractor, Passive, and Promoter.
+          - A likelihood to recommend <= 6 would equate to a `Detractor` - :(
+          - A likelihood to recommend between 7 and 8 would equate to a `Passive` - :|
+          - A likelihood to recommend >= 9 would equate to a `Promoter` - :)
+          
+  - name: fct_global_training_nps  
+    description: >
+      Detailed NPS survey responses for Group Training and Rapid Onboarding.
+    columns:
+      - name: unique_id
+        description: A surrogate key built off of the row ID.
+        tests:
+          - unique
+          - not_null
+
+      - name: response_row_id
+        description: The ID of the row the response relates to in the Google Sheet.
+
+      - name: nps_category
+        description: >
+          The NPS score of a response bucketed into 3 categories: Detractor, Passive, and Promoter.
+          A likelihood to recommend <= 6 would equate to a `Detractor` - :(
+          A likelihood to recommend between 7 and 8 would equate to a `Passive` - :|
+          A likelihood to recommend >= 9 would equate to a `Promoter` - :)
+          
+  - name: fct_delighted_feedback
+    description: >
+      Delighted responses including NPS for dbt Cloud and CSAT for Zendesk tickets.
+    columns:
+      - name: response_id
+        tests:
+          - unique
+          - not_null
+      - name: is_lower
+        description: "Boolean to indicate if this user's NPS score is lower than their previous score for a given product. This will be NULL if this is their first NPS score."
+      - name: is_even
+        description: "Boolean to indicate if this user's NPS score is the same as their previous score for a given product. This will be NULL if this is their first NPS score."
+      - name: is_higher
+        description: "Boolean to indicate if this user's NPS score is higher than their previous score for a given product. This will be NULL if this is their first NPS score."
+
+  - name: dim_organizations
+    description: >
+      This model is a collected list of all organizations in dbt's ecosystem,
+      inclusive of customers, leads, partners, and more. Ideally, an organization's
+      record would originate from a Salesforce account, but in some cases, an 
+      organization is paying us through Stripe, but has no Salesforce record.
+      In such cases, we are sourcing the organization record from Stripe information, 
+      with the intent to surface the organization as a missing Salesforce account,
+      rectify the gap, and improve the entry in this model.
+    columns:
+      - name: organization_id
+        tests:
+            - unique
+            - not_null
+      - name: organization_name
+      - name: organization_record_type
+        description: >
+          An indicator of whether the record comes from Salesforce or Stripe
+      - name: parent_organization_id
+        description: >
+          The id of the organization listed as a parent to the current record in Salesforce.
+          This recursive relationship allows any organizational hierarchy to be represented 
+          within this single model. 
+      - name: is_customer
+        description: >
+          Boolean to indicate whether the organization is paying dbt for services.  
+      - name: salesforce_account_id
+      - name: clearbit_company_type
+        description: '{{ doc("clearbit_company_type") }}'
+      - name: clearbit_industry
+        description: '{{ doc("clearbit_industry") }}'
+      - name: clearbit_industry_group
+        description: '{{ doc("clearbit_industry_group") }}'
+      - name: clearbit_sector
+        description: '{{ doc("clearbit_sector") }}'
+      - name: clearbit_sub_industry
+        description: '{{ doc("clearbit_sub_industry") }}'
+      - name: customer_references
+        description: A list of references the account has agreed to allow us to use. Examples include Logo Rights, Refer to Company Name, Customer Quote, and Case Study.
+      - name: customer_reference_contact_email
+        description: The email of the person who should be contacted in regards to customer references
+      - name: hq_territory_country
+        description: The country in which the account's headquarters is located
+      - name: landed_at
+        description: The start date of the accounts first contract
+      - name: client_technical_contact_id
+        description: The contact ID of the main point of contact for the customer
+      - name: client_technical_contact_name
+        description: The name of the main point of contact for the customer
+      - name: client_technical_contact_email
+        description: The email of the main point of contact for the customer
+      - name: became_customer_on
+        description: >
+          The `won_at` date associated with the account's first won opportunity.
+      - name: landed_at
+        description: >
+          The `contract_start_date` associated with the account's first won opportunity. 
+      - name: days_to_renewal
+        description: >
+          If this account is a customer, then this takes the contract end date (i.e. `current_term_end`)
+          and calculates how far we are from their renewal date starting _today_.
+      - name: count_children
+        description: >
+          The count of all other organizations that roll up to the current organization
+          via parent-child relationships, INCLUDING children 2 or more tiers down from 
+          the organization at hand. 
+      - name: list_children
+        description: >
+          The list of all other organizations that roll up to the current organization
+          via parent-child relationships, INCLUDING children 2 or more tiers down from 
+          the organization at hand. 
+      - name: count_cloud_accounts_excluding_children
+        description: >
+          The count of cloud accounts associated with the organization, WITHOUT including
+          any cloud accounts associated with child organizations within its hierarchy.
+      - name: list_cloud_accounts_excluding_children
+        description: >
+          The list of cloud accounts associated with the organization, WITHOUT including
+          any cloud accounts associated with child organizations within its hierarchy.
+      - name: count_cloud_accounts_including_all_children
+        description: >
+          The count of cloud accounts associated with the organization, including
+          any cloud accounts associated with child organizations within its hierarchy.
+      - name: list_cloud_accounts_including_all_children
+        description: >
+          The list of cloud accounts associated with the organization, including
+          any cloud accounts associated with child organizations within its hierarchy.

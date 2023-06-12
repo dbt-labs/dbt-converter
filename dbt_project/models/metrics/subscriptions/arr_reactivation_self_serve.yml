@@ -1,0 +1,29 @@
+version: 2
+
+metrics:
+  - name: arr_reactivation_self_serve
+    label: Self-Serve Reactivation ARR
+    model: ref('fct_arr_aggregated')
+    description: >
+      The amount of ARR (Annual Recurring Revenue) from Self-Serve customers whose accounts 
+      are cancelled (churn to MRR = 0) and then reactivated for the time period.
+
+    calculation_method: sum
+    expression: ss_reactivation_arr
+
+    filters:
+      - field: sales_channel
+        operator: "="
+        value: "'Self-Serve'"
+
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

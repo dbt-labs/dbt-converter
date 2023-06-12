@@ -1,0 +1,162 @@
+version: 2
+
+sources:
+  - name: accredible
+    description: '{{ doc("src_accredible") }}'
+    database: raw
+    schema: accredible
+    freshness:
+      warn_after: {count: 12, period: hour}
+      error_after: {count: 24, period: hour}
+    loader: stitch_tap
+    loaded_at_field: _sdc_batched_at
+
+    meta:
+      team: ['Customer Success']
+      owner_name: Elize Papineau
+
+    tables:
+      - name: credentials
+        description: "Each record represents a credential issued"
+        columns:
+          - name: approve
+            description: "Boolean indicating approval. True for all records"
+
+          - name: badge
+            description: "JSON object containing a badge preview link for issued badges (dbt Fundamentals)"
+
+          - name: certificate
+            description:  "JSON object containing a credenital preview link for issued credentials (dbt Certified Developer)"
+
+          - name: complete
+            description: "Boolean indicating if credential is complete. True for all records"
+
+          - name: course_link
+            description: "Link to source of credential. Hardcoded by badge type"
+
+          - name: custom_attributes
+            description: "JSON object with custom attricutes"
+
+          - name: description
+            description: "Description of the badge/credential. Unique per badge/credential group"
+
+          - name: encoded_id
+            description: "UUID"
+
+          - name: evidence_items
+            description: "List of additional evidence items (final grades, presentatinos etc)"
+
+          - name: expired_on
+            description: "Date of credential expiry"
+
+          - name: group_id
+            description: "ID for Accredible Group"
+
+          - name: group_name
+            description: "Name of the Accredible Group -- maps to a credential offered"
+
+          - name: id
+            description: "Unique ID for credentials"
+
+          - name: issued_on
+            description: "Date of credential/badge issue"
+
+          - name: issuer
+            description: "JSON object with info on issuer (only dbt Labs)"
+
+          - name: name
+            description: "Badge/Credential Group name"
+
+          - name: private
+            description: "Boolean for whether credential is private"
+
+          - name: recipient
+            description: "JSON object with info on the recipient of the badge/credential"
+
+          - name: references
+            description: "list of references"
+
+          - name: seo_image
+            description: "URL to image of credential"
+
+          - name: url
+            description: "URL to the credential on the Accredible platform"
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+          
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+          
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+          
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      
+      - name: groups
+        description: "Each record contains the details for each credential type issued by the Accredible platform"
+        columns:
+          - name: attach_pdf
+            description: "Boolean indicating whether PDF was attached"
+
+          - name: badge_design_id
+            description: "ID for the badge design"
+
+          - name: blockchain
+            description: "Boolean indicating whether the credential is on the blockchain"
+
+          - name: certificate_design_id
+            description: "ID for Certificate Design (nullable)"
+
+          - name: course_description
+            description: "Descriptoin for the course"
+
+          - name: course_link
+            description: "URL to the course"
+
+          - name: course_name
+            description: "Name of the Course"
+
+          - name: created_at
+            description: "Date the group was created"
+
+          - name: department_id
+            description: "Department ID"
+
+          - name: design_id
+            description: "Design ID"
+
+          - name: design_name
+            description: "Name of group design"
+
+          - name: id
+            description: "Unique ID of the group"
+
+          - name: language
+            description: "language of the certification/badge"
+
+          - name: learning_outcomes
+            description: "list of learning outcomes"
+
+          - name: name
+            description: "Name of Group"
+
+          - name: primary_design_id
+            description: "ID for the Primary Design"
+
+          - name: updated_at
+            description: "Date of last Group update"
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+          
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+          
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+          
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."

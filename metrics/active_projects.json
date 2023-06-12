@@ -1,0 +1,1 @@
+{"name": "active_projects", "description": "'A measure of engaged activity across a dbt Project, defined as whether the project had an invocation during the specified time grain.'\n", "type": "measure_proxy", "type_params": {"measure": {"name": "active_projects"}}, "constraint": {"where": "active = 1", "linkable_names": ["active"], "sql_params": {"param_items": []}}}

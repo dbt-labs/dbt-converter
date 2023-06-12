@@ -1,0 +1,92 @@
+version: 2
+
+macros:
+  - name: adp_join_organizational_units
+    description: >
+      SQL to join ADP worker assignments to their associated organizational
+      units (departments or business entities) ID to value mapping. This SQL is
+      implemented in a macro to ensure easeability of use in snapshotting since
+      ADP does not natively track organizational unit assignments.
+    arguments:
+      - name: organizational_level
+        type: string
+        description: >
+          The value of the organizational unit grain to be snapshotted.
+
+  - name: join_snapshots
+    description: From https://docs.getdbt.com/blog/joining-snapshot-complexity
+
+  - name: parse_sfdc_opp_url
+    description: Helper macro for parsing opportunity IDs from Salesforce URLs.
+
+  - name: plan_tiering
+    description: Standardized grouping of possible plan names (e.g. team and team_2022 are in the team tier)
+    docs:
+      show: true
+    arguments:
+      - name: plan_name
+        type: string
+        description: The human-readable identifier of the applicable dbt Cloud pricing plan
+
+  - name: unpack_notion_databases
+    description: '{{ doc("notion_databases_macro") }}'
+    docs:
+      show: true
+    arguments:
+      - name: notion_database_id
+        type: string
+        description: The Notion database ID used to ingest the data in tap-notion.
+
+  - name: channel_mapping_wildcards
+    description: '{{ doc("channel_mapping_wildcards_macro") }}'
+    docs:
+      show: true
+    arguments:
+      - name: medium_column
+        type: string
+        description: >
+          The `medium` or `marketing_medium` column name from the source data.
+          If this macro is used in a CTE that includes a join, include the source CTE name as well.
+          For example, `web_sessions.marketing_medium`.
+
+      - name: source_column
+        type: string
+        description: >
+          The `source` or `marketing_source` column name from the source data.
+          If this macro is used in a CTE that includes a join, include the source CTE name as well.
+          For example, `web_sessions.marketing_source`.
+
+      - name: channel_column
+        type: string
+        description: >
+          The `channel` column name from the channel map data.
+          If this macro is used in a CTE that includes a join, include the channel map CTE name as well.
+          For example, `channel_map.channel`.
+
+      - name: sub_channel_column
+        type: string
+        description: >
+          The `sub_channel` column name from the channel map data.
+          If this macro is used in a CTE that includes a join, include the channel map CTE name as well.
+          For example, `channel_map.sub_channel`.
+
+      - name: team_column
+        type: string
+        description: >
+          The `team` column name from the channel map data.
+          If this macro is used in a CTE that includes a join, include the channel map CTE name as well.
+          For example, `channel_map.team`.
+
+      - name: source_type_column
+        type: string
+        description: >
+          The `source_type` column name from the channel map data.
+          If this macro is used in a CTE that includes a join, include the channel map CTE name as well.
+          For example, `channel_map.source_type`.
+
+      - name: channel_grouping_column
+        type: string
+        description: >
+          The `channel_grouping` column name from the channel map data.
+          If this macro is used in a CTE that includes a join, include the channel map CTE name as well.
+          For example, `channel_map.channel_grouping`.

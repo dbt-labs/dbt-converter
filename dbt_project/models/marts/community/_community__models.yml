@@ -1,0 +1,265 @@
+version: 2
+
+models:
+  - name: dim_slack_users
+    description: >
+      One record per user that has, or has ever had, the ability to post a message
+      in dbt Slack. This includes admin users, bots, and deactivated users,
+      and _excludes_ users that have been invited, but have not yet accepted
+      their invite.
+
+      Note: the # of users in "announcements" includes invited users, so
+      calculating `count(*)` on this model will result in a lower number than
+      the number reported in Slack.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+
+      - name: joined_at
+        description: >
+          Our best guess at when someone created their account — note that the
+          Slack API does not have a field for this, so we derive it based
+          on channel joins and access logs.
+
+  - name: fct_common_room_activities
+    description: Materialized version of Common Room activity data that can be used for direct querying and in BI tools.
+    columns:
+      - name: activity_id
+        description: Unique identifier of an activity based on timestamp, activity type and user info.
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_slack_channel_activity_ranks
+    description: >
+      Each row is the nth most active user in a channel each month.
+      A separate rank is given for each kind of user action.
+
+      Note-is determined at top of model.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: action_rank
+        description: >
+          The top n Slack members engaging in a certain action in each
+          channel each month.
+
+  - name: fct_slack_channels_monthly_activity
+    description: >
+      Month over month channel engagement metrics with counts and percent
+      change for each channel/month pair.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: total_thread_count
+        description: >
+          Count of messages sent directly to channel.
+      - name: total_thread_percent_change
+        description: >
+          Percent change in messages sent directly to channel between current month and previous.
+      - name: total_message_count
+        description: >
+          Sum of messages sent directly to channel and replies.
+      - name: total_message_percent_change
+        description: >
+          Percent change of messages sent directly to channel and replies between current month and previous.
+      - name: msg_author_count
+        description: >
+          Sum of how many channel members write a post or reply.
+      - name: msg_author_percent_change
+        description: >
+          Percent change of how many posts and replies are written in a channel between current month and previous.
+
+  - name: fct_slack_channels_weekly_activity
+    description: >
+      Week over week channel engagement metrics with counts and percent
+      change for each channel/week pair.
+      Weeks are defined by iso standard and begin on Mondays.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: total_thread_count
+        description: >
+          Count of messages sent directly to channel.
+      - name: total_message_count
+        description: >
+          Sum of messages sent directly to channel and replies.
+      - name: msg_author_count
+        description: >
+          Sum of how many channel members write a post or reply.
+
+  - name: fct_slack_messages
+    description: >
+      One record per message posted in a channel or thread
+      
+      Note: because replies are initially captured as a field on original messages 
+      and the data feed has a 30-day lookback window (on those original messages), 
+      only replies received within that lookback are captured.
+    columns:
+      - name: message_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_slack_posts
+    description: >
+      One record per message posted in a channel (note: this means threads are
+      not included in this model
+    columns:
+      - name: message_id
+        tests:
+          - unique
+          - not_null
+      - name: has_self_reply
+        description: >
+          True when the poster replied to their own post. False if other
+          reply but poster does not. Null if no replies on post.
+
+  - name: fct_slack_replies
+    columns:
+      - name: message_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_slack_user_activity
+    description: '{{doc("fct_slack_user_activity")}}'
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+      - name: date_day
+        tests:
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+
+  - name: fct_twitter_engagement
+    description: '{{doc("fct_twitter_engagement")}}'
+    columns:
+      - name: tweet_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_youtube_channel_activity
+    description: '{{ doc("fct_youtube_channel_activity") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: date_day
+        description: '{{ doc("date_day") }}'
+      - name: channel_id
+        description: '{{ doc("channel_id") }}'
+      - name: video_id
+        description: '{{ doc("video_id") }}'
+      - name: subscribed_status
+        description: '{{ doc("subscribed_status") }}'
+      - name: live_or_on_demand
+        description: '{{ doc("live_or_on_demand") }}'
+      - name: viewer_country_code
+        description: '{{ doc("viewer_country_code") }}'
+      - name: viewer_region_category
+        description: '{{ doc("viewer_region_category") }}'
+      - name: channel_title
+        description: '{{ doc("channel_title") }}'
+      - name: channel_description
+        description: '{{ doc("channel_description") }}'
+      - name: video_title
+        description: '{{ doc("video_title") }}'
+      - name: video_description
+        description: '{{ doc("video_description") }}'
+      - name: video_duration
+        description: '{{ doc("video_duration") }}'
+      - name: privacy_type
+        description: '{{ doc("privacy_type") }}'
+      - name: has_captions
+        description: '{{ doc("has_captions") }}'
+      - name: is_embeddable
+        description: '{{ doc("is_embeddable") }}'
+      - name: was_live_video
+        description: '{{ doc("was_live_video") }}'
+      - name: video_published_at
+        description: '{{ doc("video_published_at") }}'
+      - name: count_views
+        description: '{{ doc("count_views") }}'
+      - name: count_comments
+        description: '{{ doc("count_comments") }}'
+      - name: count_likes
+        description: '{{ doc("count_likes") }}'
+      - name: count_dislikes
+        description: '{{ doc("count_dislikes") }}'
+      - name: count_shares
+        description: '{{ doc("count_shares") }}'
+      - name: total_watch_time_min
+        description: '{{ doc("total_watch_time_min") }}'
+      - name: count_subscribers_gained
+        description: '{{ doc("count_subscribers_gained") }}'
+      - name: count_subscribers_lost
+        description: '{{ doc("count_subscribers_lost") }}'
+      - name: count_subscribers_net
+        description: '{{ doc("count_subscribers_net") }}'
+      - name: average_view_duration_percentage
+        description: '{{ doc("average_view_duration_percentage") }}'
+      - name: average_view_duration_seconds
+        description: '{{ doc("average_view_duration_seconds") }}'
+
+  - name: fct_youtube_channel_daily
+    description: '{{ doc("fct_youtube_channel_daily") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: etag
+        description: '{{ doc("etag") }}'
+      - name: count_subscribers
+        description: The lifetime total number of subscribers on a channel
+      - name: count_new_subscribers
+        description: The number of subscribers a channel earned on a given day
+      - name: count_videos
+        description: The lifetime total number of videos on a channel
+      - name: count_new_videos
+        description: The number of videos posted on a given day
+      - name: count_views
+        description: The lifetime total number of views on a channel
+      - name: count_new_views
+        description: The number of views a channel earned on a given day
+
+  - name: fct_youtube_video_daily
+    description: '{{ doc("fct_youtube_video_daily") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: etag
+        description: '{{ doc("etag") }}'
+      - name: count_comments
+        description: The lifetime total number of comments on a video
+      - name: count_new_comments
+        description: The number of comments a video earned on a given day
+      - name: count_favorites
+        description: The lifetime total number of favorites on a video
+      - name: count_new_favorites
+        description: The number of favorites a video earned on a given day
+      - name: count_likes
+        description: The lifetime total number of likes on a video
+      - name: count_new_likes
+        description: The number of likes a video earned on a given day
+      - name: count_views
+        description: The lifetime total number of views on a video
+      - name: count_new_views
+        description: The number of views a video earned on a given day

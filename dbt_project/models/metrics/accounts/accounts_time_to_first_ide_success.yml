@@ -1,0 +1,31 @@
+version: 2
+
+metrics:
+  - name: accounts_time_to_first_ide_success
+    label: (Accounts) Avg Time to First IDE Success
+    model: ref('fct_cloud_accounts')
+    description: >
+      The average time to first job success for accounts
+      created over a given time period.
+    tags: []
+
+    calculation_method: average 
+    expression: "DATEDIFF(DAYS, created_at, first_successful_ide_invocation_at)"
+
+    filters:
+      - field: is_account_deleted
+        operator: "="
+        value: "0"
+      - field: is_test_account
+        operator: "="
+        value: "0"
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - database_type
+      - plan
+
+    meta:
+      owner(s): 'Andrew Tom'

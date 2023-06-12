@@ -1,0 +1,28 @@
+version: 2
+
+metrics:
+ 
+  - name: lost_pipeline_to_core
+    label: Lost Pipeline Opps to Core
+    model: ref('fct_opportunities')
+    description: '{{ doc("lost_pipeline_to_core") }}'
+    tags: ['FY2023 - O1']
+
+    calculation_method: count
+    expression: opportunity_id
+
+    timestamp: close_date
+    time_grains: [day, week, month]
+
+    filters:
+      - field: discover_at
+        operator: '!='
+        value: 'null'
+      - field: lost_sub_reason
+        operator: '='
+        value: 'Core (Open Source)'
+
+    meta:
+      okr_level: 'Company'
+      owner(s): 'Drew Banin'
+      team: 'Product'

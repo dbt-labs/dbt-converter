@@ -1,0 +1,28 @@
+
+version: 2
+
+sources:
+  - name: heysummit
+    schema: heysummit
+    database: raw
+    description: '{{ doc("src_heysummit") }}'
+
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+
+    meta:
+      team: ['Marketing','Community']
+      owner_name: Brandon Thomson
+
+    tables:
+      - name: attendees
+        description: Each record contains the details of someone who registered to attend an event.
+
+      - name: events
+        description: Each record contains the details of an event.
+
+      - name: talks
+        description: Each record contains the details of a talk at an event. One event can have several talks.
+
+      - name: tickets
+        description: Each record contains the details of a ticket to an event. One event can have several tickets.

@@ -1,0 +1,1 @@
+{"name": "metadata_API_requests", "description": "The sum of all Metadata API requests.", "type": "measure_proxy", "type_params": {"measure": {"name": "metadata_API_requests"}}}

@@ -1,0 +1,26 @@
+version: 2
+
+metrics:
+  - name: arr_month_end
+    label: ARR (Month End)
+    model: ref('fct_cloud_subscription_transactions')
+    description: >
+      The ARR (Annual Recurring Revenue) of dbt Labs at the end of a month.
+    tags: ['Company Metric', 'FY2024 - O1']
+
+    calculation_method: sum
+    expression: arr
+
+    timestamp: date_day
+    time_grains: [month]
+    dimensions:
+      - sales_motion
+      - change_category
+    filters:
+      - field: is_last_day_of_month
+        operator: "="
+        value: "1"
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: net_revenue_retention
+    label: Net Revenue (Dollar) Retention (Rate)
+    description: >
+      Net Revenue Retention (AKA Net Dollar Retention
+      or Expansion Rate) is the expansion or contraction
+      of ARR in a given month.
+    tags: ['Company Metric', 'FY2024 - O1']
+
+    calculation_method: derived
+    expression: "( {{metric('arr_month_start')}} + coalesce( {{metric('arr_net_change')}}, 0) ) / {{metric('arr_month_start')}}"
+
+    timestamp: date_day
+    time_grains: [month]
+
+    dimensions:
+      - sales_motion
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

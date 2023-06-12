@@ -1,0 +1,31 @@
+
+version: 2
+
+models:
+  - name: stg_metadata_api__requests
+    description: >
+      This table has a record for each API request that uses the Metadata API.
+
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}
+
+  - name: stg_metadata__model_bottleneck_interactions
+    description: >
+      This table has a record for each interaction with the model bottleneck viz.
+
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}

@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: crowdcast
+    database: raw
+    schema: fivetran_googlesheets
+    description: '{{ doc("src_crowdcast") }}'
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+
+    meta:
+      team: ['Marketing','Community']
+      owner_name: Brandon Thomson
+
+    
+    tables:
+      - name: crowdcast_event_attendance
+        description: Each record contains one event registration for a Crowdcast event.

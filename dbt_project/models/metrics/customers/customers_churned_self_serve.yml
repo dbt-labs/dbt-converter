@@ -1,0 +1,28 @@
+version: 2
+
+metrics:
+  - name: customers_churned_self_serve
+    label: Self-Serve Churned Customers
+    model: ref('fct_customer_activity_self_serve')
+    description: >
+      The total number of churned (recognized cancels, or downgrades
+       to free developer plan) Self-Serve customers during a given time period.
+
+    calculation_method: count_distinct
+    expression: customer_id
+
+    filters:
+      - field: sales_channel
+        operator: "="
+        value: "'Self-Serve'"
+      - field: customer_activity_type
+        operator: "="
+        value: "'churn'"
+
+    timestamp: close_month
+    time_grains: [month]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

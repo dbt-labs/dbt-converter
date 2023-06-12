@@ -1,0 +1,145 @@
+
+version: 2
+
+models:
+  - name: stg_community__signups
+    description: >
+      One record for every time someone completes the Slack signup
+      flow at community.getdbt.com.
+
+  - name: stg_dbt_invocation_events
+    columns:
+      - name: geo_region_name
+        description: Generally a state, e.g. 'Pennsylvania', 'New South Wales'
+
+      - name: geo_region
+        description: The code for the region, e.g. 'PA', 'NSW'
+
+      - name: geo_country
+        description: Two letter code for a country, e.g.'US', 'AU'
+
+      - name: is_partial_parse_enabled
+        description: "{{ doc('dbt_is_partial_parse_enabled') }}"
+
+      - name: project_load_all_elapsed_s
+        description: "{{ doc('dbt_project_load_all_elapsed_s') }}"
+
+      - name: project_path_count
+        description: "{{ doc('dbt_project_path_count') }}"
+
+      - name: project_parsed_path_count
+        description: "{{ doc('dbt_project_parsed_path_count') }}"
+
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}
+
+  - name: stg_dbt_cities
+    columns:
+      - name: city_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_dbt_package_installs
+    description: >
+      Prior to v0.17.0, the package installation events did not track project ID.
+      However, the preceding "deps start" event _does_ track the project ID. In
+      this model we use some SQL trickery to grab that ID (and the dbt version, just for fun).
+
+  - name: stg_dbt_deprecation_warnings
+    description: >
+      As of v0.18.0, we send one event per deprecation warning from any dbt
+      invocation.
+    columns:
+      - name: deprecation_name
+        description: >
+          One of the values enumerated in `deprecations.py` ([source](https://github.com/fishtown-analytics/dbt/blob/dev/marian-anderson/core/dbt/deprecations.py)).
+
+  - name: stg_dbt_docs_events
+    description: >
+      As of v0.18.0, all dbt-docs events (page views, page pings, etc.) include
+      a custom context containing `core_project_id` and `is_cloud_hosted`. This
+      model also parses the URL to extract foreign keys to dbt Cloud resources,
+      if applicable.
+    columns:
+      - name: project_id
+        description: dbt Core project ID (foreign key to `fct_dbt_projects`)
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}
+
+  - name: stg_dbt_resource_count_events
+    description: >
+      "{{ doc('dbt_resource_counts') }}". This model is at the event grain, which 
+      means there can be multiple records per `invocation_id` and `project_id` combination
+      due to fanning out of joins.
+    columns:
+      - name: project_id
+        description: dbt Core project ID (foreign key to `fct_dbt_projects`)
+
+  - name: stg_dbt_resource_counts
+    description: >
+      "{{ doc('dbt_resource_counts') }}". This model is at the resource_count grain, which 
+      means there should be a single record per `invocation_id` and `project_id` combination.
+    columns:
+      - name: event_id
+        description: Snowplow event ID
+      - name: invocation_at
+        description: The _loaded_at timestamp, renamed
+      - name: invocation_id
+        description: The ID of the invocation
+      - name: count_models
+        description: The count of models in the project at the time this invocation began
+      - name: count_tests
+        description: The count of tests in the project at the time this invocation began
+      - name: count_snapshots
+        description: The count of snapshots in the project at the time this invocation began
+      - name: count_analyses
+        description: The count of analyses in the project at the time this invocation began
+      - name: count_macros
+        description: The count of macros in the project at the time this invocation began
+      - name: count_operations
+        description: The count of operations in the project at the time this invocation began
+      - name: count_seeds
+        description: The count of seeds in the project at the time this invocation began
+      - name: count_sources
+        description: The count of sources in the project at the time this invocation began
+      - name: count_exposures
+        description: The count of exposures in the project at the time this invocation began
+      - name: count_metrics
+        description: The count of metrics in the project at the time this invocation began
+      - name: project_id
+        description: dbt Core project ID (foreign key to `fct_dbt_projects`). Comes from `current_snowplow_invocation`
+      - name: dbt_version
+        description: The dbt version that was used for the invocation. Comes from `current_snowplow_invocation`
+
+  - name: stg_dbt_rpc_tasks
+    description: This table has the invocations run inside a dbt RPC
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}
+
+  - name: stg_dbt_run_model_events
+    columns:
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}
+
+  - name: stg_snowplow_web_experiment_contexts
+    description: Context splitting for website experiments. This model features one row per event that has an experiment context attached to it.
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}

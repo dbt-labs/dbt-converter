@@ -1,0 +1,1 @@
+{"name": "customers_churned", "description": "The total number of churned (recognized cancels, or downgrades\n to free developer plan) customers (logos) during a given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "customers_churned"}}, "constraint": {"where": "is_current != 1", "linkable_names": ["is_current"], "sql_params": {"param_items": []}}}

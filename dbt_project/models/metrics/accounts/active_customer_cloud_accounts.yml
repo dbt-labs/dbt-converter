@@ -1,0 +1,30 @@
+version: 2
+
+metrics:
+  - name: active_customer_cloud_accounts
+    label: Active Customer Cloud Accounts
+    model: ref('fct_cloud_subscription_transactions')
+    description: > 
+      Reports the total number of currently paying dbt Cloud accounts, that are active 
+      (visited a Cloud page) during the specified time grain. Survivorship Bias is present here 
+      - if a customer cancels their subscription, they are also removed from history.
+    tags: []
+
+    calculation_method: count_distinct
+    expression: cloud_account_id
+
+    timestamp: date_day
+    time_grains: [day, week, month, quarter, year]
+
+    filters:
+      - field: is_last_day_of_month
+        operator: "="
+        value: "1"
+      - field: arr
+        operator: ">"
+        value: "0"
+
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

@@ -1,0 +1,133 @@
+version: 2
+
+models:
+
+  - name: stg_greenhouse__job_openings
+    description: All openings on Greenhouse. One job to many job_openings
+    columns:
+      - name: job_opening_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__jobs
+    description: All jobs created in Greenhouse. One job to many job_openings
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__job_offers
+    description: All jobs offers created in Greenhouse.
+    columns:
+      - name: offer_id
+        tests:
+          - unique
+          - not_null
+      - name: commission_amount
+        meta:
+          masking_policy: talent_acquisition_number
+      - name: equity_amount
+        meta:
+          masking_policy: talent_acquisition_number
+      - name: salary
+        meta:
+          masking_policy: talent_acquisition_number
+      - name: signing_bonus_amount
+        meta:
+          masking_policy: talent_acquisition_number
+
+  - name: stg_greenhouse__hiring_team
+    description: Hiring Manager and Recruiter ID for each Job in Greenhouse
+    columns:
+      - name: job_hiring_team_member_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__departments
+    description: L0 and L1 Job Departments by Job ID
+    columns:
+      - name: l0_department_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__job_departments
+    description: L0 and L1 Job Departments by Job ID
+    columns:
+      - name: job_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__job_offices
+    description: Job Location Mapping for all jobs
+    columns:
+      - name: job_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__offices
+    description: Job office name and location
+    columns:
+      - name: office_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__job_applications
+    description: Job applications with all associated jobs
+    columns:
+      - name: application_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__applications
+    description: All Job Applications
+    columns:
+      - name: application_id
+        tests:
+          - unique
+          - not_null
+      - name: rejected_at
+        meta:
+          masking_policy: talent_acquisition_timestamp
+
+  - name: stg_greenhouse__job_history
+    description: Job History table used to track changes over time
+    columns:
+      - name: job_record_id
+        tests:
+          - unique
+          - not_null
+      - name: requisition_name
+        meta:
+          masking_policy: talent_acquisition_string
+
+  - name: stg_greenhouse__users
+    description: All User ID, Name, and Email information for Greenhouse Users
+    columns:
+      - name: greenhouse_user_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__user_emails
+    description: All User ID, Name, and Email information for Greenhouse Users
+    columns:
+      - name: greenhouse_user_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_greenhouse__sources
+    description: Source for Greenhouse Job Applications
+    columns:
+      - name: source_id
+        tests:
+          - unique
+          - not_null

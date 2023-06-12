@@ -1,0 +1,1 @@
+{"name": "arr_new", "description": "The ARR (Annual Recurring Revenue) associated with new transactions over a given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_new"}}, "constraint": {"where": "change_category = 'new'", "linkable_names": ["change_category"], "sql_params": {"param_items": []}}}

@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: arr_churn_managed
+    label: Managed Total Churn ARR
+    description: >
+      The sum of Downsell and Cancelled ARR (Annual Recurring Revenue) for Managed customers 
+      over a given time period. Includes expected churn.
+
+    calculation_method: derived
+    expression: "{{metric('arr_downsell_managed')}} + {{metric('arr_cancelled_managed')}}"
+
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

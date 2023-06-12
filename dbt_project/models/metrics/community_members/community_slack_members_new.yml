@@ -1,0 +1,33 @@
+version: 2
+
+metrics:
+  - name: community_slack_members_new
+    label: Community Slack Members
+    model: ref('dim_slack_users')
+    description: >
+      The number of new community members that joined
+       our dbt Community Slack over a given time period.
+    tags: ['Company Metric']
+
+    calculation_method: count 
+    expression: user_id
+
+    filters:
+      - field: has_joined_workspace
+        operator: "="
+        value: "1"
+
+    timestamp: joined_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - has_messaged
+      - is_partner
+      - is_active_past_quarter
+      - region_category
+      - country_name
+      - country_code
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

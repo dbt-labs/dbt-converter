@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: dim_stripe_subscriptions
+    description: >
+      This model contains all subscriptions for Self-Service Cloud accounts
+      in Stripe while also accounting for false subscription cancellations and
+      fixing the subscription start/end dates accordingly.
+    columns:
+      - name: subscription_id
+        tests:
+          - unique
+          - not_null
+      - name: first_sub_paid_invoice_date
+        description: >
+          The first paid invoice date on a given subscription.
+      - name: last_sub_paid_invoice_date
+        description: >
+          The last paid invoice date on a given subscription.
+      - name: subscription_created_at
+        description: >
+          The date/timestamp that the subscription was created.
+      - name: subscription_canceled_at
+        description: >
+          The date/timestamp that the subscription was canceled in the system.
+      - name: is_paid_subscription
+        description: >
+          A boolean to flag if a customer ever paid for this subscription.
+
+  - name: fct_stripe_invoices
+    columns:
+      - name: invoice_id
+        tests:
+          - unique
+          - not_null
+      - name: stripe_plan_id
+        description: '{{ doc("stripe_plan_id") }}'
+      - name: stripe_plan_name
+        description: '{{ doc("stripe_plan_name") }}'
+      - name: subscription_revenue
+        description: '{{ doc("subscription_revenue") }}'
+      - name: subscription_prorations
+        description: '{{ doc("subscription_prorations") }}'
+      - name: invoice_sales_tax
+        description: '{{ doc("invoice_sales_tax") }}'
+      - name: invoice_total
+        description: '{{ doc("stripe_invoice_total") }}'
+      - name: refund_total
+        description: '{{ doc("stripe_refund_total") }}'
+      - name: refund_subtotal
+        description: '{{ doc("refund_subtotal") }}'
+      - name: invoice_subtotal
+        description: '{{ doc("invoice_subtotal") }}'
+      - name: cc_failure_message
+        description: '{{ doc("cc_failure_message") }}'
+      - name: subscription_started_at
+        description: '{{ doc("subscription_started_at") }}'
+      - name: subscription_canceled_at
+        description: '{{ doc("subscription_canceled_at") }}'
+      - name: invoice_date
+        description: '{{ doc("invoice_date") }}'
+      - name: invoice_period_start
+        description: The usage period start date for the items on the invoice.
+      - name: invoice_period_end
+        description: The usage period end date for the items on the invoice.
+      - name: cc_expiration_date
+        description: The date in which the credit card attached to an invoice is set to expire.
+
+  - name: fct_stripe_subscription_events
+    columns:
+      - name: unique_id
+        tests:
+          - unique
+          - not_null
+      - name: cost_change_comment
+        description: '{{ doc("cost_change_comment") }}'
+      - name: price
+        description: '{{ doc("price") }}'
+        tests:
+          - accepted_values:
+              values: ["0"]
+              config:
+                where: "plan_id = 'team_monthly'"
+      - name: cost_change
+        description: '{{ doc("cost_change") }}'
+      - name: subscription_change_type
+        description: '{{ doc("subscription_change_type") }}'
+      - name: total_charged_amount
+        description: '{{ doc("total_charged_amount") }}'
+      - name: is_subscription_change_event
+        description: '{{ doc("is_subscription_change_event") }}'

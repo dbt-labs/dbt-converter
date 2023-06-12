@@ -1,0 +1,1 @@
+{"name": "impressions", "description": "Total impressions", "type": "measure_proxy", "type_params": {"measure": {"name": "impressions"}}}

@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: twitter
+    schema: twitter_search
+    database: raw
+    description: '{{ doc("src_twitter") }}'
+
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+
+    meta:
+      team: ['Marketing','Community']
+      owner_name: Brandon Thomson
+
+    tables:
+      - name: tweets
+      - name: users

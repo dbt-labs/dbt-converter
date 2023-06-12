@@ -1,0 +1,35 @@
+version: 2
+
+sources:
+  - name: datadog
+    description:  '{{ doc("src_datadog") }}'
+    database: raw
+    schema: fivetran_datadog
+    freshness:
+      warn_after: { count: 24, period: hour }
+      error_after: { count: 48, period: hour }
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    meta:
+      team: ['EPD']
+      owner_name: Elize Papineau
+
+    tables:
+      - name: aws_multitenant_total_requests
+        identifier: datadog_total_requests_aws_mt
+        description: '{{ doc("datadog_total_requests") }}'
+      - name: aws_multitenant_elb_error_requests
+        identifier: datadog_elb_error_requests_aws_mt
+        description: '{{ doc("datadog_error_requests") }}'
+      - name: aws_multitenant_target_error_requests
+        identifier: datadog_target_error_requests_aws_mt
+        description: '{{ doc("datadog_error_requests") }}'
+      - name: aws_singletenant_total_requests
+        identifier: datadog_total_requests_aws_st
+        description: '{{ doc("datadog_total_requests") }}'
+      - name: aws_singletenant_elb_error_requests
+        identifier: datadog_elb_error_requests_aws_st
+        description: '{{ doc("datadog_error_requests") }}'
+      - name: aws_singletenant_target_error_requests
+        identifier: datadog_target_error_requests_aws_st
+        description: '{{ doc("datadog_error_requests") }}'

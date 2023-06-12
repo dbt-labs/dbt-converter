@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: thinkific
+    database: raw
+    loader: stitch_tap
+    schema: thinkific
+    description: '{{ doc("src_thinkific") }}'
+
+    meta:
+      team: ['Customer Success']
+      owner_name: Estelle Wolski
+
+    tables:
+      # - name: _sdc_rejected
+      - name: courses
+      - name: enrollments
+      - name: groups
+      - name: users

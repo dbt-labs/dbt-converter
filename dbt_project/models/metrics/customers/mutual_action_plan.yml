@@ -1,0 +1,24 @@
+version: 2
+
+metrics:
+  - name: mutual_action_plan
+    label: Mutual Action Plan
+    model: ref('dim_salesforce_accounts')
+    description: '{{ doc("mutual_action_plan") }}'
+    tags: ['FY2023 - O2']
+
+    calculation_method: count
+    expression: account_id
+
+    filters:
+      - field: account_status
+        operator: '='
+        value: 'Customer'
+
+    timestamp: subscription_date
+    time_grains: [month]
+
+    meta:
+      okr_level: 'Company'
+      owner(s): 'Erin Vaughan and Nick Erdenberger'
+      team: 'Leadership'

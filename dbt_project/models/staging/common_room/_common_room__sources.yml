@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: common_room
+    database: raw
+    schema: fivetran_google_drive_common_room
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+
+    meta:
+      team: ['Marketing','Community']
+      owner_name: Brandon Thomson

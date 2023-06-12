@@ -1,0 +1,21 @@
+version: 2
+
+metrics:
+  - name: gross_revenue_retention
+    label: Gross Revenue (Dollar) Retention (Rate)
+    description: >
+      The ARR retained divided by the ARR up for renewal in a given month.
+    tags: ['Company Metric', 'FY2024 - O1']
+
+    calculation_method: derived
+    expression: "{{metric('base__arr_retained')}} / {{metric('arr_month_start')}}"
+
+    timestamp: date_day
+    time_grains: [month]
+
+    dimensions:
+      - sales_motion
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

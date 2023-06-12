@@ -1,0 +1,10 @@
+INSTANCE_NAME,DATABASE_SOURCE,MAPPING_FIELD_TYPE,MAPPING_VALUE
+prod,cloud,page_urlhost,cloud.getdbt.com
+prod-emea,cloud_emea,ip_address,3.123.45.x
+prod-emea,cloud_emea,ip_address,3.126.140.x
+prod-emea,cloud_emea,ip_address,3.72.153.x
+prod-emea,cloud_emea,page_urlhost,emea.dbt.com
+prod-au,cloud_au,page_urlhost,au.dbt.com
+prod-au,cloud_au,ip_address,52.65.89.x
+prod-au,cloud_au,ip_address,3.106.40.x
+prod-au,cloud_au,ip_address,13.239.155.x

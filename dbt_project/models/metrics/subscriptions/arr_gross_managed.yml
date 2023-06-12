@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: arr_gross_managed
+    label: Managed Total Gross ARR
+    description: >
+      The sum of Land and Expand ARR (Annual Recurring Revenue) for Managed customers 
+      over a given time period.
+
+    calculation_method: derived
+    expression: "{{metric('arr_land_managed')}} + {{metric('arr_expansion_managed')}}"
+    
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

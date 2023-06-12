@@ -1,0 +1,1 @@
+{"name": "avg_spend", "description": "Average ad spend, does not ignore zero-spend days.", "type": "measure_proxy", "type_params": {"measure": {"name": "avg_spend"}}}

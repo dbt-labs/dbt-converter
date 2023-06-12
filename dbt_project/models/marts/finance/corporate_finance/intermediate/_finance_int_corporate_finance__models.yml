@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: int__subscription_customer_transactions
+    description: '{{ doc("int__subscription_customer_transactions") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+
+  - name: int__subscription_customer_arr_balance
+    description: '{{ doc("int__subscription_customer_arr_balance") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+
+  - name: int__subscription_customer_arr_delta
+    description: '{{ doc("int__subscription_customer_arr_delta") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+
+  - name: int__employee_transfers
+    description: '{{ doc("int__employee_transfers") }}'
+    columns:
+      - name: forecasted_job_id
+        tests:
+          - unique
+          - not_null
+      - name: prior_salary
+        meta:
+          masking_policy: finance_number
+      - name: transfer_salary
+        meta:
+          masking_policy: finance_number

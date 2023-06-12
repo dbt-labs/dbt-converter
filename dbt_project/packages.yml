@@ -1,0 +1,31 @@
+packages:
+  - package: dbt-labs/audit_helper
+    version: 0.9.0
+  - package: dbt-labs/codegen
+    version: 0.9.0
+  - package: dbt-labs/dbt_external_tables
+    version: 0.8.4
+  - package: dbt-labs/dbt_project_evaluator
+    version: 0.6.1
+  - package: dbt-labs/dbt_utils
+    version: [">=1.0.0", "<2.0.0"]
+  - package: dbt-labs/metrics
+    version: [">=1.4.0", "<1.5.0"]
+  - package: dbt-labs/snowplow
+    version: 0.15.1
+  - package: entechlog/dbt_snow_mask
+    version: 0.2.4
+  - package: fivetran/ad_reporting
+    version: [">=1.0.0", "<1.4.0"]
+  - package: fivetran/hubspot
+    version: 0.9.0
+  - package: fivetran/social_media_reporting
+    version: [">=0.2.0", "<0.3.0"]
+  - package: fivetran/zendesk_source
+    version: [">=0.8.0", "<0.9.0"]
+  - package: fivetran/pendo
+    version: [">=0.5.0", "<0.6.0"]
+  - package: GJMcClintock/dbt_tld
+    version: 0.1.1
+  - package: mjirv/dbt_datamocktool
+    version: 0.3.3

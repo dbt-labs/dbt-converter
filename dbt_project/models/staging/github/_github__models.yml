@@ -1,0 +1,144 @@
+
+version: 2
+
+models:
+  - name: stg_github__commits
+    columns:
+      - name: commit_sha
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__issues_merged
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__issues
+    description: > 
+      This source table title is a bit misleading! Issues
+      can be the general issues you think of in a repository
+      OR it can also contain Pull Requests. If you'd like to
+      query data on issues, then you should use this model.
+      If you're interested in Pull Requests, you should check
+      out the `fct_github_pull_request` model.
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+  
+  - name: stg_github__pull_requests
+    description: >
+      This table is misleading. If you want to get information
+      about Pull Requests, you likely want to join this onto
+      `stg_github__issues`, or use `fct_github_pull_request`.
+    columns:
+      - name: pull_request_id
+        tests:
+          - unique
+          - not_null
+      - name: issue_id
+        description: >
+          The unique issue id (DIFFERENT from issue number) for
+          this Pull Request.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__pull_request_commits
+    description: >
+      A mapping between Pull Requests and their associated Commits.
+    columns:
+      - name: pull_request_commit_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_github__pull_request_reviews
+    description: >
+      GitHub has a special designation for "PR reviews." We can use this to
+      calculate velocity in reviewing PRs, and merging/closing after review.
+    columns:
+      - name: pull_request_review_id
+        tests:
+          - unique
+          - not_null
+      - name: state
+        description: > 
+          Did this PR officially approve, dismiss, or request changes?
+          Or just leave a comment?
+
+  - name: stg_github__issue_label_history
+    description: >
+      This table stores the log of labels added or removed from an issue. Each 
+      record is either the addition or removal of the label, where `is_labeled` 
+      = true means the label was added and `is_labeled` = false means that it 
+      was removed.
+    columns:
+      - name: issue_label_history_id
+        tests:
+          - unique
+          - not_null
+      - name: is_labeled
+        description: > 
+          Boolean where true means the label was added and false means the label 
+          was removed.
+
+  - name: stg_github__labels
+    columns:
+      - name: label_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__repositories
+    columns:
+      - name: repository_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__team_memberships
+    columns:
+      - name: team_membership_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__teams
+    columns:
+      - name: team_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__user_emails
+    columns:
+      - name: email
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github__users
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_github_stars
+    description: >
+      This table contains information about users who have "starred"
+      the `dbt-labs/dbt` repository.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: repo_name
+        description: The fully qualified name of the repo
+      - name: first_starred_at
+        description: The timestamp when the user first starred the specified repo

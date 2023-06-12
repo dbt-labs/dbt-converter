@@ -1,0 +1,34 @@
+version: 2
+
+metrics:
+  - name: active_cloud_warehouse_adapters
+    label: Active Warehouse Adapters (Cloud)
+    model: ref('fct_dbt_invocations')
+    description: > 
+      A measure of engaged activity originating from a unique data platform, defined 
+      as whether the adapter had an invocation from the IDE OR from the scheduler 
+      during the specified time grain. A cloud active adapter may also be core active 
+      (not mutually exclusive).
+    tags: []
+
+    calculation_method: count_distinct
+    expression: >
+      case
+        when develop_request_id is not null
+          then adapter_unique_id
+        when run_id is not null
+          then adapter_unique_id
+        else null
+      end
+
+    timestamp: started_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - adapter
+      - adapter_unique_id
+      - plan
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

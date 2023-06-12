@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: stg_notion__databases
+    description: >
+      A collection of Notion Database rows, stored as JSON to be unpacked. See
+      `fct_notion_channel_mapping` for an unpacking example.
+    columns:
+      - name: notion_database_row_id
+        description: The Notion Database Row ID
+        tests:
+          - not_null
+          - unique
+  - name: stg_notion__security_questionnaire_timeseries
+    description: >
+      Unpacks `notion_security_questionnaire_snapshot` into duration
+      calculations between values of the `Status` column.
+    columns:
+      - name: security_questionnaire_id
+        description: The Notion Database Row ID
+        tests:
+          - not_null
+          - unique

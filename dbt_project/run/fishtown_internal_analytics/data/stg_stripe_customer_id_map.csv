@@ -1,0 +1,14 @@
+
+    
+    
+    
+    create table analytics_dev.dbt_jstein.stg_stripe_customer_id_map (OLD_CUSTOMER_ID text,NEW_CUSTOMER_ID text)
+  ;
+    -- dbt seed --
+    
+            insert into analytics_dev.dbt_jstein.stg_stripe_customer_id_map (OLD_CUSTOMER_ID, NEW_CUSTOMER_ID) values
+            (%s,%s),(%s,%s)
+        
+
+;
+  

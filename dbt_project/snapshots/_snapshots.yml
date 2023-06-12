@@ -1,0 +1,27 @@
+version: 2
+
+snapshots:
+  - name: adp_worker_base_remuneration_snapshot
+    description: >
+      A history of a given worker's remuneration records. Note: this model is adjusted downstream to account
+      for exceptions found in adp_worker_base_remuneration_snapshot_exceptions.csv
+    columns:
+      - name: annual_rate_amount_amount_value
+        meta:
+          masking_policy: finance_number
+
+  - name: cloud_users_snapshot
+    description: >
+      First snapshot record: May 2nd 2023.
+      Snapshot of the `auth_user` or, colloquially, Cloud Users.
+      This combines all Postgres databases (Multi-MT and ST). This is
+      updated based on when they last logged in. The Audit Log records
+      this, however, the Audit Log (as of 2 May 2023) is not available for ST.
+
+  - name: notion_security_questionnaire_snapshot
+    description: >
+      Snapshotting of the raw Notion Security Questionnaire JSON. It is of
+      interest to the security compliance team to track the elapsed time
+      between statuses of security questionnaire requests. This snapshot
+      enables us to calculate the time difference between different
+      questionnaire statuses.

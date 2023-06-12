@@ -1,0 +1,179 @@
+version: 2
+
+models:
+  - name: int_dbt_adapter_project_account_mappings
+    description: >
+      One row per day, per adapter_unique_id, per project_id, per cloud_account_id (if available). {{ doc('dbt_invocations') }}
+    columns:
+      - name: mapping_id_sk
+        description: >
+          The unique ID for records in this table. 
+          Surrogate key of `date_day`,  `adapter_unique_id`, `project_id`, `inferred_project_id`, `cloud_account_id`.
+        tests:
+          - unique
+          - not_null
+
+      - name: date_day
+        description: The day this combination of values was seen in the invocations data.
+        tests:
+          - not_null
+
+      - name: adapter_unique_id
+        description: >
+          MD5 hash of the warehouse connection parameter that best uniquely identifies a group of people 
+          working together on the same dbt project. Introduced in v0.21 in August 2021.
+        tests:
+          - not_null
+
+      - name: project_id
+        description: The name of the adapter as defined in the source code.
+        tests:
+          - not_null
+
+      - name: inferred_project_id
+        description: MD5 hash of `adapter_unique_id` and `project_id`.
+        tests:
+          - not_null
+
+      - name: cloud_account_id
+        description: >
+          If available, this is a foreign key to the `fct_cloud_accounts` model. 
+          This will be available for invocations that occur within dbt Cloud, 
+          and will not be available for invocations that occur outside of dbt Cloud.
+
+  - name: int_core_run_account_mappings
+    description: >
+      One row per core run (e.g. an invocation with either the 'build' or 'run' command where distribution = 'core'), 
+      per adapter_unique_id, per project_id, per cloud_account_id. 
+      Used to attribute dbt core runs to dbt Cloud accounts in downstream models. {{ doc('dbt_invocations') }}
+    columns:
+      - name: mapping_id_sk
+        description: >
+          The unique ID for records in this table. 
+          Surrogate key of `invocation_id` and `cloud_account_id`.
+        tests:
+          - unique
+          - not_null
+      - name: adapter_unique_id
+        description: >
+          MD5 hash of the warehouse connection parameter that best uniquely identifies a group of people 
+          working together on the same dbt project. Introduced in v0.21 in August 2021.
+        tests:
+          - not_null
+      - name: inferred_project_id
+        description: MD5 hash of `adapter_unique_id` and `project_id`.
+        tests:
+          - not_null
+      - name: cloud_account_id
+        description: >
+          The cloud account that this core invocation is attributed to. 
+          Foreign key to `fct_cloud_accounts`. This model uses 
+          the `int_dbt_adapter_project_account_mappings` model to connect 
+          the `adapter_unique_id`, `inferred_project_id`, and `date_day` value combination 
+          for this core invocation to a `cloud_account_id`.
+        tests:
+          - not_null
+
+  - name: int_core_run_metrics
+    description: >
+      One row per dbt invocation, with summary statistics on the duration and the result of the invocation.
+    columns:
+      - name: project_rank_id_sk
+        description: >
+          The unique ID for records in this table. Surrogate key of `inferred_project_id` and `run_rank`.
+        tests:
+          - unique
+          - not_null
+      - name: invocation_id
+        description: >
+          The invocation_id for this invocation. Foreign key to `fct_dbt_invocations`.
+        tests:
+          - not_null
+      - name: adapter_unique_id
+        description: >
+          MD5 hash of the warehouse connection parameter that best uniquely identifies a group of people 
+          working together on the same dbt project. Introduced in v0.21 in August 2021.
+      - name: inferred_project_id
+        description: MD5 hash of `adapter_unique_id` and `project_id`.
+        tests:
+          - not_null
+      - name: date_day
+        description: The day this invocation was started.
+        tests:
+          - not_null
+      - name: started_at
+        description: The timestamp that this invocation was started.
+        tests:
+          - not_null
+      - name: ended_at
+        description: The timestamp that this invocation was ended.
+      - name: duration_in_sec
+        description: >
+          The seconds between the timestamp that this invocation was started 
+          and the timestamp when it ended, if available.
+      - name: duration_tier
+        description: Used to categorize duration into buckets.
+        tests:
+          - accepted_values:
+              values: ['0-60 seconds', '60-120 seconds', '120-240 seconds', '240-360 seconds', '360-720 seconds', '720-1200 seconds', '1200+ seconds', null]
+      - name: end_state
+        description: The state of this invocation at its end. `ok` indicates success, `error` indicates failure.
+        tests:
+          - accepted_values:
+              values: ['ok', 'error', null]
+      - name: is_failed_run
+        description: >
+          If the `end_state` value is not 'ok' for this invocation, this value will be '1'. 
+          Can be used to aggregate metrics.
+        tests:
+          - not_null
+      - name: is_successful_run
+        description: >
+          If the `end_state` value is 'ok' for this invocation, this value will be '1'. 
+          Can be used to aggregate metrics.
+        tests:
+          - not_null
+      - name: dbt_version
+        description: >
+          The version of dbt used when this invocation was run. 
+          Foreign key to `dim_dbt_versions.dbt_invocation_version`.
+        tests:
+          - not_null
+      - name: type
+        description: Indicates whether this was an invocation run in dbt core vs. dbt Cloud.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['core_run']
+      - name: run_rank
+        description: >
+          This is used to rank invocations for each `inferred_project_id` 
+          by the descending order of the `started_at` timestamp.
+          Can be used to identify the most recent core invocation for this `inferred_project_id`, 
+          or the first core invocation this `inferred_project_id`.
+        tests:
+          - not_null
+      - name: count_models
+        description: >
+          {{ doc('count_models') }}
+
+      - name: count_changed
+        description: >
+          {{ doc('count_changed') }}
+
+      - name: count_error
+        description: >
+          {{ doc('count_error') }}
+
+      - name: count_succeed
+        description: >
+          {{ doc('count_succeed') }}
+
+      - name: count_seeds
+        description: >
+          {{ doc('count_seeds') }}
+          
+      - name: complexity
+        description: "{{ doc('dbt_project_complexity') }}"
+
+          

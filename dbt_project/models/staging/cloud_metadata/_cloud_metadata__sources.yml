@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: cloud_metadata
+    schema: fivetran_dbt_cloud_metadata_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+    description: >
+      Inactive. This datasource contains all metadata API calls across all multi-tenant clients.
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+      owner_email: andrew.escay@dbtlabs.com
+
+    tables:
+      - name: loader_logs

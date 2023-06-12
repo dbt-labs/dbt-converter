@@ -1,0 +1,202 @@
+version: 2
+
+sources:
+  - name: cloud_postgres
+    description: '{{ doc("src_cloud_postgres") }}'
+    schema: fivetran_dbt_cloud_postgres_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+
+
+    freshness:
+      warn_after: {count: 4, period: hour}
+      error_after: {count: 8, period: hour}
+
+    tables: &postgres_tables
+      - name: account_feature_flag # this will be deprecated and moved to be replicated via Launch Darkly
+        freshness:
+      - name: audit_log
+      - name: auth_provider
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: auth_user
+      - name: connection_info
+      - name: custom_environment_variables #This will be rarely refreshed, but throw an error if we're seeing _no_ environment variables being updated in a week
+        freshness:
+          warn_after: {count: 2, period: day}
+          error_after: {count: 3, period: day}
+      - name: database_account
+      - name: dbt_adapter #This will be rarely refreshed, but throw an error if we're seeing _no_ adapters being updated in a week
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: dbt_adapter_connection_info
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: develop_request
+      - name: email_verification
+      - name: environment
+      - name: group
+        identifier: "GROUP"
+        quoting:
+          identifier: true
+      - name: group_permission
+      - name: job_definition
+      - name: invites
+      - name: partner_connect_signup        
+        freshness:
+      - name: project
+      - name: repository
+      - name: repository_credentials
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 3, period: day}
+      - name: run
+      - name: run_trigger
+      - name: semantic_layer_configs
+        freshness:
+          warn_after: {count: 1, period: day}
+          error_after: {count: 7, period: day}
+      - name: service_token
+      - name: user_feature_flag # this will be deprecated and moved to be replicated via Launch Darkly
+        freshness:
+      - name: user_license
+      - name: user_group
+
+  - name: cloud_postgres_emea
+    description: '{{ doc("src_cloud_postgres") }}'
+    schema: fivetran_dbt_cloud_postgres_emea_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+
+
+    # temporarily opening up freshness until volume picks up - Brandon T on 10/3/2022
+    freshness:
+      warn_after: {count: 1, period: day}
+      error_after: {count: 7, period: day}
+
+    tables:
+      - name: account_feature_flag # this will be deprecated and moved to be replicated via Launch Darkly
+        freshness:
+      - name: audit_log
+      - name: auth_provider
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: auth_user
+      - name: connection_info
+      - name: custom_environment_variables #This will be rarely refreshed, but throw an error if we're seeing _no_ environment variables being updated in a week
+        freshness:
+          warn_after: {count: 2, period: day}
+          error_after: {count: 3, period: day}
+      - name: database_account
+      - name: dbt_adapter #This will be rarely refreshed, but throw an error if we're seeing _no_ adapters being updated in a week
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: dbt_adapter_connection_info
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: develop_request
+      - name: email_verification
+      - name: environment
+      - name: group
+        identifier: "GROUP"
+        quoting:
+          identifier: true
+      - name: group_permission
+      - name: job_definition
+      - name: invites
+      - name: partner_connect_signup        
+        freshness:
+      - name: project
+      - name: repository
+      - name: repository_credentials # this will rarely be fresh during low-volume periods
+        freshness:
+      - name: run
+      - name: run_trigger
+      - name: semantic_layer_configs
+        # Empty table
+        freshness: null
+      - name: service_token
+      - name: user_feature_flag # this will be deprecated and moved to be replicated via Launch Darkly
+        freshness:
+      - name: user_license
+      - name: user_group
+
+  - name: cloud_postgres_au
+    description: '{{ doc("src_cloud_postgres") }}'
+    schema: fivetran_dbt_cloud_postgres_au_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+
+    # temporarily opening up freshness until volume picks up - Brandon T on 10/3/2022
+    freshness:
+      warn_after: {count: 1, period: day}
+      error_after: {count: 7, period: day}
+
+    tables:
+      - name: account_feature_flag # this will be deprecated and moved to be replicated via Launch Darkly
+        freshness:
+      - name: audit_log
+      - name: auth_provider
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: auth_user
+      - name: connection_info
+      - name: custom_environment_variables #This will be rarely refreshed, but throw an error if we're seeing _no_ environment variables being updated in a week
+        freshness:
+          warn_after: {count: 2, period: day}
+          error_after: {count: 3, period: day}
+      - name: database_account
+      - name: dbt_adapter #This will be rarely refreshed, but throw an error if we're seeing _no_ adapters being updated in a week
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: dbt_adapter_connection_info
+        freshness:
+          warn_after: {count: 3, period: day}
+          error_after: {count: 7, period: day}
+      - name: develop_request
+      - name: email_verification
+      - name: environment
+      - name: group
+        identifier: "GROUP"
+        quoting:
+          identifier: true
+      - name: group_permission
+      - name: job_definition
+      - name: invites
+      - name: partner_connect_signup        
+        freshness:
+      - name: project
+      - name: repository
+      - name: repository_credentials # this will rarely be fresh during low-volume periods
+        freshness:
+      - name: run
+      - name: run_trigger
+      - name: semantic_layer_configs
+        # Empty table
+        freshness: null
+      - name: service_token
+      - name: user_license
+      - name: user_group

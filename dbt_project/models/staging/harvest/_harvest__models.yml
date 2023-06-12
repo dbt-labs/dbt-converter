@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  - name: stg_harvest__clients
+    description: All of the clients that we are tracking time for. Please note, hard deleted clients in the platform will have to be filtered manually in this model.
+    columns:
+      - name: client_id
+        tests:
+          - unique
+          - not_null
+      - name: salesforce_account_id
+        tests:
+          - unique:
+              config:
+                where: "is_active"
+          
+  - name: stg_harvest__projects
+    description: All of the projects that we are tracking time for. One client can have multiple projects.
+    columns:
+      - name: project_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__time_entries
+    description: One row represents one instance of a time block spent working on a project. 
+    columns:
+      - name: time_entry_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__users
+    description: One row represents one user in our Harvest account.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__roles
+    description: Each row represents a job title on the Professional Services team.
+    columns:
+      - name: role_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__tasks
+    description: Each row represents a type of task that falls under the realm of the Professional Services team.
+    columns:
+      - name: task_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__project_tasks
+    description: This model maps projects to their associated tasks.
+    columns:
+      - name: project_task_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__project_users
+    description: This model contains info about the users assigned to projects.
+    columns:
+      - name: project_user_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__user_project_tasks
+    description: This model maps users to their associated project tasks.
+    columns:
+      - name: user_project_task_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__user_projects
+    description: This model contains info about the project assignments users are assigned to.
+    columns:
+      - name: user_project_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_harvest__user_roles
+    description: This model maps users to their associated roles.
+    columns:
+      - name: user_role_id
+        tests:
+          - unique
+          - not_null
+
+

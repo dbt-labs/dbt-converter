@@ -1,0 +1,27 @@
+version: 2
+
+metrics:
+
+  - name: onboarded_accounts
+    label: Onboarded Accounts
+    model: ref('onboarded_accounts')
+    description: >
+      {{ doc("onboarded_accounts") }}  
+        
+      {{ doc("querying_dbt_metrics") }}
+
+    calculation_method: count 
+    expression: account_id
+
+    timestamp: created_at
+    time_grains: [day, week, month]
+
+    dimensions:
+      - channel
+      - employee_count_range
+      - market_segment
+      - marketing_campaign
+      - region_category
+      - sign_up_source
+      
+     

@@ -1,0 +1,501 @@
+version: 2
+
+models:
+  - name: export_cloud_accounts
+    description: '{{ doc("export_cloud_accounts") }}'
+
+  - name: export_cloud_user_account_mappings
+    description: '{{ doc("export_cloud_user_account_mappings") }}'
+
+  - name: export_cloud_users
+    description: '{{ doc("export_cloud_users") }}'
+    columns:
+      - name: user_id
+        description: >
+          Unique identifier of a dbt Cloud user.
+          Corresponds either to: - the id of the user in the North America multi-tenant
+          dbt Cloud instance - the hash of the concatenation of `database_source` and id of the user in 
+          single-tenant or other multi-tenant dbt Cloud instances
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The users Salesforce Contact ID.
+
+      - name: database_schema
+        description: Name of the Snowflake schema regrouping the raw extracted dbt Cloud instance data
+
+      - name: database_source
+        description: '{{ doc("database_source") }}'
+
+      - name: database_type
+        description: Type of deployment used for the dbt Cloud instance (multi tenant or single tenant)
+
+      - name: tenant_user_id
+        description: Identifier of a dbt Cloud user in the given dbt Cloud instance
+
+      - name: email
+        description: The user's email address.
+
+      - name: first_name
+        description: The user's first name.
+
+      - name: last_name
+        description: The user's last name.
+
+      - name: name
+        description: The user's full name.
+
+      - name: email_top_level_domain
+        description: The final part of the user's email address. For example, `test.user@dbtlabs.com`` would produce `com`
+
+      - name: is_active
+        description: A boolean that determines if a user is still existing in dbt Cloud
+
+      - name: is_staff
+        description: A boolean that indicates if a user is dbt Labs staff. This is determined on the backend of dbt Cloud.
+
+      - name: is_superuser
+        description: A boolean that indicates if a user has superuser privileges in dbt Cloud. This is determined on the backend of dbt Cloud.
+
+      - name: is_fishtown_user
+        description: A boolean that indicates if a user has an @dbtlabs.com or @fishtownanalytics.com email.
+
+      - name: date_joined__og
+        description: The timestamp in which the user was created in dbt Cloud, in their local timezone.
+
+      - name: date_joined__ntz
+        description: The timestamp in which the user was created in dbt Cloud, in UTC.
+
+      - name: last_login
+        description: A timestamp indicating when the user last logged into dbt Cloud.
+
+      - name: is_verified
+        description: >
+          A boolean value that indicates if a user has verified their email address.
+          Note: all single tenant users are considered verified.
+
+      - name: first_email_verification_sent_at
+        description: >
+          A timestamp of when the users first email verification was sent.
+          Note: this does not ensure a user is verified - only that they received communication.
+
+      - name: first_verified_at
+        description: A timestamp indicating when a user first verified their email.
+
+      - name: last_verified_at
+        description: A timestamp indicating when a user last verified their email.
+
+      - name: count_associated_accounts
+        description: >
+          This field indicates the count of accounts that a user has an active
+          license (either developer or read-only) with.
+
+      - name: count_created_accounts
+        description: >
+          This field indicates the count of accounts that a user created
+
+      - name: count_ide_sessions
+        description: This only reflects IDE sessions that have successfully completed
+
+      - name: first_ide_session_at
+        description: This only reflects IDE sessions that have successfully completed
+
+      - name: last_ide_session_at
+        description: This only reflects IDE sessions that have successfully completed
+
+      - name: instance_name
+        description: >
+          The name of the instance defined by the `POD_NAMESPACE` environment variable. 
+          This is defined in each tenant's helm chart like so: 
+          https://github.com/dbt-labs/helm-charts/blob/main/releases/ally/cloud/main.yaml#L5
+        tests:
+          - not_null
+
+      - name: sign_up_source
+        description: >
+          The sign_up_source (i.e. dbt Cloud, Snowflake Partner Connect, Databricks Partner Connect)
+          from the user's most recent cloud acount license.
+
+      - name: self_service_account_member_count
+        description: The number of Cloud accounts the user is a member of.
+
+      - name: self_service_account_owner_count
+        description: The number of Cloud accounts the user is the owner of.
+
+      - name: feature_flags
+        description: An array of any feature flags enabled for the user.
+      
+      - name: attended_courses
+        description: A JSON object of any dbt Learn courses the user has attended.
+
+      - name: is_valid_email_address
+        description: >
+          A boolean field that indicates if a user's email address is deemed valid by RFC 2282 standard.
+          A valid email includes only accepted username characters (i.e. letters, numbers, underscores, plus signs, etc.)
+          and has a top level domain under the globally accepted domains list.
+
+      - name: enrolled_in_learn
+        description: A boolean field that indicates if a user has enrolled in a dbt Learn course.
+
+      - name: is_trained
+        description: A boolean field to communicate if a user has completed a learn course.
+
+      - name: is_account_creator
+        descrition: A boolean that indicates if the user has created a dbt Cloud account.
+
+  - name: export_slack_users
+    description: '{{ doc("export_slack_users") }}'
+
+  - name: export_inferred_user_id_mappings
+    description: '{{ doc("export_inferred_user_id_mappings") }}'
+    columns:
+      - name: user_snowplow_domain_id
+        description: The original anonymous tracking id given to a user by snowplow
+        tests:
+          - unique
+          - not_null
+
+  - name: export_unassigned_critical_security_issues
+    description: 'Model for Hightouch to send Slack alerts to the #security channel for unassigned security-crirtical issues.'
+    columns:
+      - name: issue_key
+        tests:
+          - unique
+          - not_null
+
+  - name: export_pendo_visitors
+    description: '{{ doc("export_pendo_visitors") }}'
+    columns:
+      - name: visitor_id
+        tests:
+          - unique
+          - not_null
+
+  - name: export_pendo_accounts
+    description: '{{ doc("export_pendo_accounts") }}'
+    columns:
+      - name: pendo_account_id
+        tests:
+          - unique
+          - not_null
+
+  - name: export_pendo_parent_accounts
+    description: '{{ doc("export_pendo_parent_accounts") }}'
+    columns:
+      - name: pendo_parent_account_id
+        tests:
+          - unique
+          - not_null
+
+      - name: has_created_deployment_environment
+        description: A boolean that indicates if the account has ever had a deployment environment.
+  
+      - name: all_time_project_count
+        description: >
+          A count of distinct cloud projects set up by the account, including active & deleted projects.
+          Note that this does not represent the count of core projects that may be associated with the account.
+          This field can be null prior to project connections.
+
+      - name: current_project_count
+        description: >
+          A count of distinct cloud projects set up by the account that are active (not deleted).
+          Note that this does not represent the count of core projects that may be associated with the account.
+          This field can be null prior to project connections.
+
+      - name: all_time_deployment_environment_count
+        description: >
+          The distinct count of deployment environments created within the account, including both active & deleted environments.
+          
+      - name: current_project_count
+        description: >
+          The distinct count of active (not deleted) deployment environments created within the account.
+
+  - name: export_web_conversions
+    description: '{{ doc("export_web_conversions") }}'
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+  
+  - name: export_web_pageviews
+    description: '{{ doc("export_web_pageviews") }}'
+    columns:
+      - name: page_view_id
+        tests:
+          - unique
+          - not_null
+
+  - name: export_revenue_schedule_reallocations
+    description: >
+      An export to the Salesforce Revenue Schedule object to populate a revenue amount override from
+      fct_revenue_allocations
+    columns:
+      - name: sfdc_rev_schedule_id
+        description: '{{ doc("sfdc_rev_schedule_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id") }}'
+      - name: total_revenue_amount_raw
+        description: '{{ doc("total_order_product_amount_raw") }}'
+      - name: revenue_amount_override
+        description: '{{ doc("allocated_revenue") }}'
+      - name: total_revenue_amount_reflecting_override
+        description: '{{ doc("total_order_product_amount_reflecting_overrides") }}'
+
+  - name: export_customer_references
+    description: '{{ doc("export_customer_references") }}'
+    columns:
+      - name: account_id
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_references
+        description: "A list of references the account has agreed to allow us to use. Examples include Logo Rights, Refer to Company Name, Customer Quote, and Case Study."
+        tests:
+          - not_null
+
+      - name: account_name
+        description: "The account name from Salesforce."
+
+      - name: owner_name
+        description: "The name of the employee who owns the account."
+
+      - name: data_warehouse
+        description: "The data warehouse that an Account is using. Examples include: Snowflake, BigQuery, Databricks - among others."
+
+      - name: git_provider
+        description: "The git provider the Account uses. Examples include: GitHub, GitLab, Azure DevOps - among others."
+
+      - name: plan
+        description: '{{ doc("cloud_plan") }}'
+
+      - name: plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+
+      - name: employee_count_range
+        description: "The number of employee within the company, presented as a binned range."
+
+      - name: customer_reference_contact_email
+        description: "The email of the person who should be contacted in regards to customer references"
+
+      - name: clearbit_sector
+        description: "Broadest tier of company's industry classification"
+
+      - name: account_region
+        description: >
+          The region the headquarters for the account resides in.
+          Examples include: APAC, EMEA, US-Central, US-East, and US-West.
+
+      - name: hq_territory_country
+        description: "The country in which the account's headquarters is located"
+
+      - name: landed_at
+        description: "The `contract_start_date` associated with the account's first won opportunity."
+
+      - name: current_term_end
+        description: "The `contract_end_date` associated with the account's most recently won opportunity."
+
+      - name: primary_cloud_account_id
+        description: "The Cloud account ID for the primary Cloud account associated with the Salesforce account."
+
+      - name: cloud_account_name
+        description: "The Cloud account name for the primary Cloud account associated with the Salesforce account."
+
+      - name: customer_360_url
+        description: "A URL that links to the Customer 360 dashboard for the primary Cloud account."
+
+      - name: salesforce_url
+        description: "A URL that links to the Salesforce Account in Salesforce."
+
+      - name: last_updated_at
+        description: >
+          A timestamp indicating when the dataset was last run at.
+          This is used to determine which Accounts no longer have customer references in the Notion database.
+
+  - name: export_external_touchpoints
+    description: '{{ doc("export_external_touchpoints") }}'
+    columns:
+      - name: id
+        description: >
+          The Slack User ID or Training Enrollment ID
+        tests:
+          - unique
+          - not_null
+      
+      - name: touchpoint_source
+        description: This maps to `touchpoint_source` in `fct_touchpoints`
+      
+      - name: touchpoint_source_detail
+        description: This maps to `touchpoint_source_detail` in `fct_touchpoints`
+      
+      - name: email
+        description: >
+          The email associated with the Slack sign up or training enrollment.
+          This field is used to associate touchpoints with contacts in Salesforce.
+
+      - name: opened_at
+        description: >
+          Timestamp in which the touchpoint occured.
+          This maps to `opened_at` in `fct_touchpoints`.
+
+  - name: export_salesforce_contact_enrichment
+    description: '{{ doc("export_salesforce_contact_enrichment") }}'
+    columns:
+      - name: salesforce_contact_id
+        description: The user's Salesforce Contact ID
+        tests:
+          - unique  
+          - not_null
+
+      - name: latest_registrant_country_name
+        description: >
+          The latest country name value provided by the Contact.
+          By using the latest value, this ensures we have the most up-to-date information.
+      
+      - name: salesforce_country_name
+        description: The existing country name associated with the Contact.
+
+      - name: latest_registrant_country_code
+        description: >
+          The country code value associated with the latest country name provided by the Contact.
+          This is sourced via the `country_to_region_mappings` model.
+      
+      - name: salesforce_country_code
+        description: The existing country code associated with the Contact.
+      
+      - name: salesforce_title
+        description: The existing title (job title) associated with the Contact.
+      
+      - name: latest_registrant_role
+        description: >
+          The latest role value provided by the Contact.
+          By using the latest value, this ensures we have the most up-to-date information.
+
+      - name: salesforce_role
+        description: The exisiting role (job role) associated with the Contact.
+
+      - name: is_missing_sfdc_title
+        description: A boolean field indicating if the Contact does not have a title set in Salesforce.
+
+      - name: is_missing_sfdc_role
+        description: A boolean field indiciating if the Contact does not have a role set in Salesforce.
+
+      - name: is_missing_sfdc_country_code
+        description: A boolean field indicating if the Contact does not have a country code set in Salesforce.
+      
+      - name: is_missing_sfdc_country_name
+        description: A boolean field indicating if the Contact does not have a country name set in Salesforce.
+
+      - name: inferred_country_name
+        description: >
+          The country name that is to be updated for the Contact.
+          The existing Salesforce country name is prioritized (if set), followed by the country name provided during registration.
+
+      - name: inferred_country_code
+        description: >
+          The country code that is to be updated for the Contact.
+          The existing Salesforce country code is prioritized (if set), followed by the country code provided during registration.
+
+      - name: inferred_role
+        description: >
+          The role that is to be updated for the Contact.
+          The existing Salesforce role is prioritized (if set), followed by the role provided during registration.
+
+      - name: inferred_title
+        description: >
+          The title that is to be updated for the Contact.
+          The existing Salesforce title is prioritized (if set), followed by the title provided during registration.
+
+  - name: export_pigment_revenue
+    description: Export for Revenue Model in Pigment
+    columns:
+      - name: opportunity_id
+        description: the Salesforce Opportunity ID
+        tests:
+          - unique  
+          - not_null
+
+  - name: export_partner_certifications
+    description: All achived certifications with partner data to be synced to Salesforce.
+    columns:
+      - name: credential_id
+        description: The primary key on the destination Salesforce object.
+        tests:
+          - not_null
+          - unique
+
+  - name: export_customer_health_score
+    description: Export for Customer Health Score back into Salesforce
+    columns:
+      - name: ref_salesforce_account_id
+        description: the Salesforce Account ID
+        tests:
+          - unique  
+          - not_null
+
+  - name: export_pigment_cloud_revenue
+    description: Export for total Monthly Cloud Revenue in Pigment
+    columns:
+      - name: close_month
+        description: >
+          Month in which the Cloud ARR was recognized
+        tests:
+          - unique  
+          - not_null
+
+  - name: export_pigment_self_serve_arr
+    description: Export for total Monthly Self-Serve ARR in Pigment
+    columns:
+      - name: close_month
+        description: >
+          Month in which the Self_Serve ARR was recognized
+        tests:
+          - not_null
+          - unique
+
+  - name: export_new_harvest_projects
+    description: Export of projects to be added to Harvest through Hightouch.
+    columns:
+      - name: unique_id
+        tests:
+          - not_null
+          - unique
+
+  - name: export_sfdc_job_requisitions
+    description: Export for SFDC Job Requisitions for Sales Capacity Modeling
+    columns:
+      - name: salesforce_job_requisition_id
+        description: >
+          Job requisition ID in Salesforce
+        tests:
+          - not_null
+          - unique
+
+  - name: export_global_comp_bands
+    description: Compensation bands for all global roles (masked for finance view only)
+    columns:
+      - name: comp_band_id
+        description: >
+          Code to tie directly to comp band (unique by country)
+        tests:
+          - not_null
+          - unique
+      - name: job_function_code
+        description: >
+          Code to tie directly to comp band (non-unique by country)
+        tests:
+          - not_null
+  
+  - name: export_notion_employee_directory
+    description: Export of the entire employee roster (active and terminated) to support the Notion employee directory
+    columns:
+      - name: worker_id
+        tests:
+          - not_null
+          - unique

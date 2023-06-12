@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: stg_caveon__exam_deliveries
+    description: '{{ doc("caveon__exam_deliveries") }}'
+    columns:
+      - name: delivery_id
+        tests:
+          - not_null
+          - unique
+      - name: candidate_email
+        tests:
+          - not_null
+      - name: exam_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_caveon__exams')
+              field: exam_id
+      - name: credential_exam_id
+        description: >
+          Surrogate key from the user email and the test number, limited to passed exams only 
+          This allows us to match each with each passed test with the corresponding Credential in Accredible
+          The need for the rank function is futureproofing for when credentials expire and users renew with a new exam
+  - name: stg_caveon__exam_delivery_item_responses
+    description: '{{ doc("caveon__exam_delivery_item_responses") }}'
+    columns:
+      - name: delivery_item_response_id
+        tests:
+          - not_null
+          - unique
+      - name: delivery_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_caveon__exam_deliveries')
+              field: delivery_id
+      - name: item_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_caveon__exam_items')
+              field: item_id
+  - name: stg_caveon__exam_items
+    description: '{{ doc("caveon__exam_items") }}'
+    columns:
+      - name: exam_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_caveon__exams')
+              field: exam_id
+  - name: stg_caveon__exams
+    description: '{{ doc("caveon__exams") }}'
+    columns:
+      - name: exam_id
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              values: ['be4fe3bb-c4cf-45ee-94f7-34191acbcfc1']
+  - name: stg_caveon__users
+    description: '{{ doc("caveon__users") }}'
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+          - unique
+      - name: email
+        tests:
+          - not_null
+      - name: exam_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_caveon__exams')
+              field: exam_id

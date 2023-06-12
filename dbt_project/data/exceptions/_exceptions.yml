@@ -1,0 +1,28 @@
+version: 2
+
+seeds:
+  - name: zendesk_organization_id_exceptions
+    description: >
+      Closed Zendesk tickets cannot be updated. Occasionally important tickets
+      are attributed to the incorrect SFDC account. This seed is a mechanism
+      for overriding specific ticket organization_ids. 
+
+  - name: website_conversion_exceptions
+    description: >
+      This model is used to correct conversion names historically, if they were misnamed via our website conversion tracking.
+      To use this seed, input the existing conversion name in the column `current_conversion_name` and then input the desired conversion
+      name in the column `corrected_conversion_name`.
+    columns:
+      - name: current_conversion_name
+        description: >
+          The conversion name you are wanting to correct.
+          This should be the name represented in the raw data.
+        tests:
+          - unique
+          - not_null
+      - name: corrected_conversion_name
+        description: >
+          The desired conversion name for the conversion you are wanting to correct.
+          This should match your desired output.
+        tests:
+          - not_null

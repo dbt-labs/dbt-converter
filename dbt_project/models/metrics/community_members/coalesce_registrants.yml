@@ -1,0 +1,31 @@
+version: 2
+
+metrics:
+  - name: coalesce_registrants
+    label: Coalesce Registrants
+    model: ref('fct_heysummit_registrations')
+    description: '{{ doc("coalesce_registrants") }}'
+    tags: ['FY2023 - O4']
+
+    calculation_method: count_distinct
+    expression: attendee_id
+
+    timestamp: registered_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - region_category
+      - company_size
+
+    filters:
+      - field: registration_status
+        operator: '='
+        value: 'Completed Order'
+      - field: is_current_year
+        operator: 'is'
+        value: 'true'
+
+    meta:
+      okr_level: 'Team'
+      owner(s): 'Heather Wilson'
+      team: 'Marketing'

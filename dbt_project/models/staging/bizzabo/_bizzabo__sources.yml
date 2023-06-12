@@ -1,0 +1,606 @@
+version: 2
+
+sources:
+  - name: bizzabo
+    description: '{{ doc("src_bizzabo") }}'
+    database: raw
+    freshness:
+      warn_after: { count: 12, period: hour }
+      error_after: { count: 24, period: hour }
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+    meta:
+      team: ['Marketing','Community']
+      owner_name: Brandon Thomson
+
+    tables:
+      - name: agenda_settings
+        description: "Each record contains the filters and locations for an event."
+        columns:
+          - name: eventid
+            description: "The unique identifier for the event."
+
+          - name: filters
+            description: "A JSON object that contains a list of groups & tags available for an event."
+
+          - name: locations
+            description: "A JSON object that contains a list of locations & sublocations available for an event."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: event_contacts
+        identifier: contacts
+        description: "Each record contains the details for a contact for a specific event."
+        columns:
+          - name: created
+            description: "Timestamp indicating when a contact was created for a given event."
+
+          - name: eventid
+            description: "The unique identifier of the event."
+
+          - name: id
+            description: "The unique identifier of the contact for a given event."
+
+          - name: modified
+            description: "Timestamp indicating when a contact was last modified for a given event."
+
+          - name: properties
+            description: "A JSON object that contains information held within the registration form."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: events
+        description: "Each record contains the details for an event."
+        columns:
+          - name: attendancetype
+            description: "The attendance type for an event. Examples include Hybrid and Virtual."
+
+          - name: created
+            description: "Timestamp indicating when an event was created."
+
+          - name: enddate
+            description: "Timestamp indicating when the event ends."
+
+          - name: headerlogourl
+            description: "A URL for image that is used as the event logo in the event website and mobile app."
+
+          - name: id
+            description: "The unique identifier for the event."
+
+          - name: language
+            description: "The primary langauge for the event."
+
+          - name: modified
+            description: "Timestamp indicating when an event was last updated."
+
+          - name: name
+            description: "The name of the event."
+
+          - name: startdate
+            description: "Timestamp indicating when the event starts."
+
+          - name: status
+            description: "The current status of the event. Examples include Published and Live."
+
+          - name: supportemail
+            description: "The support email as set by the organizer."
+
+          - name: timezone
+            description: "The timezone of the event."
+
+          - name: type
+            description: "The type of event. Examples include Conference & Convetion and Class & Workshop."
+
+          - name: websiteurl
+            description: "The URL for the event."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: sponsors
+        identifier: partners
+        description: "Each records contains the details for each sponsor for an event."
+        columns:
+          - name: booth
+            description: "The name of the Booth the sponsor purchased."
+
+          - name: contactemail
+            description: "The email address of the contact associated with the sponsorhip."
+
+          - name: contactphone
+            description: "The phone number of the contact associated with the sponsorship."
+
+          - name: created
+            description: "Timestamp indicating when the sponsor was created."
+
+          - name: description
+            description: "A description of the sponsor."
+
+          - name: eventid
+            description: "The unique identifier of the event the sponsor is associated with."
+
+          - name: facebook
+            description: "The Facebook URL of the contact associated with the sponsorship."
+
+          - name: id
+            description: "The unique identifier for the sponsor."
+
+          - name: level
+            description: "The level of sponsorship."
+
+          - name: linkedin
+            description: "The LinkedIn URL of the contact associated with the sponsorship."
+
+          - name: logo
+            description: "A URL of the sponsor's logo."
+
+          - name: name
+            description: "The name of the sponsor."
+
+          - name: promotedoffer
+            description: "The offer the sponsor is promoting."
+
+          - name: twitter
+            description: "The Twitter handle of the contact associated with the sponsorship."
+
+          - name: type
+            description: "The type of sponsor. Examples include Sponsor and Exhibitor."
+
+          - name: visible
+            description: "A bolean indicating if the sponsor is visible to registrants."
+
+          - name: website
+            description: "The URL of the sponsor's website."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: registrations
+        description: "Each record contains the details for one registration for an event."
+        columns:
+          - name: billingaddress
+            description: "A JSON object that contains registration details for the contact the completed the regisration."
+
+          - name: charge
+            description: "The amount charged during registration."
+
+          - name: checkedin
+            description: "A boolean indicating if the registrant is checked-in."
+
+          - name: contactid
+            description: "The unique identifier for the contact associated with the registration."
+
+          - name: created
+            description: "Timestamp indicating when the registration was created."
+
+          - name: currency
+            description: "The currency code associated with the registration payment."
+
+          - name: eventid
+            description: "The unique identifier for the event associated with the registration."
+
+          - name: fees
+            description: "The amount of fees charged during registration."
+
+          - name: id
+            description: "The unique identifier for the registration."
+
+          - name: invoice
+            description: "A boolean indicating if the registration has an associated invoice."
+
+          - name: magiclink
+            description: "The verification URL sent to the registrant to verify their registration."
+
+          - name: manageregistrationlink
+            description: "The personal 'manage registration details' link for a given registration."
+
+          - name: modified
+            description: "Timestamp indicating when a registration was last updated."
+
+          - name: orderid
+            description: "The order id associated with a given registration."
+
+          - name: ordertype
+            description: "The order type associated with a given registration. Examples include online and in-person."
+
+          - name: paymentdate
+            description: "Timestamp indicating when payment for the registration was completed at."
+
+          - name: paymentmethod
+            description: "The payment method associated with the registration. Examples include Credit Card and Cash."
+
+          - name: paymentstatus
+            description: "The current status of the payment associated with the registration. Examples include Pending and Completed."
+
+          - name: promocode
+            description: "The promo code used during registration, as entered during the checkout process."
+
+          - name: promoname
+            description: "The name of the promo code used during registration, i.e. promo code `purplepeople` maps to promo name `dbt Labs Staff`"
+
+          - name: price
+            description: "The price of the ticket associated with the registration."
+
+          - name: properties
+            description: "A JSON object that contains registration details for the contact associated with the registration."
+
+          - name: registrationdate
+            description: "Timestamp indicating when the registration was completed at."
+
+          - name: sessionscheckin
+            description: "A JSON object that contains the sessions a registrant has checked into."
+
+          - name: checkedindate
+            description: "Timestamp indicating when a registrant first checked in (or attended) an event."
+
+          - name: status
+            description: "The current status of the registration."
+
+          - name: ticketid
+            description: "The unique identifier for the ticket associated with the registration."
+
+          - name: ticketname
+            description: "The name of the ticket associated with the registration."
+
+          - name: utmcampaign
+            description: "The `utm_campaign` values parsed from the referring URL when registration was completed."
+
+          - name: utmcontent
+            description: "The `utm_content` values parsed from the referring URL when registration was completed."
+
+          - name: utmmedium
+            description: "The `utm_medium` values parsed from the referring URL when registration was completed."
+
+          - name: utmsource
+            description: "The `utm_source` values parsed from the referring URL when registration was completed."
+
+          - name: validity
+            description: "Indicates if a registration was valid or not."
+
+          - name: virtualcheckin
+            description: "A boolean indicating if the contact associated with the registration checked-in to the evnet virtually."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: sessions
+        description: "Each record contains the details of each session for an event."
+        columns:
+          - name: allowrating
+            description: "A boolean field indicating if attendees are able to rate the session."
+
+          - name: associatedcontacts
+            description: "A JSON object of the associated contacts with a session."
+
+          - name: description
+            description: "The description of the session."
+
+          - name: descriptionhtml
+            description: "The description of the session in HTML format."
+
+          - name: enablevirtualsession
+            description: "A boolean indicating if the session is enabled virtually."
+
+          - name: enddate
+            description: "Timestamp indicating when the session will end."
+
+          - name: endminute
+            description: "The ending minute of the sesison."
+
+          - name: event_id
+            description: "The unique identifier of the event the session is associated with."
+
+          - name: externalid
+            description: "An external identifier for the session, as defined by the organizer during import."
+
+          - name: filters
+            description: "A JSON object containing tags associated with the session."
+
+          - name: hidden
+            description: "A boolean field indicating if the session is hidden from registrants."
+
+          - name: id
+            description: "The unique identifier for the session."
+
+          - name: locationid
+            description: "The unique identifier for the location the session is associated with."
+
+          - name: private
+            description: "A boolean field indicating if a session is private."
+
+          - name: registration
+            description: "A boolean field that determines if a session has session registration enabled."
+
+          - name: registrationcapacityenable
+            description: "A boolean field that determines if a session has a capacity limit."
+
+          - name: registrationcount
+            description: "The total number of registrations for a given session."
+
+          - name: registrationfull
+            description: "A boolean field indicating if registration is full for a session."
+
+          - name: registrationvisibility
+            description: "A boolean field that determines if attendees can see the session in their registration forms."
+
+          - name: speakers
+            description: "A JSON object containing details of the speakers associated with a session."
+
+          - name: sponsors
+            description: "An Array of sponsors associated with a session."
+
+          - name: startdate
+            description: "Timestamp indicating when a session will start."
+
+          - name: startminute
+            description: "The start minute of a session."
+
+          - name: sublocationid
+            description: "The unique identifier of the sublocation of the session."
+
+          - name: title
+            description: "The title of the session."
+
+          - name: virtualsessiondetails
+            description: "A JSON object contains virtual session details."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: session_checkins
+        description: "One row per session check in. A check in is synonymous with attendance."
+        columns:
+          - name: created
+            description: A timestamp of when the check in occured.
+
+          - name: donebyorganizer
+            description: A boolean field indicating if the dbt Labs team manually checked in the registrant.
+
+          - name: event_id
+            description: The unique identifier for the overall event.
+
+          - name: isvirtual
+            description: A boolean field indicating if the registrant checked into the session virtually.
+
+          - name: overrule
+            description: A boolean field indicating if the dbt Labs team manually allowed the registrant to check in despite ticket rules.
+
+          - name: sessionid
+            description: The unique identifier for the session the registrant checked into.
+
+          - name: status
+            description: >
+              The status of the check in.
+              Examples include: CheckIn, CheckOut.
+
+          - name: ticketid
+            description: >
+              The unique identifier for the registrant.
+              Downstream this will be referred to as the `registration_id`
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: session_recording_views
+        description: "One row per recording view of a session."
+        columns:
+          - name: email
+            description: "The registrants email address"
+
+          - name: eventid
+            description: The unique identifier for the overall event.
+
+          - name: id
+            description: The unique identifier for the recording view
+
+          - name: sessionid
+            description: The unique identifier of the session the registrant watched a recording of.
+
+          - name: ticketid
+            description: >
+              The unique identifier for the registrant.
+              Downstream this will be referred to as the `registration_id`
+
+          - name: viewedat
+            description: A timestamp indicating when the registrant viewed the recording.
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: speakers
+        description: "Each record contains the details for each speaker for an event."
+        columns:
+          - name: bio
+            description: "The bio provided by the speaker."
+
+          - name: blog
+            description: "A URL of the blog provided by the speaker."
+
+          - name: company
+            description: "The name of the company associated with the speaker."
+
+          - name: country
+            description: "The country of the speaker."
+
+          - name: email
+            description: "The email address of the speaker."
+
+          - name: event_id
+            description: "The unique identifier for the event the speaker is associated with."
+
+          - name: firstname
+            description: "The first name of the speaker."
+
+          - name: hidden
+            description: "A boolean indicating if the speaker is hidden to registrants."
+
+          - name: id
+            description: "The unique identifier of the speaker."
+
+          - name: lastname
+            description: "The last name of the speaker."
+
+          - name: linkedin
+            description: "A URL to the LinkedIn page for the speaker."
+
+          - name: photoset
+            description: "A JSON object of URLs that link to photos of the speaker."
+
+          - name: prefix
+            description: "The prefix for the speaker."
+
+          - name: title
+            description: "The job title of the speaker."
+
+          - name: twitterhandle
+            description: "The Twitter handle for the speaker."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."
+
+      - name: tickets
+        identifier: registration_types
+        description: "Each record contains the details for each ticket type."
+        columns:
+          - name: availability
+            description: "Indicates when tickets will become available. Examples include Immediate and Dates."
+
+          - name: availabilityend
+            description: "Indicates when ticket sales will no longer be available. Examles include Dates and Event End."
+
+          - name: availabilityendtimestamp
+            description: "Timestamp indicating when ticket sales will no longer be available."
+
+          - name: availabilitystarttimestamp
+            description: "Timestamp indicating when ticket sales will become available."
+
+          - name: currencycode
+            description: "The currency code in which ticket sales will be processed in."
+
+          - name: description
+            description: "The description of the ticket."
+
+          - name: eventid
+            description: "The unique identifier of the event the ticket is associated with."
+
+          - name: id
+            description: "The unique identifier of the ticket."
+
+          - name: name
+            description: "The name of the ticket."
+
+          - name: perordermax
+            description: "The maximum number of tickets that can be purchased in a single order."
+
+          - name: perordermin
+            description: "The minimum number of tickets that can be purchased in a single order."
+
+          - name: price
+            description: "The price of the ticket."
+
+          - name: quantity
+            description: "The amount of tickets that can be sold, as set by the organizer."
+
+          - name: registrationproperties
+            description: "A JSON object of questions asked during registration when purchasing a ticket."
+
+          - name: salemethod
+            description: "The sale method of the ticket. Examples include Online and In-Person."
+
+          - name: taxrate
+            description: "The tax rate attached to purchases of the ticket."
+
+          - name: _sdc_batched_at
+            description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+          - name: _sdc_received_at
+            description: "Timestamp indicating when Stitch received the record for loading."
+
+          - name: _sdc_sequence
+            description: "A Unix epoch (in nanoseconds) that indicates the order in which data points were considered for loading."
+
+          - name: _sdc_table_version
+            description: "Indicates the version of the table. This column is used to determine when to issue TRUNCATE commands during loading, where applicable."

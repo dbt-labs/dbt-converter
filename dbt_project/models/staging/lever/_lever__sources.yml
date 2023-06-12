@@ -1,0 +1,64 @@
+version: 2
+
+sources:
+  - name: lever
+    database: raw
+    schema: fivetran_lever
+    description: '{{ doc("src_lever") }}'
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+
+    meta:
+      team: ['People Ops']
+      owner_name: Elize Papineau
+
+    tables:
+      - name: application
+        description: >
+          When a candidate applies to a job posting, an application is created.
+          Lever is candidate-centric, meaning that candidates can exist in the
+          system without being applied to a specific job posting. However,
+          almost all candidates are applied to job postings, and thus almost
+          all candidates have one or more applications.
+      - name: archive_reason
+        description: >
+          Archive reasons provide granularity behind to candidates who have
+          exited your active hiring pipeline. Candidates exit your active
+          pipeline either due to being hired at your company or due to being
+          rejected for a specific reason. 
+      - name: posting
+        description: >
+          Job postings organize candidates based on the specific roles that
+          they may fit into on your growing team. There are four different
+          states of job postings: published, internal, closed, and draft. NOTE:
+          In the Lever app, we refer to internal postings as “unlisted”
+          postings. For organizations that have enabled job posting approvals,
+          there are two additional states: pending and rejected.
+      - name: opportunity
+        description: >
+          "Opportunities" represent each individual, unique candidacy or
+          journey through your pipeline for a given job position, meaning a 
+          single Candidate can be associated with multiple Opportunities.
+      - name: opportunity_stage_history
+        description: >
+          A timeseries of candidate stage progression for each opportunity.
+      - name: requisition_posting
+        description: Mapping requisitions to postings.
+      - name: requisition
+        description: >
+          The record transitioning a candidate to an employee. Lever 
+          supports the creation of custom fields (customFields) in your
+          requisitions.
+      - name: stage
+        description: >
+          Stages are steps in the recruiting workflow of your hiring
+          pipeline. All candidates belong to a stage and change stages as
+          they progress through the recruiting pipeline, typically in a
+          linear fashion.
+      - name: user
+        description: >
+          Users in Lever include anyone who has been invited to join in on
+          recruiting efforts. There are five different access roles in Lever.
+          From most to least access, these roles are Super admin, Admin, Team
+          member, Limited team member, and Interviewer. 

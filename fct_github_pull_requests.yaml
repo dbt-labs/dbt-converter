@@ -1,0 +1,18 @@
+name: fct_github_pull_requests
+description: This model contains all pull requests, their repository, author information,
+  status, and whether the pr was merged.
+sql_table: ANALYTICS.dbt_jstein.fct_github_pull_requests
+dbt_model: ANALYTICS.dbt_jstein.fct_github_pull_requests
+measures:
+- name: dora_score
+  agg: sum
+  expr: CASE WHEN pull_request_id IS NOT NULL THEN 1 ELSE 0 END
+  agg_time_dimension: date_day
+dimensions:
+- name: users_engineering_team
+  type: categorical
+- name: date_day
+  type: time
+  type_params:
+    is_primary: true
+    time_granularity: day

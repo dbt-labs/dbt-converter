@@ -1,0 +1,186 @@
+version: 2
+
+sources:
+  - name: adp
+    description: ADP Workforce Now is our HR administration application.
+    database: raw
+    schema: fivetran_adp_workforce_now
+    loader: fivetran
+    meta:
+      team: ['People Ops']
+      owner_name: Elize Papineau
+      create_masked_views: true
+
+    tables:
+      - name: business_communication
+        description: Worker ID to @dbtlabs.com email mapping.
+      - name: classification
+        description: >
+          ID to value mapping for professional and technical roles or
+          management levels.
+      - name: location
+        description: Country code and zip codes.
+      - name: organizational_unit
+        description: ID to value mapping for departments and business entities.
+      - name: person_communication
+        description: >
+          Worker ID to personal email mapping. Fivetran forces us to ingest
+          this data as it treats it like a primary key.
+        columns:
+          - name: id
+            meta:
+              masking_policy: never_unmask_string
+      - name: person_disability
+        description: Current disability self identification.
+        columns:
+          - name: value
+            meta:
+              masking_policy: dei_string
+      - name: person_government_id
+        description: >
+          Worker ID to government ID mapping. Fivetran forces us to ingest
+          this data as it treats it like a primary key.
+        columns:
+          - name: id
+            meta:
+              masking_policy: never_unmask_string
+      - name: person_history
+        description: Timeseries of person-level attributes.
+        columns:
+          - name: birth_date
+            meta:
+              masking_policy: dei_date
+          - name: deceased_indicator
+          - name: death_date
+            meta:
+              masking_policy: finance_date
+          - name: ethnicity_long_name
+            meta:
+              masking_policy: dei_string
+          - name: ethnicity_short_name
+            meta:
+              masking_policy: dei_string
+          - name: ethnicity_effective_date
+            meta:
+              masking_policy: dei_date
+          - name: gender_short_name
+            meta:
+              masking_policy: dei_string
+          - name: gender_effective_date
+            meta:
+              masking_policy: dei_date
+          - name: gender_identity_short_name
+            meta:
+              masking_policy: dei_string
+          - name: gender_identity_effective_date
+            meta:
+              masking_policy: dei_date
+          - name: sexual_orientation_short_name
+            meta:
+              masking_policy: dei_string
+          - name: sexual_orientation_effective_date
+            meta:
+              masking_policy: dei_date
+          - name: race_short_name
+            meta:
+              masking_policy: dei_string
+          - name: race_effective_date
+            meta:
+              masking_policy: dei_date
+          - name: legal_name_given_name
+            meta:
+              masking_policy: finance_string
+          - name: legal_name_family_name_1
+            meta:
+              masking_policy: finance_string
+          - name: legal_name_generation_affix
+            meta:
+              masking_policy: finance_string
+          - name: legal_name_qualification_affix
+            meta:
+              masking_policy: finance_string
+          - name: legal_name_script
+            meta:
+              masking_policy: finance_string
+          - name: gender_identity
+            meta:
+              masking_policy: dei_string
+          - name: sexual_orientation
+            meta:
+              masking_policy: dei_string
+          - name: ethnicity
+            meta:
+              masking_policy: dei_string
+          - name: race
+            meta:
+              masking_policy: dei_string
+          - name: gender
+            meta:
+              masking_policy: dei_string
+      - name: work_assignment_history
+        description: >
+          Timeseries of work-assignment-level attributes. We supplement this
+          timeseries with snapshotting and so history before appx February 2023
+          should be considered incomplete.
+        columns:
+          - name: assignment_status_reason
+            meta:
+              masking_policy: dei_string
+          - name: assignment_status_reason_short_name
+            meta:
+              masking_policy: dei_string
+          - name: expected_termination_date
+            meta:
+              masking_policy: finance_date
+          - name: payroll_file_number
+            meta:
+              masking_policy: finance_string
+          - name: wage_law_coverage_name
+            meta:
+              masking_policy: finance_string
+          - name: wage_law_coverage_name_long_name
+            meta:
+              masking_policy: finance_string
+          - name: wage_law_coverage_short_name
+            meta:
+              masking_policy: finance_string
+          - name: wage_law_coverage_value
+            meta:
+              masking_policy: finance_string
+      - name: worker
+        description: Current values of worker attributes.
+        columns:
+          - name: expected_termination_date
+            meta:
+              masking_policy: finance_date
+      - name: worker_additional_remuneration
+        description: >
+          Current work assignment to additional financial compensation data.
+          Additional financial compensation data includes any non-salary
+          payments made through ADP, but may be incomplete.
+        columns:
+          - name: rate_amount_value
+            meta:
+              masking_policy: finance_number
+      - name: worker_assigned_organizational_unit
+        description: >
+          Work assignment ID to organization ID mapping. An organization may be
+          a department or business entity. This source does not contain history
+          and must be snapshotted.
+      - name: worker_assigned_location
+        description: Work assignment ID to location ID mapping.
+      - name: worker_base_remuneration
+        description: >
+          Current work assignment to financial compensation data. Base
+          financial compensation data are the main salary payment. This source
+          does not contain history and must be snapshotted.
+        columns:
+          - name: annual_rate_amount_amount_value
+            meta:
+              masking_policy: finance_number
+      - name: worker_classification
+        description: Work assigment ID to classification ID.
+      - name: worker_report_to
+        description: >
+          Most recent work assigment ID to manager worker ID mapping. This
+          source does not contain history and must be snapshotted.

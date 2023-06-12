@@ -1,0 +1,14 @@
+
+    
+    
+    
+    create table analytics_dev.dbt_jstein.kpi_goals__selfservice_enterprise_upgrades (MONTH date,GOAL integer,METRIC_NAME text)
+  ;
+    -- dbt seed --
+    
+            insert into analytics_dev.dbt_jstein.kpi_goals__selfservice_enterprise_upgrades (MONTH, GOAL, METRIC_NAME) values
+            (%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s),(%s,%s,%s)
+        
+
+;
+  

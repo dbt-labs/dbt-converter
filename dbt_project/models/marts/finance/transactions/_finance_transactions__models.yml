@@ -1,0 +1,49 @@
+
+version: 2
+
+models:
+
+    - name: fct_invoice_line_items
+      description: >
+        This model contains all invoices line items across Salesforce and Quickbooks, and invoices from Stripe.
+        Invoices include subscription revenue, professional services, and Coalesce sponsorships.
+        We use this model to calculate recognized revenue with the option to segment by location.
+      columns:
+          - name: invoice_line_id
+            tests:
+                - unique
+                - not_null
+
+    - name: fct_transactions
+      columns:
+          - name: transaction_id
+            tests:
+                - unique
+
+          - name: category
+            tests:
+                - not_null
+
+          - name: invoice_id
+            tests:
+                - not_null
+
+          - name: customer_id
+            description: >
+              A unique identifier for a dbt customer, as sourced and synthesized from vendor identifiers.
+              See customer_id_type.
+            tests:
+                - not_null
+
+          - name: customer_name
+            description: >
+              A human-readable identifier for a dbt customer. Typically their business name, as stored
+              in our CRM or payment processing tools. 
+
+          - name: customer_id_type
+            description: >
+              A descriptor of the source of the customer_id.
+
+          - name: periods
+            tests:
+                - not_null

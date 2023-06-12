@@ -1,0 +1,78 @@
+talk_id,heysummit_event_id,crowdcast_event_id,crowdcast_session_number,talk_name_crowdcast,talk_date,speaker_name,speaker_advocates,is_underrepresented_gender,persona,advocacy_effort,duration,chat_champions,is_underrepresented_race_ethnicity,talk_type,theme
+217309,12229,xh130x6o,1,day 1 opening remarks,44536,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+249762,12229,xh130x6o,2,scaling knowledge scaling bodies why dbt labs is making the bet on a data literate organization,44536,Erica Louie,@Jillian Corkin,1,decision maker,low,30 mins,@Andrew Escay @Brandon Thomson,1,dbt labs,Culture & Teams
+246886,12229,xh130x6o,3,keynote how big is this wave,44536,Tristan Handy,@Lauren Craigie,0,all,,45 mins,@Lauren Craigie,0.5,dbt labs,Data Futures
+252949,12229,xh130x6o,4,dbt 101 stories from real life data practitioners a live look at dbt,44536,Natty (Jon Natkins),@Carly Kaufman,1,champion / team lead,medium,30 mins,@Carly Kaufman,0,Community,"Culture & Teams, Journey"
+249881,12229,xh130x6o,5,how to build a mature dbt project from scratch,44536,Dave Connors,@Andrew Escay,0,committed end user,,30 mins,@Andrew Escay,0,dbt labs,Workshop
+249880,12229,xh130x6o,6,analytics engineering for storytellers,44536,Gwen Windflower,@Jess Williams,1,,,30 mins,@Jess Williams,0,dbt labs,Culture & Teams
+249766,12229,xh130x6o,7,no silver bullets building the analytics flywheel,44536,Lewis Davies,@David Krevitt,0.6666666667,decision maker,low,30 mins,@David Krevitt,0,Community,Data Futures
+246948,12229,xh130x6o,8,git for the rest of us,44536,Claire Carroll,@Alexis Baird,1,skeptical end user,low,45 mins,@Alexis Baird,0,Community,Workshop
+252963,12229,xh130x6o,9,identity crisis navigating the modern data organization,44536,Barr Moses,@Jillian Corkin,0.8,decision maker,medium,45 mins,,0.25,Community,Culture & Teams
+257982,12229,xh130x6o,10,share empower repeat come learn about how to become a meetup organizer,44536,Rosie Cardoso,@Rosie Sampaio Cardoso,1,committed end user,,30 mins,@Amada Echeverría,1,dbt labs,Culture & Teams
+261892,12229,xh130x6o,11,you don t need another database a conversation with reynold xin and drew banin,44536,Drew Banin,@Nikhil Kothari,0,champion / team lead,medium,30 mins,@Amy Deora,0.5,Premier Partner (Sponsor),"Data Futures, Tool deep dives"
+249834,12229,xh130x6o,12,the operational data warehouse reverse etl cdps and the future of data activation,44536,Tejas Manohar,@Azzam Aijazi,0.4,champion / team lead,high,45 mins,@Azzam Aijazi,0.4,Premier Partner (Sponsor),Frameworks & best practices
+266797,12229,xh130x6o,13,day 1 closing remarks,44536,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+266614,12229,xh130x6o,14,apac replay day 1 keynote mature projects storytelling building a data team,44536,,,,,,,,,,
+266622,12229,xh130x6o,15,day 2 opening remarks,44537,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+249830,12229,xh130x6o,16,tailoring dbt s incremental strategy to artsy s data needs,44537,Abhiti Prabahar,@Mila Page,1,committed end user,medium,30 mins,@Mila Page,1,Community,Workshop
+250564,12229,xh130x6o,17,refactor your hiring process a framework,44537,Ezinne Chimah,@Meghan Colón,0.66,champion / team lead,low,45 mins,@Meghan Colón,0.66,Workshop Sponsor,Culture & Teams
+249826,12229,xh130x6o,18,optimizing query run time with materialization schedules,44537,Ola Canty,@Jess Williams,1,committed end user,low,30 mins,@Jess Williams,1,Community,Frameworks & best practices
+249817,12229,xh130x6o,19,how dbt enables systems engineering in analytics,44537,Jorge Cruz Serralles,@Erica Louie,0,skeptical end user,high,30 mins,@Erica Louie,1,Community,Frameworks & best practices
+249814,12229,xh130x6o,20,smaller black boxes towards modular data products,44537,Stephen Bailey,@Azzam Aijazi,0,committed end user,high,30 mins,@Azzam Aijazi,0,Premier Partner (Sponsor),Frameworks & best practices
+249831,12229,xh130x6o,21,when to ask for help modern advice for working with consultants in data and analytics,44537,Jacob Frackson,@Amos Budde,0,champion / team lead,low,30 mins,@Amos Budde,0,"Community Marketplace Sponsor, Vendor",Frameworks & best practices
+249761,12229,xh130x6o,22,analytics engineering everywhere why in the next five years every organization will adopt analytics engineering,44537,Jason Ganz,@Tristan Handy,0,decision maker,low,30 mins,,0,Community,Data Futures
+250573,12229,xh130x6o,23,the modern data stack how fivetran operationalizes data transformations,44537,Nick Acosta,@Nikhil Kothari,0,committed end user,low,30 mins,@Nikhil Kothari,0,Premier Partner (Sponsor),Tool deep dives
+249750,12229,xh130x6o,24,down with data science,44537,Emilie Schario,@Anna Filippova,1,champion / team lead,low,45 mins,,0,Community,Data Futures
+249773,12229,xh130x6o,25,so you think you can dag supporting data scientists with dbt packages,44537,Emma Peterson,@Lesley Greene,1,skeptical end user,low,30 mins,@Lesley Greene,0,Vendor,Workshop
+249825,12229,xh130x6o,26,operationalizing column name contracts with dbtplyr,44537,Emily Riederer,@Nate May,1,committed end user,low,30 mins,@Nate May,0,Community,Frameworks & best practices
+249812,12229,xh130x6o,27,data paradox of the growth stage startup,44537,Emily Ekdahl,@Dave Connors,1,skeptical end user,low,30 mins,@Dave Connors,1,,Frameworks & best practices
+249832,12229,xh130x6o,28,batch to streaming in one easy step,44537,Emily Hawkins,@Amy Chen,0.5,committed end user,low,30 mins,@Amy Byrum,1,Premier Partner (Sponsor),Frameworks & best practices
+249828,12229,xh130x6o,29,the call is coming from inside the warehouse surviving schema changes with automation,44537,Lewis Davies,@Randy Pitcher,0.5,skeptical end user,medium,30 mins,@Randy Pitcher,0,Community,Workshop
+246950,12229,xh130x6o,30,beyond the box stop relying on your black co worker to help you build a diverse team,44537,Akia Obas,@Erica Ford-Green,1,decision maker,low,45 mins,TBD,1,Community,Culture & Teams
+249824,12229,xh130x6o,31,observability within dbt,44537,Jonathan Talmi,@Barr Yaron,0,committed end user,low,30 mins,@Barr Yaron,0.5,Community,Workshop
+249775,12229,xh130x6o,32,built it once build it right prototyping for data teams,44537,Alex Viana,@Erica Louie,0,committed end user,low,30 mins,@Erica Louie,0,Community,Frameworks & best practices
+249820,12229,xh130x6o,33,inclusive design and dbt,44537,Evelyn Stamey,@Amy Byrum,1,committed end user,high,30 mins,@Amy Chen,0,Community,Frameworks & best practices
+261570,12229,xh130x6o,34,coalesce after party with catalogs cocktails,44537,Tim Gasper,@Nikhil Kothari,,,,30 mins,@Jason Ganz,,,
+266623,12229,xh130x6o,35,day 2 closing remarks,44537,Jillian Corkin,@Jillian Corkin,,,,30 mins,,,,
+266619,12229,xh130x6o,36,apac replay day 2 ae everywhere packages observability prototyping,44537,,,,,,,,,,
+267310,12229,xh130x6o,37,day 3 opening remarks,44538,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+249883,12229,xh130x6o,38,how to prepare data for a product analytics platform,44538,Esmeralda Martinez,@Amos Budde,1,champion / team lead,,45 mins,@Amos Budde,1,Workshop Sponsor,Workshop
+249866,12229,xh130x6o,39,the future of analytics is polyglot,44538,Caitlin Colgrove,@Amy Deora,0,No fit,high,30 mins,@Amy Deora (Will bring our new partner engineer Bobby when he joins),0,Premier Partner (Sponsor),Data Futures
+249764,12229,xh130x6o,40,the endpoints are the beginning using the dbt cloud api to build a culture of data awareness,44538,Kevin Hu,@Barr Yaron,0,committed end user,low,30 mins,@Barr Yaron,1,Community,Frameworks & best practices
+249818,12229,xh130x6o,41,automating ambiguity managing dynamic source data using dbt macros,44538,Eric Nelson,@Lauren Benezra,0,committed end user,medium,30 mins,@Lauren Benezra,0,Community,Frameworks & best practices
+249774,12229,xh130x6o,42,building on top of dbt managing external dependencies,44538,Teghan Nightengale,@Barr Yaron,0,skeptical end user,medium,30 mins,@Barr Yaron,0,Community,Frameworks & best practices
+249811,12229,xh130x6o,43,data as engineering,44538,Raazia Ali,@Nikhil Kothari,0,"champion / team lead, decision maker",high,30 mins,@Nikhil Kothari,0,Premier Partner (Sponsor),Data Futures
+259353,12229,xh130x6o,44,data analytics in a snowflake world a conversation with christian kleinerman and tristan handy,44538,Tristan Handy,@Sanjana Sen @Jeremy Cohen,0.5,skeptical end user,medium,30 mins,@Sanjana Sen @Jeremy Cohen,0,Vendor,Frameworks & best practices
+246879,12229,xh130x6o,45,keynote the metric system,44538,Drew Banin,@Lauren Craigie,0,champion / team lead,,45 mins,@Lauren Craigie,0,dbt labs,Data Futures
+249868,12229,xh130x6o,46,dbt core v 1 0 reveal,44538,Jeremy Cohen,@Mary Wleklinski,0.5,all,medium,30 mins,@Randy Pitcher,0.5,dbt labs,Tool deep dives
+249867,12229,xh130x6o,47,firebolt deep dive next generation performance with dbt,44538,Kevin Marr Cody Schwarz,@Elize Papineau,9,no fit,high,30 mins,@Bobby Birstock,0,Premier Sponsor,Data Futures
+249778,12229,xh130x6o,48,metrics and the modern data experience,44538,Benn Stancil,@Anna Filippova,0,committed end user,low,30 mins,,0,Premier Partner (Sponsor),Culture & Teams
+249815,12229,xh130x6o,49,dbt notebooks and the modern data experience,44538,Elizabeth Dlha,@Amy Chen,0,committed end user,medium,30 mins,,0,Community,Frameworks & best practices
+250627,12229,xh130x6o,50,don t hire a data engineer yet,44538,Stefania Olafsdottir,@Jillian Corkin,1,committed end user,high,45 mins,@Jillian Corkin,0,Community,Data Futures
+258626,12229,xh130x6o,51,dbt for financial services how to boost returns on your sql pipelines using dbt databricks and delta lake,44538,Ricardo Portilla,@Andrew Escay,0,committed end user,low,30 mins,@Andrew Escay,0,dbt labs,Workshop
+249819,12229,xh130x6o,52,implementing and scaling dbt core without engineers,44539,Elliot Wargo,@Mike Fuller,0,skeptical end user,medium,30 mins,@Mike Fuller,0,Community,Tool deep dives
+249833,12229,xh130x6o,53,the future of data analytics,44539,Sarah Catanzaro,@David Krevitt,1,decision maker,medium,45 mins,@David Krevitt,0,dbt labs,Data Futures
+266620,12229,xh130x6o,54,apac replay day 3 data awareness forces of gravity modern data experience dbt 1 0 reveal,44538,,,,,,,,,,
+266624,12229,xh130x6o,55,day 3 closing remarks,44538,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+266625,12229,xh130x6o,56,day 4 opening remarks,44539,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+249772,12229,xh130x6o,57,building an open source data stack,44539,Katie Hindson,@Mila Page,1,champion / team lead,low,30 mins,@Mila Page,0,Community,Workshop
+249813,12229,xh130x6o,58,dbt in a data mesh world,44539,José Cabeda,@Amy Deora,0,skeptical end user,high,30 mins,@Amy Deora,0,Premier Partner (Sponsor),Workshop
+246955,12229,xh130x6o,59,from diverse humans of data to data dream teams,44539,Prukalpa Sankar,@Janessa Lantz,1,champion / team lead,low,45 mins,@Janessa Lantz,1,Vendor,Culture & Teams
+249822,12229,xh130x6o,60,introducing the activity schema data modeling with a single table,44539,Ahmed Elsamadisi,@Carolyn Ghosh,0,committed end user,high,30 mins,@Carolyn Ghosh,1,Vendor,Frameworks & best practices
+249816,12229,xh130x6o,61,from 100 spreadsheets to 100 data analysts the story of dbt at slido,44539,Andrej Svec,@Sara Leon,0.3333333333,skeptical end user,medium,30 mins,@Ernesto Ongaro,0,Community,Culture & Teams
+249836,12229,xh130x6o,62,this is just the beginning,44539,Alan Cruickshank,@Erin Vaughan,0,decision maker,medium,30 mins,@Ernesto Ongaro,0,Community,Data Futures
+249858,12229,xh130x6o,63,to all the data managers we ve loved before,44539,Paige Berry,@Erica Louie,0.5,champion / team lead,low,30 mins,@Erica Louie,0,Community,Culture & Teams
+250636,12229,xh130x6o,64,stay calm and query on root cause analysis for your data pipelines,44539,Francisco Alberini,@Azzam Aijazi,0.5,committed end user,low,45 mins,@Azzam Aijazi,0,Workshop Sponsor,Workshop
+249871,12229,xh130x6o,65,upskilling from an insights analyst to an analytics engineer,44539,Brittany Krauth,@Sanjana Sen,1,skeptical end user,medium,30 mins,@Sanjana Sen,0,Community,Workshop
+249823,12229,xh130x6o,66,modeling event data at scale,44539,Will Warner,@db (David Berton),0.5,committed end user,low,30 mins,,0,Premier Partner (Sponsor),Frameworks & best practices
+249771,12229,xh130x6o,67,building a metadata ecosystem with dbt,44539,Darren Haken,@Girish Rao,0,committed end user,low,30 mins,@Girish Rao,0,Community,Frameworks & best practices
+266626,12229,xh130x6o,68,day 4 closing remarks,44539,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+266628,12229,xh130x6o,69,day 5 opening remarks,44540,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,
+246964,12229,xh130x6o,70,new data role on the block revenue analytics,44539,Celina Wong,@Mary Wleklinski,1,decision maker,low,45 mins,@Grant Winship,1,Community,"Culture & Teams, Data Futures"
+249873,12229,xh130x6o,71,using dbt to understand open source communities,44539,Srini Kadamati,@Mila Page,0,skeptical end user,medium,30 mins,@Mila Page,1,Vendor,Workshop
+249835,12229,xh130x6o,72,getting meta about metadata building trustworthy data products backed by dbt,44539,Kelechi Erondu,@Amos Budde,0.5,committed end user,low,45 mins,@Amos Budde,0,Workshop Sponsor,Frameworks & best practices
+249829,12229,xh130x6o,73,eat the data you have tracking core events in a cookieless world,44540,Jeff Sloan,@Amy Chen,0,champion / team lead,low,30 mins,@Erin Vaughan,0,Premier Partner (Sponsor),Frameworks & best practices
+249869,12229,xh130x6o,74,trials and tribulations of incremental models,44540,Vincey Au,@Pat Kearns,1,committed end user,medium,30 mins,@Pat Kearns,1,Community,Workshop
+249763,12229,xh130x6o,75,sharing the knowledge joining dbt and the business using tangata,44540,Chris Jenkins,@Lee Bond-Kennedy,0,committed end user,low,30 mins,@Lee Bond-Kennedy,0,Community,Frameworks & best practices
+249827,12229,xh130x6o,76,sql draw artworks review panel,44540,James Weakley,@Amos Budde,0,committed end user,high,45 mins,@Amos Budde,0,Custom Activation Sponsor,Culture & Teams
+217311,12229,xh130x6o,77,day 5 closing remarks,44540,Jillian Corkin,@Jillian Corkin,,,,30 mins,@Jason Ganz,,,

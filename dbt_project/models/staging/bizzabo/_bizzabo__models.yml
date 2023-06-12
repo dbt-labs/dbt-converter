@@ -1,0 +1,997 @@
+version: 2
+
+models:
+  - name: base__bizzabo_agenda_settings
+    description: Each record contains the filters and locations for an event.
+    columns:
+      - name: event_id
+        description: The unique identifier for the event.
+
+      - name: filters
+        description: A JSON object that contains a list of groups and tags available for an event.
+
+      - name: locations
+        description: A JSON object that contains a list of locations and sublocations available for an event.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: base__bizzabo_event_contacts
+    description: Each record contains the details for a contact for a specific event.
+    columns:
+      - name: contact_id
+        description: The unique identifier of the contact for a given event.
+
+      - name: event_id
+        description: The unique identifier of the event.
+
+      - name: properties
+        description: A JSON object that contains information held within the registration form.
+
+      - name: created_at
+        description: Timestamp indicating when a contact was created for a given event.
+
+      - name: modified_at
+        description: Timestamp indicating when a contact was last modified for a given event.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: base__bizzabo_registrations
+    description: Each record contains the details for one registration for an event.
+    columns:
+      - name: registration_id
+        description: The unique identifier for the registration.
+
+      - name: contact_id
+        description: The unique identifier for the contact associated with the registration.
+
+      - name: event_id
+        description: The unique identifier for the event associated with the registration.
+
+      - name: order_id
+        description: The order id associated with a given registration.
+
+      - name: ticket_id
+        description: The unique identifier for the ticket associated with the registration.
+
+      - name: billing_address_properties
+        description: A JSON object that contains registration details for the contact the completed the regisration.
+
+      - name: charge_amount
+        description: The amount charged during registration.
+
+      - name: currency_code
+        description: The currency code associated with the registration payment.
+
+      - name: fees_amount
+        description: The amount of fees charged during registration.
+
+      - name: has_invoice
+        description: A boolean indicating if the registration has an associated invoice.
+
+      - name: magic_link
+        description: The verification URL sent to the registrant to verify their registration.
+
+      - name: manage_registration_link
+        description: The personal 'manage registration details' link for a given registration.
+
+      - name: order_type
+        description: >
+          The order type associated with a given registration.
+          Examples include online and in-person.
+
+      - name: payment_method
+        description: >
+          The payment method associated with the registration.
+          Examples include Credit Card and Cash.
+
+      - name: payment_status
+        description: >
+          The current status of the payment associated with the registration.
+          Examples include Pending and Completed.
+
+      - name: promo_code
+        description: The promo code used during registration, as entered during the checkout process.
+
+      - name: promo_name
+        description: >
+          The name of the promo code used during registration, i.e. promo code `purplepeople` maps to promo name `dbt Labs Staff`
+
+      - name: session_checkins
+        description: "A JSON object that contains the sessions a registrant has checked into."
+
+      - name: ticket_price
+        description: The price of the ticket associated with the registration.
+
+      - name: registrant_properties
+        description: A JSON object that contains registration details for the contact associated with the registration.
+
+      - name: status
+        description: The current status of the registration.
+
+      - name: ticket_name
+        description: The name of the ticket associated with the registration.
+
+      - name: marketing_campaign
+        description: >
+          The `utm_campaign` values parsed from the referring URL when registration was completed.
+
+      - name: marketing_content
+        description: >
+          The `utm_content` values parsed from the referring URL when registration was completed.
+
+      - name: marketing_medium
+        description: >
+          The `utm_medium` values parsed from the referring URL when registration was completed.
+
+      - name: marketing_source
+        description: >
+          The `utm_source` values parsed from the referring URL when registration was completed.
+
+      - name: validity
+        description: Indicates if a registration was valid.
+
+      - name: is_checked_in
+        description: A boolean indicating if the registrant is checked-in.
+
+      - name: is_virtual_checkin
+        description: A boolean indicating if the contact associated with the registration checked-in to the evnet virtually.
+
+      - name: created_at
+        description: Timestamp indicating when the registration was created.
+
+      - name: modified_at
+        description: Timestamp indicating when a registration was last updated.
+
+      - name: payment_at
+        description: Timestamp indicating when payment for the registration was completed at.
+
+      - name: registered_at
+        description: Timestamp indicating when the registration was completed at.
+
+      - name: checked_in_at
+        description: Timestamp indicating when a registrant first checked in (or attended) an event.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: base__bizzabo_sessions
+    description: Each record contains the details of each session for an event.
+    columns:
+      - name: session_id
+        description: The unique identifier for the session.
+
+      - name: event_id
+        description: The unique identifier of the event the session is associated with.
+
+      - name: location_id
+        description: The unique identifier for the location the session is associated with.
+
+      - name: sublocation_id
+        description: The unique identifier of the sublocation of the session.
+
+      - name: external_id
+        description: >
+          An external identifier for the session, as defined by the organizer during import.
+
+      - name: associated_contacts
+        description: A JSON object of the associated contacts with a session.
+
+      - name: description
+        description: The description of the session.
+
+      - name: description_html
+        description: The description of the session in HTML format.
+
+      - name: filters
+        description: A JSON object containing tags associated with the session.
+
+      - name: speakers
+        description: A JSON object containing details of the speakers associated with a session.
+
+      - name: sponsors
+        description: An Array of sponsors associated with a session.
+
+      - name: title
+        description: The title of the session.
+
+      - name: virtual_session_details
+        description: A JSON object contains virtual session details.
+
+      - name: allow_rating
+        description: A boolean field indicating if attendees are able to rate the session.
+
+      - name: has_registration
+        description: A boolean field that determines if a session has session registration enabled.
+
+      - name: has_registration_capacity_enabled
+        description: A boolean field that determines if a session has a capacity limit.
+
+      - name: is_hidden
+        description: A boolean field indicating if the session is hidden from registrants.
+
+      - name: is_private
+        description: A boolean field indicating if a session is private.
+
+      - name: is_registration_full
+        description: A boolean field indicating if registration is full for a session.
+
+      - name: is_registration_visible
+        description: A boolean field that determines if attendees can see the session in their registration forms.
+
+      - name: is_virtual_session
+        description: A boolean indicating if the session is enabled virtually.
+
+      - name: count_registrations
+        description: The total number of registrations for a given session.
+
+      - name: start_at
+        description: Timestamp indicating when a session will start.
+
+      - name: start_minute
+        description: The start minute of a session.
+
+      - name: end_at
+        description: Timestamp indicating when the session will end.
+
+      - name: end_minute
+        description: The ending minute of the sesison.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: stg_bizzabo__event_contacts
+    description: Each record contains the details for a contact for a specific event.
+    columns:
+      - name: event_contact_id
+        description: >
+          A surrogate key created off of `event_id` and `contact_id`.
+        tests:
+          - unique
+          - not_null
+
+      - name: contact_id
+        description: The unique identifier of the contact for a given event.
+
+      - name: event_id
+        description: The unique identifier of the event.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: first_name
+        description: The first name of the contact.
+
+      - name: last_name
+        description: The last name of the contact.
+
+      - name: full_name
+        description: The full name of the contact.
+
+      - name: email
+        description: The email of the contact.
+
+      - name: properties
+        description: A JSON object that contains information held within the registration form.
+
+      - name: roles
+        description: A list of roles associated with a contact for a given event.
+
+      - name: count_of_registrations
+        description: The number of registrations by a contact for a given event.
+
+      - name: ticket_types
+        description: A list of tickets that a contact has purchased for a given event.
+
+      - name: has_tickets
+        description: A boolean field indicating if a contact purchased tickets for a given event.
+
+      - name: created_at
+        description: Timestamp indicating when a contact was created for a given event.
+
+      - name: modified_at
+        description: Timestamp indicating when a contact was last modified for a given event.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: stg_bizzabo__events
+    description: Each record contains the details for an event.
+    columns:
+      - name: event_id
+        description: The unique identifier for the event.
+        tests:
+          - unique
+          - not_null
+
+      - name: attendance_type
+        description: >
+          The attendance type for an event.
+          Examples include Hybrid and Virtual.
+
+      - name: header_logo_url
+        description: A URL for the image that is used as the event logo in the event website and mobile app.
+
+      - name: language
+        description: The primary langauge for the event.
+
+      - name: name
+        description: The name of the event.
+
+      - name: status
+        description: >
+          The current status of the event.
+          Examples include Published and Live.
+
+      - name: support_email
+        description: The support email as set by the organizer.
+
+      - name: timezone
+        description: The timezone of the event.
+
+      - name: type
+        description: >
+          The type of event.
+          Examples include Conference & Convetion and Class & Workshop.
+
+      - name: website_url
+        description: The URL for the event.
+
+      - name: created_at
+        description: Timestamp indicating when an event was created.
+
+      - name: modified_at
+        description: Timestamp indicating when an event was last updated.
+
+      - name: start_at
+        description: Timestamp indicating when the event starts.
+
+      - name: end_at
+        description: Timestamp indicating when the event ends.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: stg_bizzabo__locations
+    description: >
+      Each record contains one row per unique combintation of location and sublocation.
+      This can be used as a lookup table with `stg_bizzabo__sessions` to retrieve the location and sublocation for a session.
+    columns:
+      - name: location_lookup_id
+        description: >
+          A surrogate key created off of `location_id` and `sublocation_id`.
+        tests:
+          - unique
+          - not_null
+
+      - name: sublocation_id
+        description: The unique identifier for a sublocation.
+
+      - name: location_id
+        description: The unique identifier for a location.
+
+      - name: event_id
+        description: The unique identifier for the event.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: sublocation_name
+        description: The name of the sublocation of the event and/or session.
+
+      - name: location_name
+        description: The name of the location and/or session.
+
+  - name: stg_bizzabo__recording_views
+    description: One row per recording view of a session.
+    columns:
+      - name: recording_view_id
+        description: The unique identifier of the recording view.
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: The unique identifier for the overall event.
+
+      - name: registration_id
+        description: The unique identifier for the registrant who viewed the recording.
+
+      - name: session_id
+        description: The unique identifier of the session the registrant watched a recording of.
+
+      - name: email
+        description: The registrants email address
+
+      - name: viewed_recording_at
+        description: A timestamp indicating when the registrant viewed the recording.
+
+      - name: _sdc_batched_at
+        description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+  - name: stg_bizzabo__registrations
+    description: Each record contains the details for one registration for an event.
+    columns:
+      - name: registration_id
+        description: The unique identifier for the registration.
+        tests:
+          - unique
+          - not_null
+
+      - name: contact_id
+        description: The unique identifier for the contact associated with the registration.
+
+      - name: event_id
+        description: The unique identifier for the event associated with the registration.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: event_contact_id
+        description: >
+          A surrogate key created off of `event_id` and `contact_id`.
+        tests:
+          - dbt_utils.relationships_where:
+              to: ref('stg_bizzabo__event_contacts')
+              field: event_contact_id
+              from_condition: "modified_at <= dateadd(day,-1,current_date())"
+              to_condition: "created_at <= dateadd(day,-1,current_date())"
+              config:
+                severity: warn
+
+      - name: order_id
+        description: The order id associated with a given registration.
+
+      - name: ticket_id
+        description: The unique identifier for the ticket associated with the registration.
+
+      - name: billing_address_properties
+        description: A JSON object that contains registration details for the contact the completed the regisration.
+
+      - name: charge_amount
+        description: The amount charged during registration.
+
+      - name: currency_code
+        description: The currency code associated with the registration payment.
+
+      - name: fees_amount
+        description: The amount of fees charged during registration.
+
+      - name: has_invoice
+        description: A boolean indicating if the registration has an associated invoice.
+
+      - name: magic_link
+        description: The verification URL sent to the registrant to verify their registration.
+
+      - name: manage_registration_link
+        description: >
+          The personal manage registration details link for a given registration.
+
+      - name: order_type
+        description: >
+          The order type associated with a given registration.
+          Examples include online and in-person.
+
+      - name: payment_method
+        description: >
+          The payment method associated with the registration.
+          Examples include Credit Card and Cash.
+
+      - name: payment_status
+        description: >
+          The current status of the payment associated with the registration.
+          Examples include Pending and Completed.
+
+      - name: promo_code
+        description: "The promo code used during registration, as entered during the checkout process."
+
+      - name: promo_name
+        description: "The name of the promo code used during registration, i.e. promo code `purplepeople` maps to promo name `dbt Labs Staff`"
+
+      - name: session_checkins
+        description: "A JSON object that contains the sessions a registrant has checked into."
+
+      - name: ticket_price
+        description: The price of the ticket associated with the registration.
+
+      - name: registrant_properties
+        description: A JSON object that contains registration details for the contact associated with the registration.
+
+      - name: status
+        description: The current status of the registration.
+
+      - name: ticket_name
+        description: The name of the ticket associated with the registration.
+
+      - name: marketing_campaign
+        description: >
+          The utm_campaign` values parsed from the referring URL when registration was completed.
+
+      - name: marketing_content
+        description: >
+          The `utm_content` values parsed from the referring URL when registration was completed.
+
+      - name: marketing_medium
+        description: >
+          The `utm_medium` values parsed from the referring URL when registration was completed.
+
+      - name: marketing_source
+        description: >
+          The `utm_source` values parsed from the referring URL when registration was completed.
+
+      - name: validity
+        description: Indicates if a registration was valid.
+
+      - name: is_checked_in
+        description: A boolean indicating if the registrant is checked-in.
+
+      - name: is_virtual_checkin
+        description: A boolean indicating if the contact associated with the registration checked-in to the evnet virtually.
+
+      - name: created_at
+        description: Timestamp indicating when the registration was created.
+
+      - name: modified_at
+        description: Timestamp indicating when a registration was last updated.
+
+      - name: payment_at
+        description: Timestamp indicating when payment for the registration was completed at.
+
+      - name: registered_at
+        description: Timestamp indicating when the registration was completed at.
+
+      - name: checked_in_at
+        description: Timestamp indicating when a registrant first checked in (or attended) an event.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+      - name: first_name
+        description: The first name of the registrant.
+
+      - name: last_name
+        description: The last name of the registrant.
+
+      - name: full_name
+        description: The full name of the registrant.
+
+      - name: email
+        description: The email of the registrant.
+
+      - name: billing_address
+        description: The billing address of the contact who completed the registration.
+
+      - name: billing_contact_name
+        description: The name of the contact who completed the registration.
+
+      - name: billing_city
+        description: The city of the contact who completed the registration.
+
+      - name: billing_company
+        description: The company of the contact who completed the registration.
+
+      - name: billing_country
+        description: The country of the contact who completed the registration.
+
+      - name: billing_email
+        description: The email of the contact who completed the registration.
+
+      - name: billing_first_name
+        description: The first name of the contact who completed the registration.
+
+      - name: billing_last_name
+        description: The last name of the contact who completed the registration.
+
+      - name: billing_state
+        description: The state of the contact who completed the registration.
+
+      - name: billing_zip_code
+        description: The zip code of the contact who completed the registration.
+
+  - name: stg_bizzabo__sessions
+    description: Each record contains the details of each session for an event.
+    columns:
+      - name: session_id
+        description: The unique identifier for the session.
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: The unique identifier of the event the session is associated with.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: location_id
+        description: The unique identifier for the location the session is associated with.
+
+      - name: sublocation_id
+        description: The unique identifier of the sublocation of the session.
+
+      - name: external_id
+        description: An external identifier for the session, as defined by the organizer during import.
+
+      - name: location_lookup_id
+        description: >
+          A surrogate key created off of `location_id` and `sublocation_id`.
+          This can be used to lookup against the `stg_bizzabo__locations` model to retrieve the location of the session.
+
+      - name: associated_contacts
+        description: A JSON object of the associated contacts with a session.
+
+      - name: description
+        description: The description of the session.
+
+      - name: description_html
+        description: The description of the session in HTML format.
+
+      - name: filters
+        description: A JSON object containing tags associated with the session.
+
+      - name: speakers
+        description: A JSON object containing details of the speakers associated with a session.
+
+      - name: sponsors
+        description: An Array of sponsors associated with a session.
+
+      - name: title
+        description: The title of the session.
+
+      - name: virtual_session_details
+        description: A JSON object contains virtual session details.
+
+      - name: virtual_session_type
+        description: >
+          The type of virtual session.
+          Examples include Webinar and Embedded.
+
+      - name: virtual_session_video_provider
+        description: >
+          The video provider for the virtual session.
+          Examples include Agora and Mux.
+
+      - name: virtual_session_authorizations
+        description: A JSON object of virtual session authorization details.
+
+      - name: virtual_session_recording_authorizations
+        description: A JSON object of virtual session recording authorizations.
+
+      - name: allow_rating
+        description: A boolean field indicating if attendees are able to rate the session.
+
+      - name: has_registration
+        description: A boolean field that determines if a session has session registration enabled.
+
+      - name: has_registration_capacity_enabled
+        description: A boolean field that determines if a session has a capacity limit.
+
+      - name: is_hidden
+        description: A boolean field indicating if the session is hidden from registrants.
+
+      - name: is_private
+        description: A boolean field indicating if a session is private.
+
+      - name: is_registration_full
+        description: A boolean field indicating if registration is full for a session.
+
+      - name: is_registration_visible
+        description: A boolean field that determines if attendees can see the session in their registration forms.
+
+      - name: is_virtual_session
+        description: A boolean indicating if the session is enabled virtually.
+
+      - name: count_registrations
+        description: The total number of registrations for a given session.
+
+      - name: start_at
+        description: Timestamp indicating when a session will start.
+
+      - name: end_at
+        description: Timestamp indicating when the session will end.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+      - name: is_deleted
+        description: A boolean field that indicates if the session has been deleted in the source platform.
+
+      - name: session_duration_in_seconds
+        description: The duration in seconds of the session.
+
+  - name: stg_bizzabo__session_checkins
+    description: "One row per session check in. A check in is synonymous with attendance."
+    columns:
+      - name: session_checkin_id
+        description: A surrogate key created off of the event_id, session_id, registration_id, and session_check_in_at timestamp.
+        tests:
+          - unique
+          - not_null
+
+      - name: session_id
+        description: The unique identifier for the session the registrant checked into.
+
+      - name: event_id
+        description: The unique identifier for the overall event.
+
+      - name: registration_id
+        description: The unique identifier for the registrant.
+
+      - name: checkin_status
+        description: >
+          The status of the checkin.
+          Examples include: CheckIn, CheckOut.
+
+      - name: is_checked_in_by_organizer
+        description: A boolean field indicating if the dbt Labs team manually checked in the registrant.
+
+      - name: is_manual_override
+        description: A boolean field indicating if the dbt Labs team manually allowed the registrant to check in despite ticket rules.
+
+      - name: is_virtual_checkin
+        description: A boolean field indicating if the registrant checked into the session virtually.
+
+      - name: session_checkin_at
+        description: A timestamp of when the check in occured.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+  - name: stg_bizzabo__speakers
+    description: Each record contains the details for each speaker for an event.
+    columns:
+      - name: speaker_id
+        description: The unique identifier of the speaker.
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: The unique identifier for the event the speaker is associated with.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: bio
+        description: The bio provided by the speaker.
+
+      - name: blog
+        description: A URL of the blog provided by the speaker.
+
+      - name: company
+        description: The name of the company associated with the speaker.
+
+      - name: country
+        description: The country of the speaker.
+
+      - name: email
+        description: The email address of the speaker.
+
+      - name: first_name
+        description: The first name of the speaker.
+
+      - name: last_name
+        description: The last name of the speaker.
+
+      - name: full_name
+        description: The full name of the speaker.
+
+      - name: linkedin_url
+        description: A URL to the LinkedIn page for the speaker.
+
+      - name: photo_set
+        description: A JSON object of URLs that link to photos of the speaker.
+
+      - name: prefix
+        description: The prefix for the speaker.
+
+      - name: title
+        description: The job title of the speaker.
+
+      - name: twitter_handle
+        description: The Twitter handle for the speaker.
+
+      - name: is_hidden
+        description: A boolean indicating if the speaker is hidden to registrants.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+      - name: is_deleted
+        description: A boolean field that indicates if the speaker has been deleted in the source platform.
+
+  - name: stg_bizzabo__sponsors
+    description: Each records contains the details for each sponsor for an event.
+    columns:
+      - name: sponsor_id
+        description: The unique identifier for the sponsor.
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: The unique identifier of the event the sponsor is associated with.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: booth
+        description: The name of the Booth the sponsor purchased.
+
+      - name: contact_email
+        description: The email address of the contact associated with the sponsorhip.
+
+      - name: contact_phone
+        description: The phone number of the contact associated with the sponsorship.
+
+      - name: description
+        description: A description of the sponsor.
+
+      - name: facebook_url
+        description: The Facebook URL of the contact associated with the sponsorship.
+
+      - name: level
+        description: The level of sponsorship.
+
+      - name: linkedin_url
+        description: The LinkedIn URL of the contact associated with the sponsorship.
+
+      - name: logo
+        description: A URL of the sponsor's logo.
+
+      - name: name
+        description: The name of the sponsor.
+
+      - name: promoted_offer
+        description: The offer the sponsor is promoting.
+
+      - name: twitter_handle
+        description: The Twitter handle of the contact associated with the sponsorship.
+
+      - name: type
+        description: >
+          The type of sponsor.
+          Examples include Sponsor and Exhibitor.
+
+      - name: website_url
+        description: The URL of the sponsor's website.
+
+      - name: is_visible
+        description: A bolean indicating if the sponsor is visible to registrants.
+
+      - name: created_at
+        description: Timestamp indicating when the sponsor was created.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+      - name: is_deleted
+        description: A boolean field that indicates if the sponsor has been deleted in the source platform.
+
+  - name: stg_bizzabo__tags
+    description: >
+      Each record contains the groups and tags for an event.
+      An example of a group is `Region` with the associated tag of `APAC Friendly`.
+    columns:
+      - name: tag_id
+        description: The unique identifier of the tag.
+        tests:
+          - unique
+          - not_null
+
+      - name: group_id
+        description: The unique identifier of the tag group.
+
+      - name: event_id
+        description: The unique identifier of the event.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: tag_name
+        description: The name of the tag.
+
+      - name: group_name
+        description: The name of the tag group.
+
+      - name: group_type
+        description: >
+          The type of tag group.
+          Examples include Multi and Single.
+
+      - name: is_group_visible
+        description: A boolean indicating if the tag group is visibile.
+
+  - name: stg_bizzabo__tickets
+    description: Each record contains the details for each ticket type.
+    columns:
+      - name: ticket_id
+        description: The unique identifier of the ticket.
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: The unique identifier of the event the ticket is associated with.
+        tests:
+          - relationships:
+              to: ref('stg_bizzabo__events')
+              field: event_id
+              config:
+                severity: warn
+
+      - name: availability
+        description: >
+          Indicates when tickets will become available.
+          Examples include Immediate and Dates.
+
+      - name: availability_end
+        description: >
+          Indicates when ticket sales will no longer be available.
+          Examples include Dates and Event End.
+
+      - name: currency_code
+        description: The currency code in which ticket sales will be processed in.
+
+      - name: description
+        description: The description of the ticket.
+
+      - name: name
+        description: The name of the ticket.
+
+      - name: per_order_max
+        description: The maximum number of tickets that can be purchased in a single order.
+
+      - name: per_order_min
+        description: The minimum number of tickets that can be purchased in a single order.
+
+      - name: price
+        description: The price of the ticket.
+
+      - name: quantity
+        description: The amount of tickets that can be sold, as set by the organizer.
+
+      - name: registration_properties
+        description: A JSON object of questions asked during registration when purchasing a ticket.
+
+      - name: sale_method
+        description: >
+          The sale method of the ticket.
+          Examples include Online and In-Person.
+
+      - name: tax_rate
+        description: The tax rate attached to purchases of the ticket.
+
+      - name: availability_end_at
+        description: Timestamp indicating when ticket sales will no longer be available.
+
+      - name: availability_start_at
+        description: Timestamp indicating when ticket sales will become available.
+
+      - name: _sdc_batched_at
+        description: Timestamp indicating when Stitch loaded the batch the record was a part of into the destination.
+
+      - name: is_deleted
+        description: A boolean field that indicates if the ticket has been deleted in the source platform.

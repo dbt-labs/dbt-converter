@@ -1,0 +1,27 @@
+
+version: 2
+
+sources:
+  - name: harvest
+    schema: stitch_harvest
+    loader: stitch
+    database: raw
+    description: '{{ doc("src_harvest") }}'
+
+    meta:
+      team: ['ProServ', 'Customer Success']
+      owner_name: Estelle Wolski
+
+    tables:
+      - name: clients
+      - name: project_tasks
+      - name: project_users
+      - name: projects
+      - name: roles
+      - name: tasks
+      - name: time_entries
+      - name: user_project_tasks
+      - name: user_projects
+      - name: user_roles
+      - name: users
+      

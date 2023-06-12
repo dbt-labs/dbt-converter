@@ -1,0 +1,1 @@
+{"name": "arr_exit_self_serve", "description": "The amount of ARR (Annual Recurring Revenue) from Self-Serve customers at the end of the given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_exit_self_serve"}}, "constraint": {"where": "sales_channel = 'Self-Serve'", "linkable_names": ["sales_channel"], "sql_params": {"param_items": []}}}

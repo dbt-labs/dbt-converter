@@ -1,0 +1,28 @@
+version: 2
+
+metrics:
+  - name: arr_starting_self_serve
+    label: Self-Serve Starting ARR
+    model: ref('fct_arr_aggregated')
+    description: >
+      The amount of ARR (Annual Recurring Revenue) from Self-Serve customers at the beginning of the given time period.
+
+    calculation_method: sum
+    expression: starting_arr
+
+    filters:
+      - field: sales_channel
+        operator: "="
+        value: "'Self-Serve'"
+    
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

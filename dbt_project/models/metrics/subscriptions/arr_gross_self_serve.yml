@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: arr_gross_self_serve
+    label: Self-Serve Total Gross ARR
+    description: >
+      The sum of Land, Expand, and Reactivation ARR (Annual Recurring Revenue) 
+      for Self-Serve customers over a given time period.
+
+    calculation_method: derived
+    expression: "{{metric('arr_land_self_serve')}} + {{metric('arr_expansion_self_serve')}} + {{metric('arr_reactivation_self_serve')}}"
+
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

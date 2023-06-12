@@ -1,0 +1,19 @@
+fixed:
+  account: kw27752
+  authenticator: externalbrowser
+  client_session_keep_alive: False
+  database: analytics_dev
+  role: transformer
+  threads: 8
+  type: snowflake
+  warehouse: transforming
+prompts:
+  user:
+    type: string
+    hint: your snowflake username, usually <first_name.last_name> (e.g. ERICA.LOUIE)
+  schema:
+    type: string
+    hint: usually dbt_<yourname> (e.g. dbt_elouie)
+
+config:
+  fail_fast: true

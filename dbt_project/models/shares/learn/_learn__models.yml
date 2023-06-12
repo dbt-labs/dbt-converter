@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: scrubbed_learn_snowplow_events
+    description: >
+      Scrubbed 'www.getdbt.com/dbt-learn/lessons%' events from previous 14
+      days, to share in near-real-time with the
+      [dbt Learn Snowflake account](https://fka50167.snowflakecomputing.com/)

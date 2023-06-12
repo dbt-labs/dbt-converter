@@ -1,0 +1,22 @@
+
+version: 2
+
+sources:
+  - name: trello
+    schema: trello
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+    database: raw
+    description: '{{ doc("src_trello") }}'
+
+    meta:
+      team: ['ProServ']
+      owner_name: Estelle Wolski
+
+    tables:
+      - name: boards
+        identifier: boards
+      - name: cards
+        identifier: cards
+      - name: users
+        identifier: users

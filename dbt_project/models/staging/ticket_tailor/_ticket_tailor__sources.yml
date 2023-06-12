@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: ticket_tailor
+    schema: taptickettailor
+    database: raw
+    loader: stitch_tap 
+    loaded_at_field: _sdc_received_at
+    description: '{{ doc("src_ticket_tailor") }}'
+
+    meta:
+      team: ['Customer Success']
+      owner_name: Estelle Wolski
+
+    tables:
+        - name: events
+        
+        - name: orders
+          columns:
+            - name: status
+              tests:
+                - accepted_values:
+                    values: ['cancelled', 'pending', 'completed']
+        
+        - name: issued_tickets
+          freshness:
+            warn_after: {count: 14, period: day}

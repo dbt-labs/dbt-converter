@@ -1,0 +1,85 @@
+version: 2
+
+sources:
+  - name: greenhouse
+    description: >
+      Hiring platform in use as of November 21, 2022. Contact Alaina Lynch for
+      business questions.
+    schema: fivetran_greenhouse
+    database: raw
+    loader: fivetran
+    meta:
+      team: ['Talent Acquisition']
+      owner_name: Elize Papineau
+      create_masked_views: true
+    
+    tables:
+      - name: application
+        description: >
+          Applications associate candidates with jobs. There are 2 kinds of
+          applications: candidates and prospects. Candidate applications always
+          have exactly 1 job. Prospect applications can have 0 or more jobs.
+        columns:
+          - name: rejected_at
+            meta:
+              masking_policy: talent_acquisition_timestamp
+      - name: department
+        description: ID to value mapping for internal dbt Labs departments.
+      - name: hiring_team
+        description: >
+          Job ID to User ID mapping identifying the hiring team for job
+          openings.
+      - name: job
+        description: All jobs filled or opened through Greenhouse.
+      - name: job_application
+        description: Application ID to Job ID mapping.
+      - name: job_department
+        description: Department ID to Job ID mapping.
+      - name: job_history
+        description: Timeseries of activity on jobs.
+        columns:
+          - name: name
+            meta:
+              masking_policy: talent_acquisition_string
+      - name: job_office
+        description: Office ID to Job ID mapping.
+      - name: job_opening
+        description: Tracking of opening / closing of jobs in Greenhouse.
+      - name: offer
+        description: All job offers extended through Greenhouse.
+        columns:
+          - name: custom_commission_amount
+            meta:
+              masking_policy: talent_acquisition_variant
+          - name: custom_commission_offer_1666728970_0688653
+            meta:
+              masking_policy: talent_acquisition_string
+          - name: custom_equity_stake
+            meta:
+              masking_policy: talent_acquisition_number
+          - name: custom_monthly_salary
+            meta:
+              masking_policy: talent_acquisition_variant
+          - name: custom_salary
+            meta:
+              masking_policy: talent_acquisition_variant
+          - name: custom_signing_bonus_amount_offer_1666727470_3459742
+            meta:
+              masking_policy: talent_acquisition_variant
+          - name: custom_signing_bonus_offer_1666710055_8032212
+            meta:
+              masking_policy: talent_acquisition_string
+          - name: custom_street_address_1
+            meta:
+              masking_policy: talent_acquisition_string
+          - name: custom_street_address_2
+            meta:
+              masking_policy: talent_acquisition_string
+      - name: office
+        description: dbt Labs offices.
+      - name: source
+        description: ID to value mapping for candidate or prospect sources.
+      - name: user
+        description: Internal Greenhouse users.
+      - name: user_email
+        description: User ID to user email mapping

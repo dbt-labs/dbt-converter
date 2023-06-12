@@ -1,0 +1,31 @@
+version: 2
+
+metrics:
+  - name: accounts_first_job_created
+    label: Accounts First Job Created
+    model: ref('fct_cloud_accounts')
+    description: >
+      The sum of accounts creating a dbt Cloud job for the
+      first time over a given time period.
+    tags: []
+
+    calculation_method: count 
+    expression: account_id
+
+    filters:
+      - field: is_account_deleted
+        operator: "="
+        value: "0"
+      - field: is_test_account
+        operator: "="
+        value: "0"
+
+    timestamp: first_job_created_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - database_type
+      - plan
+
+    meta:
+      owner(s): 'Andrew Tom'

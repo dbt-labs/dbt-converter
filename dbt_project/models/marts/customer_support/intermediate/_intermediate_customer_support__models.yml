@@ -1,0 +1,37 @@
+version: 2
+
+models:
+
+  - name: int__support_all_ticket_tags
+    description: >
+      Calculates all tags and booleans that can be derived from zendesk ticket tags.
+
+    columns:
+      - name: ticket_id
+        tests:
+          - not_null
+          - unique
+        
+  - name: support_tickets_unioned
+    description: >
+      Union Intercom conversation data with Zendesk ticket data. We switched from 
+      Intercom to Zendesk in May 2021. See this spreadsheet for additional information
+      https://docs.google.com/spreadsheets/d/1WCDpCSOUfJk-UexIOM56d_nnne3bfhtGA0IuGjHBywA/edit#gid=0
+      
+    columns:
+      - name: ticket_id
+        tests:
+          - not_null
+          - unique
+
+  - name: support_ticket_chats_unioned
+    description: >
+      Union Intercom conversation parts with Zendesk ticket comments. We switched from 
+      Intercom to Zendesk in May 2021. See this spreadsheet for additional information
+      https://docs.google.com/spreadsheets/d/1WCDpCSOUfJk-UexIOM56d_nnne3bfhtGA0IuGjHBywA/edit#gid=0
+      
+    columns:
+      - name: ticket_comment_id
+        tests:
+          - not_null
+          - unique

@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: dbt_cloud_admin
+    description: '{{ doc("src_dbt_cloud_admin") }}'
+    database: raw
+    schema: fivetran_dbt_cloud
+    loader: fivetran
+    meta:
+      team: ['Data']
+      owner_name: Elize Papineau
+
+    tables:
+      - name: environments
+        description: '{{ doc("dbt_cloud_admin_environments") }}'
+      - name: jobs
+        description: '{{ doc("dbt_cloud_admin_jobs") }}'
+      - name: runs
+        description: '{{ doc("dbt_cloud_admin_runs") }}'

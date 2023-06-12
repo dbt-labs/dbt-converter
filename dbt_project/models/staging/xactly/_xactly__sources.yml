@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: xactly
+    description: '{{ doc("src_xactly") }}'
+    schema: xactly
+    database: raw
+    loader: xactly
+    meta:
+      team: ['Revenue Operations']
+      owner_name: Elize Papineau
+      create_masked_views: true
+    
+    tables:
+      - name: credits
+        description: '{{ doc("xactly_credits") }}'
+      - name: quotas
+        description: '{{ doc("xactly_quotas") }}'
+      - name: payments
+        description: '{{ doc("xactly_payments") }}'
+        columns:
+          - name: item_code
+            description:  The transaction batch that resulted in the payments
+            meta:
+              masking_policy: finance_string
+          - name: earning_group_name
+            description:  The group name category for the amounts paid
+            meta:
+              masking_policy: finance_string
+          - name: comp_earning_group_name
+            description:  The group name category for the commissions paid
+            meta:
+              masking_policy: finance_string
+          - name: bonus_earning_group_name
+            description:  The group name category for the bonuses paid
+            meta:
+              masking_policy: finance_string
+          - name: amount
+            description:  The payment amount in local currency
+            meta:
+              masking_policy: finance_float

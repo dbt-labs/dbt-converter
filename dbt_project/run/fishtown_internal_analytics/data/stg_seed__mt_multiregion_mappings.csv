@@ -1,0 +1,14 @@
+
+    
+    
+    
+    create table analytics_dev.dbt_jstein.stg_seed__mt_multiregion_mappings (INSTANCE_NAME text,DATABASE_SOURCE text,MAPPING_FIELD_TYPE text,MAPPING_VALUE text)
+  ;
+    -- dbt seed --
+    
+            insert into analytics_dev.dbt_jstein.stg_seed__mt_multiregion_mappings (INSTANCE_NAME, DATABASE_SOURCE, MAPPING_FIELD_TYPE, MAPPING_VALUE) values
+            (%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s),(%s,%s,%s,%s)
+        
+
+;
+  

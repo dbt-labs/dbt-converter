@@ -1,0 +1,400 @@
+version: 2
+
+models:
+  - name: stg_googlesheets__dbt_project_reg
+    description: '{{ doc("googlesheets_dbt_project_reg") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      
+  - name: stg_googlesheets__employee_locations
+    description: List of all Fishtown employees and their current country/zipcode/region
+    columns:
+      - name: id
+        tests:
+          - unique   
+          - not_null
+
+  - name: stg_googlesheets__global_training_nps
+    description: '{{ doc("googlesheets_global_training_nps") }}'
+    columns:
+      - name: unique_id
+        description: A surrogate key built off of the row ID.
+        tests:
+          - unique
+          - not_null
+
+      - name: response_row_id
+        description: The ID of the row the response relates to in the Google Sheet.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__global_training_feedback
+    description: '{{ doc("googlesheets_global_training_feedback") }}'
+    columns:
+      - name: unique_id
+        description: A surrogate key built off of the row ID.
+        tests:
+          - unique
+          - not_null
+
+      - name: response_row_id
+        description: The ID of the row the response relates to in the Google Sheet.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__incidents
+    description: '{{ doc("googlesheets_incidentio_incidents") }}'
+    columns:
+      - name: incident_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__private_learn_enrollments
+    description: '{{ doc("googlesheets_private_learn_enrollments") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: percentage_completed
+        description: Indicates whether a student has finished the course. This is specifically used when we combine these Learners with On-Demand learners whose completion rate can vary.
+
+  - name: stg_googlesheets__proserv_staff_engagement_survey
+    description: '{{ doc("googlesheets_proserv_staff_engagement") }}'
+    columns:
+      - name: survey_response_id
+        description: Surrogate key generated from Salesforce account id, employee email address, and engagement start date.
+        tests:
+          - unique
+          - not_null
+      - name: salesforce_opportunity_line_item_id
+        tests:
+          - relationships:
+              to: ref('stg_salesforce__opportunity_line_items')
+              field: opportunity_line_item_id
+              where: "submitted_at > '2023-02-03T00:00:00'"
+              config:
+                severity: warn
+
+  - name: stg_googlesheets__rate_ro_calculated_scores
+    description: '{{ doc("googlesheets__rate_ro") }}'
+    columns:
+      - name: rate_rapid_onboarding__survey_response_id
+        tests:
+          - unique
+          - not_null
+      - name: client_company_name
+        tests:
+          - not_null
+      - name: account_id
+        tests:
+          - not_null
+
+  - name: stg_googlesheets__rate_ro_raw_responses
+    description: '{{ doc("googlesheets__rate_ro") }}'
+    columns:
+      - name: rate_rapid_onboarding__survey_response_id
+        tests:
+          - unique
+          - not_null
+      - name: client_company_name
+        tests:
+          - not_null
+      - name: account_id
+        tests:
+          - not_null
+
+  - name: stg_googlesheets__rev_allocation_overrides
+    description: '{{ doc("googlesheets_rev_allocation_overrides") }}'
+    columns:
+      - name: order_number
+        description: '{{ doc("order_number") }}'
+      - name: ignore_revenue_reallocation
+        description: '{{ doc("ignore_revenue_reallocation") }}'  
+
+  - name: stg_googlesheets__rev_invoice_overrides
+    description: '{{ doc("googlesheets_rev_invoice_overrides") }}'  
+    columns:
+      - name: revenue_schedule_code
+        description: >
+          {{ doc("revenue_schedule_code") }} In this case, used to further confirm the schedule being overridden.    
+      - name: order_number
+        description: '{{ doc("order_number") }}'  
+      - name: order_item_number
+        description: '{{ doc("order_item_number") }}' 
+      - name: credit_note
+        description: '{{ doc("credit_note_name") }}' 
+      - name: billing_finance_period_start_date
+        description: '{{ doc("finance_period_start_date") }}' 
+      - name: invoiced_amount
+        description: '{{ doc("invoicing_subtotal") }}' 
+      - name: comment
+        description: An explanation of the reason for the override.
+
+  - name: stg_googlesheets__rev_rpo_overrides
+    description: '{{ doc("googlesheets_rev_rpo_overrides") }}' 
+    columns:
+      - name: revenue_schedule_code
+        description: >
+          {{ doc("revenue_schedule_code") }} In this case, used to further confirm the schedule being overridden.
+      - name: override_type
+        description: '{{ doc("rpo_override_type") }}'
+      - name: override_start_date
+        description: '{{ doc("rpo_override_start_date") }}'
+      - name: override_end_date
+        description: '{{ doc("rpo_override_end_date") }}'
+      - name: flat_amount
+        description: '{{ doc("rpo_override_flat_amount") }}' 
+      - name: comment
+        description: An explanation of the reason for the override.
+
+  - name: stg_googlesheets__rev_schedule_overrides
+    description: '{{ doc("googlesheets_rev_schedule_overrides") }}'
+    columns:
+      - name: revenue_schedule_code
+        description: >
+          {{ doc("revenue_schedule_code") }} In this case, used to further confirm the schedule being overridden.
+        tests:
+          - not_null
+      - name: initial_catch_up_date
+        description: >
+          {{ doc("initial_catch_up_date") }} In this case, a forced override of the field.
+      - name: final_rollup_date
+        description: >
+          {{ doc("final_rollup_date") }} In this case, a forced override of the field.
+      - name: sign_date
+        description: >
+          {{ doc("salesforce_contract_sign_date") }} In this case, a forced override of the field.
+      - name: revenue_start_date
+        description: >
+          {{ doc("revenue_start_date") }} In this case, a forced override of the field.
+      - name: revenue_end_date
+        description: >
+          {{ doc("revenue_end_date") }} In this case, a forced override of the field.
+      - name: revenue_per_day
+        description: >
+          {{ doc("revenue_per_day") }} In this case, a forced override of the field.          
+      - name: revenue_amount
+        description: >
+          An overall amount of revenue to be recognized. In this case, a forced override of the field.
+      - name: comment
+        description: An explanation of the reason for the override.
+
+      - name: initial_catch_up_date
+        description: '{{ doc("initial_catch_up_date") }}'
+
+      - name: initial_catch_up_amount
+        description: '{{ doc("initial_catch_up_amount") }}'
+
+      - name: as_of_date
+        description: '{{ doc("revenue_schedule_override_as_of_date") }}'
+
+  - name: stg_googlesheets__rev_transaction_overrides
+    description: '{{ doc("googlesheets_rev_transaction_overrides") }}'
+    columns:
+      - name: sfdc_rev_schedule_id
+        description: >
+          {{ doc("sfdc_rev_schedule_id") }} In this case, the key to join in overrides. Each can appear more than
+          once if multiple transactions are being associated with the same schedule.
+      - name: revenue_schedule_code
+        description: >
+          {{ doc("revenue_schedule_code") }} In this case, used to further confirm the schedule being overridden.
+        tests:
+          - not_null
+      - name: rev_transaction_amount
+        description: >
+          An overall amount of revenue to be recognized on the specific date. In this case, a forced override of the field.
+      - name: recognition_date
+        description: >
+          The date on which the revenue transaction will be overridden into the recognition schedule. 
+      - name: comment
+        description: An explanation of the reason for the override.
+
+  - name: stg_googlesheets_self_service_transaction_line_overrides
+    description: '{{ doc("googlesheets_self_service_transaction_line_overrides") }}'
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - transaction_identifier
+            - transaction_line_id
+    columns:
+      - name: transaction_identifier
+        description: '{{ doc("netsuite_transaction_identifier") }}'
+      - name: transaction_line_id
+        description: '{{ doc("netsuite_transaction_line_id") }}'
+      - name: revenue_start_date_override
+        description: >
+          {{ doc("revenue_start_date") }} In this case an override of the netsuite-sourced date.
+      - name: revenue_end_date_override
+        description: >
+          {{ doc("revenue_end_date") }} In this case an override of the netsuite-sourced date.
+      - name: comment
+        description: An explanation of the reason for the override.
+
+  - name: stg_googlesheets__website_content_tags
+    description: '{{ doc("googlesheets_website_content_tags") }}'
+    columns:
+      - name: page_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__proserv_feature_enablement_sessions
+    description: '{{ doc("googlesheets_website_content_tags") }}'
+    columns:
+      - name: enablement_session_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__customer_health_score_overall_weights
+    description: '{{ doc("customer_health") }}'
+    columns:
+      - name: customer_health_overall_weight_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__customer_health_score_category_weights
+    description: '{{ doc("customer_health") }}'
+    columns:
+      - name: customer_health_category_weight_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__customer_health_score_buckets
+    description: '{{ doc("customer_health") }}'
+    columns:
+      - name: customer_health_bucket_id
+          
+  - name: stg_googlesheets__proserv_utilization_targets
+    description: '{{ doc("googlesheets_website_content_tags") }}'
+    columns:
+      - name: proserv_utilization_targets_id
+        tests:
+          - unique
+          - not_null
+          
+  - name: stg_googlesheets__proserv_team_technical_skills
+    columns:
+      - name: proserv_team_technical_skills_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__finance_job_ids
+    description: '{{ doc("finance_job_ids") }}'
+    columns:
+      - name: job_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__sfdc_cloud_account_mappings
+    description: >
+      Manual pull/blessed list of customers since December 22, 2022 and their correct
+      Salesforce Account ID. This is a temporary fix until we fix our SFDC x Cloud logic.
+      The source of this data is [this Google Sheet](https://docs.google.com/spreadsheets/d/1ZVfwePxG1xnoWiOvUPlEzWKNcUsy-_rClARs5oP5bAc/edit#gid=1291913777)
+    columns:
+      - name: cloud_account_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__diversity_form_responses
+    description: >
+      The results of the ongoing DEI identification form for dbt Labs employees.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - sheet_row_id
+            - email_address
+    columns:
+      - name: email_address
+        meta:
+          masking_policy: dei_string
+      - name: submitted_at
+        meta:
+          masking_policy: dei_date
+
+  - name: stg_googlesheets__global_comp_bands
+    description: >
+      Compensation bands by Job Function Code by Country. Owned by TAP and Compensation/Rewards team.
+      Likely will be adjusted twice a year, any other changes are ad-hoc and sporadic.
+    columns:
+      - name: comp_band_id
+        tests:
+          - unique
+          - not_null
+  
+  - name: stg_googlesheets__terminated_employees
+    description: '{{ doc("terminated_employees") }}'
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - worker_id
+            - primary_worker_assignment_id
+
+  - name: stg_googlesheets__finance_transfers
+    description: >
+      Forecasted employee transfers between cost centers/job ID's to feed the finance roster for cost forecasting
+    columns:
+      - name: transfer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__planned_sales_attributes
+    description: >
+      Sales Attributes for all planned headcount to be used in conjunction with Sales attributes for actual headcount from SFDC
+    columns:
+      - name: job_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_googlesheets__diversity_form_value_mappings_dei
+    description: >
+      Diversity form response value value to DEI department bucket mapping. The
+      values in this spreadsheet are maintained by the DEI coordinator.
+    columns:
+      - name: form_response
+        tests:
+          - unique
+  - name: stg_googlesheets__diversity_form_value_mappings_eeo
+    description: >
+      Diversity form response value value to United States EEO bucket mapping.
+      The values in this spreadsheet are maintained by the DEI coordinator.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - identity_category
+            - form_response
+  
+  - name: stg_googlesheets__technical_classification_by_adp_department_code
+    description: >
+      Classifies each ADP department as technical or non-technical for DEI reporting purposes. 
+      Additionally, rolls departments up to org levels (e.g. Architecture -> Engineering) to 
+      create larger buckets and reduce the risk of creating a breakdown small enough to identify an individual.
+    columns: 
+      - name: cost_center_code
+        tests:
+          - dbt_utils.relationships_where:
+              to: ref('stg_adp__organizational_units')
+              field: cost_center_code
+              to_condition: organizational_level_name = 'Department'
+      - name: technical_classification
+        tests:
+          - accepted_values:
+              values: ['Technical', 'Not technical']
+          - not_null
+      - name: org
+        tests:
+          - not_null

@@ -1,0 +1,32 @@
+version: 2
+
+exposures:
+  
+  - name: weekly_dbt_metrics
+    type: dashboard
+    maturity: high
+    url: https://fishtown.looker.com/dashboards/51
+    description: >
+      Did someone say "exponential growth"?
+    
+    depends_on:
+      - ref('fct_dbt_invocations')
+      - ref('fct_dbt_projects')
+      - ref('stg_github_stars')
+      
+    owner:
+      name: Product Team
+      email: product@fishtownanalytics.com
+
+  - name: dbt_minor_version_adoption
+    type: dashboard
+    maturity: medium
+    url: https://fishtown.looker.com/dashboards/84
+    
+    depends_on:
+      - ref('fct_dbt_project_activity')
+      - ref('fct_dbt_projects')
+      
+    owner:
+      name: Jeremy (Product)
+      email: jeremy@fishtownanalytics.com

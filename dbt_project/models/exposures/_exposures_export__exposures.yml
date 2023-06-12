@@ -1,0 +1,156 @@
+version: 2
+
+exposures:
+  - name: single_tenant_fivetran_alerts
+    type: application
+    maturity: high
+    url: https://app.hightouch.io/dbtlabs/syncs/29036
+    description: '{{ doc("single_tenant_fivetran_alerts") }}'
+    
+    depends_on:
+      - ref('export_st_fivetran_connectors')
+      
+    owner:
+      name: Brandon Thomson
+      email: brandon.thomson@dbtlabs.com
+
+  - name: dbt_cloud_salesforce_export
+    type: application
+    maturity: high
+    url: https://app.hightouch.io/dbtlabs/syncs?search=salesforce
+    description: '{{ doc("dbt_cloud_salesforce_export") }}'
+
+    depends_on:
+      - ref('export_cloud_accounts')
+      - ref('export_cloud_user_account_mappings')
+      - ref('export_cloud_users')
+    
+    owner:
+      name: Brandon Thomson
+      email: brandon.thomson@dbtlabs.com
+
+  - name: hubspot_export
+    type: application
+    maturity: high
+    url: https://app.hightouch.io/dbtlabs/syncs?search=hubspot
+    description: '{{ doc("hubspot_export") }}'
+
+    depends_on:
+      - ref('export_cloud_users')
+      - ref('export_slack_users')
+
+    owner:
+      name: Brandon Thomson
+      email: brandon.thomson@dbtlabs.com
+
+  - name: mixpanel_export
+    type: application
+    maturity: medium
+    url: https://app.hightouch.io/dbtlabs/syncs?search=mixpanel+prod
+    description: '{{ doc("mixpanel_export") }}'
+
+    depends_on:
+      - ref('export_cloud_users')
+      - ref('export_web_pageviews')
+      - ref('export_inferred_user_id_mappings')
+      - ref('export_web_conversions')
+
+    owner:
+      name: Andrew Escay
+      email: andrew@dbtlabs.com
+
+  - name: customer_references_database
+    type: dashboard
+    maturity: low
+    url: https://www.notion.so/dbtlabs/360081051e064d2c8de01fbccefa563e?v=e41999d74f8a496fa1e2b6e53b6e6514
+    description: '{{ doc("customer_references_notion_database") }}'
+
+    depends_on:
+      - ref('export_customer_references')
+
+    owner:
+      name: Brandon Thomson
+      email: brandon.thomson@dbtlabs.com
+
+  - name: external_touchpoints_to_salesforce_touchpoints
+    type: application
+    maturity: low
+    url: https://app.hightouch.io/dbtlabs/syncs/41786
+    description: '{{ doc("external_touchpoints_to_salesforce_touchpoints") }}'
+
+    depends_on:
+      - ref('export_external_touchpoints')
+
+    owner:
+      name: Brandon Thomson
+      email: brandon.thomson@dbtlabs.com
+
+  - name: pigment_revenue_export
+    type: application
+    maturity: low
+    url: https://pigment.app/application/14f48a1d-cc67-4bd9-8c6c-77611857d922
+    description: >
+        Revenue export from Salesforce for Corp Fin Revenue Forecast Model
+
+    depends_on:
+      - ref('export_pigment_revenue')
+
+    owner:
+      name: Kenan Glasgold
+      email: kenan.glasgold@dbtlabs.com
+
+  - name: export_pigment_cloud_revenue
+    type: application
+    maturity: low
+    url: https://pigment.app/application/14f48a1d-cc67-4bd9-8c6c-77611857d922/lists/fa521869-1506-4413-a34a-38a9a9af2191
+    description: >
+        Total Cloud Revenue used in the Pigment ARR model to back into monthly Enterprise Upgrade ARR
+
+    depends_on:
+      - ref('export_pigment_cloud_revenue')
+
+    owner:
+      name: Kenan Glasgold
+      email: kenan.glasgold@dbtlabs.com
+
+  - name: export_pigment_self_serve_arr
+    type: application
+    maturity: low
+    url: https://pigment.app/application/14f48a1d-cc67-4bd9-8c6c-77611857d922/lists/29bcc14d-3569-4280-be9a-d78cc46261bc
+    description: >
+        Total Self-Serve ARR used in the Pigment ARR model 
+
+    depends_on:
+      - ref('export_pigment_self_serve_arr')
+
+    owner:
+      name: Kenan Glasgold
+      email: kenan.glasgold@dbtlabs.com
+
+  - name: export_sfdc_job_requisitions
+    type: application
+    maturity: low
+    url: https://pigment.app/application/14f48a1d-cc67-4bd9-8c6c-77611857d922/lists/29bcc14d-3569-4280-be9a-d78cc46261bc
+    description: >
+        Job ID's for use in Finance Sales Capacity Modeling
+
+    depends_on:
+      - ref('stg_salesforce__job_requisitions')
+
+    owner:
+      name: Kenan Glasgold
+      email: kenan.glasgold@dbtlabs.com
+
+  - name: export_global_comp_bands
+    type: application
+    maturity: low
+    url: https://pigment.app/application/14f48a1d-cc67-4bd9-8c6c-77611857d922/lists/29bcc14d-3569-4280-be9a-d78cc46261bc
+    description: >
+        Comp Bands for use in finance forecasting
+
+    depends_on:
+      - ref('stg_googlesheets__global_comp_bands')
+
+    owner:
+      name: Kenan Glasgold
+      email: kenan.glasgold@dbtlabs.com

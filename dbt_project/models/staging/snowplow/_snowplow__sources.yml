@@ -1,0 +1,50 @@
+
+version: 2
+
+sources:
+  - name: snowplow
+    loader: snowpipe
+    database: raw
+    freshness:
+        error_after: {count: 48, period: hour}
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+    description: > 
+        dbt Cloud application event tracking framework.
+    tables:
+      - name: event
+        loaded_at_field: collector_tstamp
+        tests:
+            - snowplow_app_recency:
+                app_id: dbt
+                error_after: 48 hour
+
+            - snowplow_app_recency:
+                app_id: dbt-docs
+                error_after: 48 hours
+
+            - snowplow_app_recency:
+                app_id: discourse.getdbt.com
+                error_after: 48 hours
+
+            - snowplow_app_recency:
+                app_id: getdbt.com
+                error_after: 48 hours
+
+  - name: snowplow_historical
+    loader: fivetran
+    database: raw
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+    description: >
+      A historical Snowplow dataset representing the time before our current
+      Snowflake data warehouse was implemented.
+    tables:
+      - name: event
+      - name: invocation
+      - name: invocation_env
+      - name: platform
+      - name: run_model
+      - name: web_page

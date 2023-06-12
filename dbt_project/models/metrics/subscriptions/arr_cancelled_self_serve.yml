@@ -1,0 +1,29 @@
+version: 2
+
+metrics:
+  - name: arr_cancelled_self_serve
+    label: Self-Serve Cancelled ARR
+    model: ref('fct_arr_aggregated')
+    description: >
+      The ARR (Annual Recurring Revenue) loss from Self-Serve accounts associated with churn
+      transactions (cancels, or switch to free developer plan) over a given time period.
+
+    calculation_method: sum
+    expression: ss_churn_arr
+
+    filters:
+      - field: sales_channel
+        operator: "="
+        value: "'Self-Serve'"
+
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

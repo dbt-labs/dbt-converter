@@ -1,0 +1,47 @@
+Metadata-Version: 2.1
+Name: rudder-sdk-python
+Version: 1.0.6
+Summary: RudderStack is an open-source Segment alternative written in Go, built for the enterprise.
+Home-page: https://github.com/rudderlabs/rudder-sdk-python
+Author: RudderStack
+Author-email: arnab@rudderlabs.com
+Maintainer: RudderStack
+Maintainer-email: arnab@rudderlabs.com
+License: MIT License
+Keywords: rudder,rudderstack,analytics
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+License-File: LICENSE.md
+Requires-Dist: requests (<3.0,>=2.7)
+Requires-Dist: six (>=1.4)
+Requires-Dist: monotonic (>=1.5)
+Requires-Dist: backoff (>=2.1)
+Requires-Dist: python-dateutil (>2.1)
+Provides-Extra: test
+Requires-Dist: mock (==2.0.0) ; extra == 'test'
+Requires-Dist: pylint (==1.9.3) ; extra == 'test'
+Requires-Dist: flake8 (==3.7.9) ; extra == 'test'
+Requires-Dist: coverage (==4.5.4) ; extra == 'test'
+
+
+RudderStack is a platform for collecting, storing and routing customer event data to dozens
+of tools. RudderStack is open-source, can run in your cloud environment
+(AWS, GCP, Azure or even your data-centre) and provides a powerful transformation
+framework to process your event data on the fly.
+
+

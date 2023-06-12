@@ -1,0 +1,75 @@
+version: 2
+
+sources:
+  - name: fivetran_webhooks_postgres
+    description: '{{ doc("src_cloud_webhooks") }}'
+    schema: fivetran_webhooks_postgres_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Tom
+
+    # freshness:
+    #   warn_after: {count: 4, period: hour}
+    #   error_after: {count: 8, period: hour}
+
+    freshness: # atom 4/18: opening up until volume picks up 
+      warn_after: {count: 1, period: day}
+      error_after: {count: 7, period: day}
+
+    tables:
+      - name: events
+        description: Webhook events triggered for all subscription configurations in this cloud deployment.
+      - name: response_receipts
+        description: Responses and metadata from webhook event requests last dispatched to client applications.
+      - name: subscriptions
+        description: A configured subscription the client sets to listen to RunCompleted events from dbt cloud.
+
+  - name: fivetran_webhooks_postgres_emea
+    description: '{{ doc("src_cloud_webhooks") }}'
+    schema: fivetran_webhooks_postgres_emea_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Tom
+
+    freshness: # atom 4/18: opening up until volume picks up 
+      warn_after: {count: 1, period: day}
+      error_after: {count: 7, period: day}
+
+    tables:
+      - name: events
+        description: Webhook events triggered for all subscription configurations in this cloud deployment.
+      - name: response_receipts
+        description: Responses and metadata from webhook event requests last dispatched to client applications.
+      - name: subscriptions
+        description: A configured subscription the client sets to listen to RunCompleted events from dbt cloud.
+
+  - name: fivetran_webhooks_postgres_au
+    description: '{{ doc("src_cloud_webhooks") }}'
+    schema: fivetran_webhooks_postgres_au_public
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Tom
+
+    freshness: # atom 4/18: opening up until volume picks up 
+      warn_after: {count: 1, period: day}
+      error_after: {count: 7, period: day}
+
+    tables:
+      - name: events
+        description: Webhook events triggered for all subscription configurations in this cloud deployment.
+      - name: response_receipts
+        description: Responses and metadata from webhook event requests last dispatched to client applications.
+      - name: subscriptions
+        description: A configured subscription the client sets to listen to RunCompleted events from dbt cloud.

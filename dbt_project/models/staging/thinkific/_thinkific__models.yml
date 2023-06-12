@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: stg_thinkific__users
+    description: The individual users that are registered in the Thinkific LMS (courses.getdbt.com)
+    columns:
+      - name: user_id
+        description: Primary key for users in Thinkific.
+        tests:
+          - unique
+          - not_null
+      - name: administered_course_ids
+        description: An array of the particular courses the user administers if applicable
+      - name: user_role
+        description: The roles assigned to the user in Thinkific.  This is not the person role at their company.
+      - name: created_at
+        description: The timestamp for when the user account was created by a) the user themselves or b) a Thinkific admin.
+
+  - name: stg_thinkific__courses
+    description: The unique courses that are created in the Thinkific LMS (courses.getdbt.com)
+    columns:
+      - name: course_id
+        description: Primary key for courses in Thinkific.
+        tests:
+          - unique
+          - not_null
+      - name: instructor_id
+        description: A foreign key to the instructor for the course (note - we don't currently load instructor data)
+      - name: product_id
+        description: A foreign key to the product for this course (note - we don't currently load product data)
+      - name: user_id
+        description: A foreign key to the users who created the course.
+        tests:
+          - relationships:
+              to: ref('stg_thinkific__users')
+              field: user_id
+      - name: course_slug
+        description: A string that can be appended to courses.getdbt.com to find the course.  (e.g. courses.getdbt.com/dbt-fundamentals)
+
+  - name: stg_thinkific__enrollments
+    description: The enrollments by individual learners in each course in the Thinkific LMS (courses.getdbt.com).  Users can be enrolled in more than one course.
+    columns:
+      - name: enrollment_id
+        description: Primary key for enrollments in Thinkific.
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: A foreign key to the users who created the course.
+        tests:
+          - relationships:
+              to: ref('stg_thinkific__users')
+              field: user_id
+              config:
+                severity: warn
+      - name: course_id
+        description: A foreign key to the course associated with this enrollment.
+        tests:
+          - relationships:
+              to: ref('stg_thinkific__courses')
+              field: course_id
+      - name: started_at
+        description: The timestamp for when the user opened the first lesson in the course.
+      - name: updated_at
+        description: The timestamp when the user took the latest action in the course.
+      - name: last_logged_in_at
+        description: This is the updated_at column, but renamed so we can provide both contexts. This is the best way of indicating when a user has last logged in as they have either made progress on the coures or revisited the course.
+      - name: completed_at
+        description: The timestamp for when the user marked all lessons in the course as complete.
+
+  - name: stg_thinkific__groups
+    description: The groups created in the Thinkific LMS (courses.getdbt.com) for reporting purposes.
+    columns:
+      - name: group_id
+        description: Primary key for groups in Thinkific.
+        tests:
+          - unique
+          - not_null

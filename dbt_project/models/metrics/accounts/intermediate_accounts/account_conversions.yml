@@ -1,0 +1,32 @@
+version: 2
+
+metrics:
+
+  - name: account_conversions
+    label: Account Conversions
+    model: ref('account_conversions')
+    description: >
+      {{ doc("account_conversions") }}  
+        
+      {{ doc("querying_dbt_metrics") }}
+
+    calculation_method: count 
+    expression: account_id
+
+    timestamp: created_at
+    time_grains: [day, week, month]
+
+    dimensions:
+      - channel
+      - employee_count_range
+      - market_segment
+      - marketing_campaign
+      - plan_tier
+      - region_category
+      - sales_motion
+      - sign_up_source
+
+    filters:
+      - field: is_converted
+        operator: '='
+        value: 'true'

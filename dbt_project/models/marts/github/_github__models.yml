@@ -1,0 +1,92 @@
+version: 2
+
+exposures:
+  - name: core_oss_maintenance
+    type: dashboard
+    maturity: medium
+    url: https://fishtown.looker.com/dashboards/291
+    description: >
+      Open source maintenance: community-contributed issues needing triage, 
+      PRs needing review and merge
+    owner:
+      email: jeremy@dbtlabs.com
+    depends_on:
+      - ref('fct_github_issues')
+      - ref('fct_github_pull_requests')
+
+models:
+  - name: dim_github_users
+    description: "This model contains all github users, their associated teams, and general user information."
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: user_type
+        description: >
+            A field denoting whether a given github user is a true user, a bot, or a larger organization. 
+      - name: is_site_admin
+        description: >
+            A boolean indicating whether a given user has administrative rights in git. 
+      - name: github_username
+        description: >
+            The display username selected by a given user in git. 
+      - name: company
+        description: >
+            The company self-reported by a given user in git. 
+      - name: engineering_team_assignment
+      - name: blog
+      - name: location
+        description: >
+            The location self-reported by a given user in git.
+      - name: is_hireable
+      - name: bio
+        description: >
+            The bio provided by a given user in git. 
+      - name: created_at
+      - name: updated_at
+      - name: teams
+        description: >
+            A list of a given user's assigned teams in git
+      - name: first_internal_commit_date
+        description: >
+            The date of the first commit a given user has made as a member of an internal dbt team. 
+      - name: first_overall_commit_date
+        description: >
+            The date of the first commit a given user has made across all tracked github activity. 
+        
+
+  - name: fct_github_commits
+    description: "This model consists of all commits in every repository and the committer information."
+    columns:
+      - name: commit_sha
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_github_pull_requests
+    description: "This model contains all pull requests, their repository, author information, status, and whether the pr was merged."
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+  
+  - name: fct_github_issues
+    description: "This model contains all the issues across tracked repos. It
+      has information around the isssue itself, as well as triage timings."
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_github_issue_status_counts
+    description: "This model has counts on issues in different issue statuses
+      each day. This model is built to help monitor how many issues fall in 
+      different states to help improve the issue triage flow of product."
+    columns:
+      - name: issue_status_count_id
+        tests:
+          - unique
+          - not_null

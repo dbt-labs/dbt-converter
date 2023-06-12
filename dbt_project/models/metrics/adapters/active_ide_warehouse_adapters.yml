@@ -1,0 +1,29 @@
+version: 2
+
+metrics:
+  - name: active_ide_warehouse_adapters
+    label: Active Warehouse Adapters (IDE)
+    model: ref('fct_dbt_invocations')
+    description: > 
+      A measure of engaged activity originating from a unique data platform, defined 
+      as whether the adapter had an invocation in the IDE during the specified time grain.
+    tags: []
+
+    calculation_method: count_distinct
+    expression: adapter_unique_id
+
+    timestamp: started_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - adapter
+      - plan
+
+    filters:
+      - field: develop_request_id
+        operator: "is not"
+        value: "null"
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

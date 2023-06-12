@@ -1,0 +1,2 @@
+{% docs core_run_metrics %} Core runs are the invocation of commmands such as "dbt run" and "dbt build" outside of the dbt Cloud environment. For more information on how Core Usage -
+[see here](https://www.notion.so/dbtlabs/Core-Usage-vs-Cloud-Usage-6966f921fa124884886b6eada0ca2adc?pvs=4). {% enddocs %}

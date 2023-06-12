@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: cloud_attach_rate
+    label: Cloud Attach Rate (Adapters)
+    description: > 
+      The percentage of active cloud warehouse adapters over the sum total active warehouse adapters.
+    tags: ['FY2024 - O3']
+
+    calculation_method: derived
+    expression: "{{ metric('active_cloud_warehouse_adapters') }} / {{ metric('active_warehouse_adapters') }}"
+
+    timestamp: started_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - adapter
+      - adapter_unique_id
+      - plan
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

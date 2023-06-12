@@ -1,0 +1,1 @@
+{"name": "revenue", "description": "The total revenue of our jaffle business", "type": "measure_proxy", "type_params": {"measure": {"name": "revenue"}}, "constraint": {"where": "status = 'completed'", "linkable_names": ["status"], "sql_params": {"param_items": []}}}

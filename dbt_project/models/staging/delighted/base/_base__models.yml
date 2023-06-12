@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: base__delighted_questions
+    description: >
+      This unions Delighted projects together. Each row 
+      represents one question that is included on a survey.
+    columns:
+      - name: question_id
+        tests:
+          - unique
+          - not_null
+  
+  - name: base__delighted_response_answers
+    description: >
+      This unions Delighted projects together. Each row represents 
+      one answer to one question as a part of one survey response.
+    columns:
+      - name: response_answer_id
+        tests:
+          - unique
+          - not_null
+      - name: account_plan
+        description: '{{ doc("cloud_plan") }}'
+      - name: account_plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+
+  - name: base__delighted_responses
+    description: >
+      This unions Delighted projects together. Each row represents
+      one survey response.
+    columns:
+      - name: response_id
+        tests:
+          - unique
+          - not_null
+
+  - name: base__delighted_users
+    description: >
+      This unions Delighted projects together. Each row represents
+      a person who has responded to at least one survey.
+    columns:
+      - name: delighted_user_id
+        tests:
+          - unique
+          - not_null
+

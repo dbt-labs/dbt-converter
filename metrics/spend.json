@@ -1,0 +1,1 @@
+{"name": "spend", "description": "Total spend (in currency of individual platforms)", "type": "measure_proxy", "type_params": {"measure": {"name": "spend"}}}

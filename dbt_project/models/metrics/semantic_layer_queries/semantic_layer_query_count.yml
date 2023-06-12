@@ -1,0 +1,28 @@
+version: 2
+
+metrics:
+  - name: semantic_layer_query_count
+    label: Count of Semantic Layer Queries
+    model: ref('fct_cloud_account_activities')
+    description: "The count of semantic layer queries run by eligible accounts in the period."
+    tags: ['Product Metric']
+
+    calculation_method: sum
+    expression: count_semantic_layer_queries
+
+    timestamp: date_day
+    time_grains: [day, week, month, quarter, year]
+
+    filters:
+      - field: is_semantic_layer_eligible
+        operator: "="
+        value: "true"
+
+    dimensions:
+      - name
+      - plan
+      - is_active_metrics
+
+    meta:
+      metric_level: 'Product'
+      owner: 'Cameron Afzal'

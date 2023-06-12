@@ -1,0 +1,79 @@
+version: 2
+
+models:
+  - name: dim_all_learners
+    description: Represents everyone that we have trained through any dbt Learn experience.
+    columns:
+      - name: learner_email
+        description: Email of the learner, this will operate as the primary key for all learners.
+        tests:
+          - unique
+          - not_null
+      - name: learner_name
+        description: Full name of the learner.
+      - name: best_learning_channel
+        description: The channel through which the learner was trained (courses.getdbt.com, live - public, live - private) based on their best taken course.
+        tests:
+          - accepted_values:
+              values: ['jumpstart','group training', 'community learn', 'rapid onboarding', 'on demand']
+      - name: best_course_type
+        description: The type of the learner's best course.  (public, private)
+        tests:
+          - accepted_values:
+              values: ['public', 'private']
+      - name: attended_courses
+        description: An array of all courses a student has enrolled in and their pct completion
+      - name: is_trained
+        description: Boolean field to communicate if a learner has completed a course.
+      - name: first_started_at
+        description: The start time of their first training ever.
+      - name: last_logged_in_at
+        description: This indicates the last time a Learner made changes to their dbt Fundamentals (private or public) course. This will be null if the student exclusively attended a private Learn event.
+      - name: first_completed_at
+        description: The completion time of their first completed course.
+
+  - name: fct_internal_training_enrollments
+    description: Tracks enrollment progress of newly onboarded employees through departmental trainings.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - user_id
+            - course_id
+    columns:
+      - name: enrollment_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_training_enrollments
+    description: A unioned model to represent every enrollment (e.g. dbt Fundamentals, private learns, Jumpstarts) that have attended any dbt Learn experience.
+    columns:
+      - name: enrollment_id
+        tests:
+          - unique
+          - not_null
+      - name: learner_name
+        description: Full name of the learner.
+      - name: learning_channel
+        description: The channel through which the learner was trained (courses.getdbt.com, live - public, live - private)
+        tests:
+          - accepted_values:
+              values: ['jumpstart','group training', 'community learn', 'rapid onboarding', 'on demand']
+      - name: is_trained
+        description: Boolean field to communicate if a learner has completed a course.
+      - name: started_at
+        description: The start time of the training.
+      - name: completed_at
+        description: The completion time of the training.
+      - name: last_logged_in_at
+        description: This is specifically for dbt Fundamentals (private and public) and indicates when the user last updated/made progress on their course.
+      - name: last_chapter_completed
+        description: >
+          This is likely the last chapter completed for a given enrollment. This field will be NULL if there are no mapping for the course_id OR if the learner 
+          has not yet completed the first chapter. Note: this calculation makes the assumption that a learner is progressing sequentially through the course, 
+          but this is not yet enforced.
+      - name: current_chapter
+        description: > 
+          This is likely the current chapter for a given enrollment. This field will be NULL if there are no mapping for the course_id and 'Completed' if the learner has 
+          completed the entire course. Note: this calculation makes the assumption that a learner is progressing sequentially through the course, 
+          but this is not yet enforced.

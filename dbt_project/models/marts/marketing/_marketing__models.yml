@@ -1,0 +1,1619 @@
+version: 2
+
+models:
+  - name: fct_marketing_funnel_events
+    description: This dataset includes one row per event in our marketing pipeline funnel.
+    columns:
+      - name: event_id
+        description: A surrogate key based off of the user_funnel_id, object_id, and event_name.
+        tests:
+          - unique
+          - not_null
+
+      - name: user_funnel_id
+        description: The corresponding ID for each user's funnel(s).
+
+      - name: object_id
+        description: This links back to which Salesforce object this information stems from. For example, if a new contact is created, this represents the contact_id.
+
+      - name: event_timestamp
+        description: When the event occured in UTC
+
+      - name: event_name
+        description: The stage of the marketing funnel
+
+      - name: source
+        description: The source associated with each event. For contacts, this is campaign_source. For leads and opportunities, this is lead source.
+
+  - name: fct_heysummit_registrations
+    description: >
+      This dataset includes one row per event and talk registration for a HeySummit event.
+      If a user registered for an event but no talks, then the talk data will be null.
+      Answers to the questions that were asked during the registration process are also available in this dataset.
+    columns:
+      - name: registration_id
+        description: A unique value for every talk registration per attendee
+        tests:
+          - unique
+          - not_null
+
+      - name: attendee_id
+        description: A unique identifer for each attendee to an event
+
+      - name: event_id
+        description: A unique identifer for each event
+
+      - name: talk_id
+        description: A unique identifier for each talk
+
+      - name: email
+        description: The attendee's email address
+
+      - name: name
+        description: The name of the attendee
+
+      - name: event_name
+        description: The name of the event
+
+      - name: talk_name
+        description: The name of the specific talk at an event
+
+      - name: registration_status
+        description: The latest registration status for a given attendee. This will indicate if an attendee has completed their order, or if they aborted at a specific stage.
+
+      - name: ip_address
+        description: The IP Address of the registrant when they registered for an event
+
+      - name: speaker_referrer_email
+        description: The email of the speaker who refered a registrant
+
+      - name: http_referer
+        description: The refering site for a registrant who registered for an event
+
+      - name: http_referer_domain
+        description: The refering domain for a registrant who registered for an event
+
+      - name: source
+        description: The traffic source for a user who registered for an event. This is parsed from the utm_source parameter in the referer URL.
+
+      - name: medium
+        description: The traffic medium for a user who registered for an event. This is parsed from the utm_medium parameter in the referer URL.
+
+      - name: marketing_asset
+        description: The marketing creative and/or asset name.
+
+      - name: marketing_asset_version
+        description: The version of the marketing asset. This is particularly useful for A/B and version testing.
+
+      - name: marketing_campaign
+        description: The campaign for a user who registered for an event. This is parsed from the utm_campaign paramater in the referer URL.
+
+      - name: marketing_campaign_period
+        description: The period in which a marketing campaign was run. This can be several different types of time periods, including year (yyyy), quarter-year (q#-yyyy), half-year (h#-yyyy), or evergreen
+
+      - name: marketing_campaign_name
+        description: The truncated name of the marketing campaign.
+
+      - name: marketing_campaign_goal
+        description: >
+          The goal of the marketing campaign. This can be one of three values: `awareness`, `conversion`, `retention`.
+
+      - name: marketing_content
+        description: The piece of marketing content that led a user to the Coalesce website during a registration session. This is parsed from the utm_content parameter in the referer URL.
+
+      - name: marketing_offer
+        description: The offer associated with a marketing asset.
+
+      - name: questions
+        description: A JSON field with details of all of the questions asked during the signup process
+
+      - name: categories
+        description: A JSON field with details of all of the categories for a given event a registrant registered for
+
+      - name: talks
+        description: A JSON field with details of all of the talks a registrant registered for
+
+      - name: talk_url
+        description: The API endpoint for each talk
+
+      - name: tickets
+        description: A JSON field with details of all of the tickets a registrant purchased for an event
+
+      - name: registered_at
+        description: A timestamp indicating when a user registered for an event
+
+      - name: agreed_terms_at
+        description: A timestamp indicating when a user agreed to the terms for an event. This is most frequently the same time as registered_at.
+
+      - name: are_you_a_member_of_the_dbt_slack_community
+        description: "A question asked during the registration signup: 'Are you a member of the dbt Slack community?'"
+
+      - name: were_so_excited_to_connect_with_you_at_coalesce_tell_us_a_little_bit_about_who_you_are_and_how_long_youve_been_using_dbt
+        description: "A question asked during the registration signup: 'We're so excited to connect with you at Coalesce. Tell us a little bit about who you are and how long you've been using dbt.'"
+
+      - name: job_title
+        description: The jobe title provided by the registrant
+
+      - name: if_you_need_any_accommodations_please_let_us_know
+        description: "A question asked during the registration signup: 'If you need any accommodations, please let us know.'"
+
+      - name: zippostal_code
+        description: The zip or postal code provided by the registrant
+
+      - name: company_size
+        description: The company size provided by the registrant
+
+      - name: company_name
+        description: The company name provided by the registrant
+
+      - name: contact_id
+        description: The Salesforce contact id associated with the registrant
+
+      - name: account_id
+        description: The Salesforce account id associated with the registrant
+
+      - name: country_code
+        description: The ISO Alpha-2 country code for the registrant. This is source via a registrant's Salesforce contact record. If that doesn't exist, then it is sourced via the registrant's associated account record.
+
+      - name: country_name
+        description: The country for the registrant
+
+      - name: region_category
+        description: The region for the registrant. This is determined by our country code to region mapping.
+
+      - name: is_registered
+        description: Indicates if a user has completed their registration for an event.
+
+      - name: has_attended_live
+        description: Indicates if a user attended a talk live.
+
+      - name: has_viewed_recording
+        description: Indicates if a user watched a recording of a talk after it aired. Note - a user can both attend live and view a recording.
+
+      - name: was_no_show
+        descriptoin: Indicates if a user did not attend a session that they registered for. Note - a recording view does not account for attendance.
+
+  - name: fct_hubspot_email_sends
+    description: This dataset includes one row per email sent in our Hubspot emails.
+    columns:
+      - name: event_id
+        description: The ID of the event (email send).
+        tests:
+          - unique
+          - not_null
+
+      - name: bcc_emails
+        description: The 'cc' field of the email message.
+
+      - name: cc_emails
+        description: The 'bcc' field of the email message.
+
+      - name: email_subject
+        description: The subject line of the email message.
+
+      - name: from_email
+        description: The 'from' field of the email message.
+
+      - name: reply_to_email
+        description: The 'reply-to' field of the email message.
+
+      - name: created_timestamp
+        description: The created timestamp of the event.
+
+      - name: email_campaign_id
+        description: The ID of the related email campaign.
+
+      - name: recipient_email_address
+        description: The email address of the contact related to the event.
+
+      - name: email_send_timestamp
+        description: The timestamp of the SENT event related to this event.
+
+      - name: email_send_id
+        description: The event ID which uniquely identifies the email message's SENT event. If not applicable, this property is omitted.
+
+      - name: contact_id
+        description: The ID of the related contact.
+
+      - name: bounces
+        description: "{{ doc('bounces') }}"
+
+      - name: clicks
+        description: "{{ doc('clicks') }}"
+
+      - name: deferrals
+        description: "{{ doc('deferrals') }}"
+
+      - name: deliveries
+        description: "{{ doc('deliveries') }}"
+
+      - name: drops
+        description: "{{ doc('drops') }}"
+
+      - name: forwards
+        description: "{{ doc('forwards') }}"
+
+      - name: opens
+        description: "{{ doc('opens') }}"
+
+      - name: prints
+        description: "{{ doc('prints') }}"
+
+      - name: spam_reports
+        description: "{{ doc('spam_reports') }}"
+
+      - name: was_bounced
+        description: Whether the email was bounced.
+
+      - name: was_clicked
+        description: Whether the email was clicked.
+
+      - name: was_deferred
+        description: Whether the email was deferred.
+
+      - name: was_delivered
+        description: Whether the email was delivered.
+
+      - name: was_forwarded
+        description: Whether the email was forwarded.
+
+      - name: was_opened
+        description: Whether the email was opened.
+
+      - name: was_printed
+        description: Whether the email was printed.
+
+      - name: was_spam_reported
+        description: Whether the email was spam reported.
+
+      - name: _fivetran_synced
+        description: '{{ doc("_fivetran_synced") }}'
+
+      - name: parent_campaign_id
+        description: The ID of the marketing campaign the email is associated with
+
+      - name: parent_campaign_name
+        description: The name of the campaign the email is associated with
+
+      - name: campaign_type
+        description: The type of campaign the email is associated with. Examples include Leadflow email, Ab email, Automated email, etc.
+
+      - name: status
+        description: >
+          The latest status of the email recipient. The hiearchy for determining this is:
+          - Sent Email
+          - Delivered Email
+          - Opened Email
+          - Clicked Through Email
+
+  - name: fct_campaign_members
+    description: '{{ doc("fct_campaign_members") }}'
+    columns:
+      - name: id
+        description: A surrogate key based off of the `campaign_member_id`, `touchpoint_id`, and `opportunity_id`. Since one campaign member can have multiple touchpoints, and multiple opportunities can be linked to each hand touchpoint, this allows us to see the unique combination of all three.
+        tests:
+          - unique
+          - not_null
+
+      - name: campaign_member_id
+        description: The unique ID of each contact in a campaign.
+
+      - name: campaign_id
+        description: The ID of the campaign the campaign member is associated with.
+
+      - name: cloud_user_id
+        description: The dbt Cloud user ID of the campaign member. This is only included if the user signed up for Cloud after they were engaged with the campaign.
+
+      - name: contact_id
+        description: The Salesforce Contact ID of the campaign member.
+
+      - name: account_id
+        description: The ID of the Salesforce account the campaign member is associated with.
+
+      - name: created_by_id
+        description: The ID of the user who created the campaign member.
+
+      - name: external_id
+        description: Unique ID on the campaign member that concatenates email and campaign member id.
+
+      - name: touchpoint_id
+        description: The ID of the touchpoint the campaign member is associated with. This is only included if the touchpoint was opened after the campaign member became engaged with the campaign.
+
+      - name: lead_or_contact_id
+        description: The ID of the lead or contact that sourced the campaign member.
+
+      - name: lead_or_contact_owner_id
+        description: The ID of the owner of the lead or contact.
+
+      - name: campaign_grade
+        description: Field used for grading field marketing leads to assign to sales team.
+
+      - name: city
+        description: City portion of the campaign member's address.
+
+      - name: company_or_account
+        description: The company, if the campaign member is based on a lead, or the account, if the campaign member is based on a contact.
+
+      - name: country
+        description: Country portion of campaign member's address.
+
+      - name: description
+        description: Description of the campaign member
+
+      - name: do_not_call
+        description: Whether the campaign member wants to be contacted by phone.
+
+      - name: email
+        description: Email address of the campaign member.
+
+      - name: name
+        description: The name of the campaign member, from the Salesforce contact object.
+
+      - name: first_name
+        description: The first name of the campaign member, from the Salesforce contact object.
+
+      - name: last_name
+        description: The last name of the campaign member, from the Salesforce contact object.
+
+      - name: lead_source
+        description: The source of the lead for the campaign member.
+
+      - name: is_deleted
+        description: Indicates if a campaign member is deleted or not.
+
+      - name: phone
+        description: The phone number of the campaign member, from the Salesforce contact object.
+
+      - name: postal_code
+        description: The postal code of the campaign member, from the Salesforce contact object.
+
+      - name: salutation
+        description: The salutation for addressing the campaign member, for example, Mr., Ms., Dr., or Prof.
+
+      - name: state
+        description: State or province portion of campaign member's address.
+
+      - name: status
+        description: The status of the campaign member, for example, sent or responded.
+
+      - name: street
+        description: Street portion of the campaign member's address.
+
+      - name: title
+        description: The title of the campaign member, for example, President.
+
+      - name: type
+        description: The record type of the campaign member, which determines the page layout available for the campaign member.
+
+      - name: has_responded
+        description: Indicates if the campaign member has responded.
+
+      - name: is_engaged
+        description: Indicates if a campaign member is engaged with a campaign. This is based on if the campaign member required the minimum required action to become engaged based on the campaign type. For example, a user registering for an event.
+
+      - name: campaign_member_created_at
+        description: Date the campaign member was created.
+
+      - name: campaign_member_responded_date
+        description: Date the campaign member first responded.
+
+      - name: campaign_member_engaged_at
+        description: A timestamp indicating when the campaign member became engaged with the campaign.
+
+      - name: campaign_name
+        description: The name of the campaign the user is a member of.
+
+      - name: campaign_type
+        description: The type of campaign the user is a member of.
+
+      - name: campaign_start_date
+        description: The start date of the campaign the user is a member of.
+
+      - name: campaign_end_date
+        description: The end date of the campaign the user is a member of.
+
+      - name: contact_created_at
+        description: A timestamp indicating when the campaign member was originally created as a contact.
+
+      - name: cloud_signup_at
+        description: A timestamp indicating when the campaign member signed up for dbt Cloud. This is only included if the user signed up for Cloud after they were engaged with the campaign.
+
+      - name: touchpoint_index
+        description: The Nth touchpoint for a contact. This index starts at 1. For example, the first touchpoint for a contact will have a touchpoint_index of 1. This is used to calculate new_vs_existing_lead.
+
+      - name: opportunity_id
+        description: The ID of an opportunity associated with a touchpoint. This is only included if the touchpoint was opened after the campaign member became engaged with the campaign.
+
+      - name: opportunity_index
+        description: The Nth opportunity on an account. This index starts at 1. For example, the first opportunity on an account will have an opportunity_index of 1. This is used to calculate new_vs_existing_opportunity.
+
+      - name: furthest_pipeline_stage_achieved
+        description: The furthest pipeline stage achieved for an opportunity.
+
+      - name: is_new_contact
+        description: Indicates if the campaign was the driver of a new contact. This is determined if the contact was created on the same date as the campaign member, and if it was the first campaign on that day.
+
+      - name: is_qualified_touchpoint
+        description:  A boolean field (true/false) that indicates if the touchpoint resulted in a contact becoming qualified.
+        
+      - name: new_vs_existing_cloud_user
+        description: Indicates if a campaign member signed up for dbt Cloud after engaging in a campaign (New), or if they were already a cloud user at the time of engagement (Existing).
+
+      - name: new_vs_existing_touchpoint
+        description: Indicates if a touchpoint is new for a contact, or if there was already a touchpoint for the contact. This is based off of the touchpoint_index value.
+
+      - name: new_vs_existing_opportunity
+        description: Indicates if an opportunity is new on an account, or if there was already an opportunity on an account. This is based off of the opportunity_index value.
+
+      - name: days_to_touchpoint_conversion
+        description: The number of days from the campaign_member_engaged_at date to the touchpoint_opened_at date. This is used to include touchpoints within a conversion window.
+
+      - name: days_to_cloud_signup_conversion
+        description: The number of days from the campaign_member_engaged_at date to the date_joined__ntz date from dbt Cloud. This is used to include dbt Cloud signups within a conversion window.
+
+  - name: fct_notion_channel_mapping
+    description: >
+      This dataset is used to map different source, medium, and touchpoint combinations to a Sub Channel, Channel, Channel Grouping, Team, and Source Type (Bucket).
+      This allows us to better aggregate website traffic and touchpoints to our marketing and sales efforts.
+      The mappings proudced in this model are created in the[Touchpoint Groupings Notion Database](https://www.notion.so/dbtlabs/92d27ce58d5e4c08b35010bbdf6d071e?v=533ed0232c9249e7b7dca8ae587b7191&pvs=4)
+    columns:
+      - name: unique_id
+        description: The primary key for the model.
+        tests:
+          - not_null
+          - unique
+
+      - name: source_mapping_id
+        description: '{{ doc("source_mapping_id") }}'
+
+      - name: touchpoint_mapping_id
+        description: >
+          A surrogate key created off of the `source` and `event_name` fields in the channel mapping database.
+          This is used to group non-web touchpoints to their respective channels & sub channels.
+
+      - name: campaign
+        description: The utm_campaign value in the URL parameters.
+
+      - name: medium
+        description: The utm_medium value in the URL parameters.
+
+      - name: source
+        description: The utm_source value in the URL parameters.
+
+      - name: event_name
+        description: The `touchpoint_source` field from the Touchpoints object in Salesforce.
+
+      - name: source_type
+        description: >
+          A high-level grouping, or bucketing, of the touchpoint source.
+          Source types fall into four specific groups: Demand Generation, Direct Demand, Partner Referred Inbound, and Product Upsell.
+          This field is reference from the `source_type` field in the `fct_notion_channel_mapping` model.
+
+      - name: team
+        description: >
+          The team that is credited for the touchpoint.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the event, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: referred_by_partner
+        description: The partner that is to be credited with the touchpoint.
+
+  - name: fct_organic_search_keywords
+    description: '{{ doc("organic_search_keywords") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+
+      - name: date
+        description: The date (day) the search query took place. Dates are in Pacific Time Zone (PT).
+
+      - name: country
+        description: The country where the search came from. Represented in ISO Alpha-3.
+
+      - name: device
+        description: >
+          The type of device on which the user is searching: desktop, tablet, or mobile.
+
+      - name: keyword
+        description: These are the query strings that users searched for on Google
+
+      - name: search_type
+        description: >
+          Which search tab contained the link seen by the user:
+          Web: Results that appear in the All tab. This includes any image or video results shown in the All results tab.
+          Image: Results that appear in the Images search results tab.
+          Video: Results that appear in the Videos search results tab.
+          News: Results that show in the News search results tab.
+
+      - name: site
+        description: The website property that appeared in the search results
+
+      - name: clicks
+        description: Count of clicks from a Google search result that landed the user on your property
+
+      - name: impressions
+        description: >
+          How many links to your site a user saw on Google search results.
+          Impressions are counted when the user visits that page of results, even if the result was not scrolled into view.
+          However, if a user views only page 1 but the result is on page 2, the impression is not counted.
+
+      - name: position
+        description: >
+          The position value represents the average position in search results for the URL.
+          For example, when grouping by keyword, the position is the average position for the given keyword in search results.
+
+      - name: page
+        description: The final URL linked by a Search result after any skip redirects
+
+      - name: is_target_keyword
+        description: A booelan field that determines if the keyword is being targeted for a specific page
+
+      - name: page_type
+        description: '{{ doc("page_type") }}'
+
+      - name: content_type
+        description: '{{ doc("content_type") }}'
+
+      - name: status
+        description: '{{ doc("status") }}'
+
+      - name: target_keyword
+        description: '{{ doc("target_keyword") }}'
+
+      - name: target_position
+        description: '{{ doc("target_position") }}'
+
+      - name: target_monthly_traffic
+        description: '{{ doc("target_monthly_traffic") }}'
+
+  - name: fct_organic_search_pages
+    description: '{{ doc("organic_search_pages") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+
+      - name: date
+        description: The date (day) the search query took place. Dates are in Pacific Time Zone (PT).
+
+      - name: country
+        description: The country where the search came from. Represented in ISO Alpha-3.
+
+      - name: device
+        description: >
+          The type of device on which the user is searching: desktop, tablet, or mobile.
+
+      - name: search_type
+        description: >
+          Which search tab contained the link seen by the user:
+          Web: Results that appear in the All tab. This includes any image or video results shown in the All results tab.
+          Image: Results that appear in the Images search results tab.
+          Video: Results that appear in the Videos search results tab.
+          News: Results that show in the News search results tab.
+
+      - name: site
+        description: The website property that appeared in the search results
+
+      - name: clicks
+        description: Count of clicks from a Google search result that landed the user on your property
+
+      - name: impressions
+        description: >
+          How many links to your site a user saw on Google search results.
+          Impressions are counted when the user visits that page of results, even if the result was not scrolled into view.
+          However, if a user views only page 1 but the result is on page 2, the impression is not counted.
+
+      - name: position
+        description: >
+          The position value represents the average position in search results for the URL.
+          For example, when grouping by keyword, the position is the average position for the given keyword in search results.
+
+      - name: page
+        description: The final URL linked by a Search result after any skip redirects
+
+      - name: page_type
+        description: '{{ doc("page_type") }}'
+
+      - name: content_type
+        description: '{{ doc("content_type") }}'
+
+      - name: status
+        description: '{{ doc("status") }}'
+
+      - name: target_keyword
+        description: '{{ doc("target_keyword") }}'
+
+      - name: target_position
+        description: '{{ doc("target_position") }}'
+
+      - name: target_monthly_traffic
+        description: '{{ doc("target_monthly_traffic") }}'
+
+  - name: dim_organic_social_posts
+    description: '{{ doc("organic_social_posts") }}'
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - post_id
+            - platform
+            - source_relation
+    columns:
+      - name: parent_campaign_id
+        description: The HubSpot marketing campaign the post is associated with
+      - name: post_id
+        description: The ID of the post, from the source platform
+      - name: page_id
+        description: The ID of the page, from the source platform
+      - name: post_message
+        description: The message of the post
+      - name: page_name
+        description: The name of the page, from the source platform
+      - name: post_url
+        description: The URL of the post
+      - name: source_relation
+        description: The source of the record, if the unioning functionality is being used
+      - name: platform
+        description: The platform the post was posted on
+      - name: clicks
+        description: The number of clicks on the post
+      - name: impressions
+        description: The number of impressions on the post
+      - name: likes
+        description: The number of likes on the post
+      - name: shares
+        description: The number of shares on the post
+      - name: comments
+        description: The number of comments on the post
+      - name: created_timestamp
+        description: When the post was created
+
+  - name: fct_ad_reporting_daily
+    description: >
+      Each record in this table represents the daily performance of ads. The parent models for this table are largely created via Fivetran's [ad reporting package](https://hub.getdbt.com/fivetran/ad_reporting/latest/).
+
+      LinkedIn Ads has a slightly different hierarchy than the other marketing platforms. As identified within [Microsoft's Campaign Groups](https://docs.microsoft.com/en-us/linkedin/marketing/integrations/ads/account-structure/create-and-manage-campaign-groups?tabs=http)
+      documentation, the hierarchy consists of multiple campaigns for a single campaign group. As this hierarchy is the inverse of the standard hierarchy seen within the
+      other platforms, the `campaign` and `campaign_group` are switched for LinkedIn Ads within the ad_reporting table for consistency across platforms.
+    columns:
+      - name: id
+        description: A surrogate key created off of each dimension in the model.
+        tests:
+          - unique
+          - not_null
+
+      - name: campaign_name
+        description: A label for the campaign. For LinkedIn Ads this field is the `campaign_group_name` field.
+
+      - name: ad_group_name
+        description: A label for the ad group, if present in the source data. Mapped from fields including `campaign_group_name`. For LinkedIn Ads this field is the `campaign_name` field.
+
+      - name: account_name
+        description: A label for the account.
+
+      - name: campaign_id
+        description: The ID representing the campaign. For LinkedIn Ads this field is the `campaign_group_id` field.
+
+      - name: ad_group_id
+        description: The ID representing the ad group, if present in the source data. Mapped from fields including `campaign_group_id`. For LinkedIn Ads this field is the `campaign_id` field.
+
+      - name: account_id
+        description: The ID representing the account.
+
+      - name: date_day
+        description: The day of the activity.
+
+      - name: clicks
+        description: The count of clicks.
+
+      - name: impressions
+        description: The count of impressions.
+
+      - name: spend
+        description: The cost of the ads.
+
+      - name: base_url
+        description: The base URL of the ad.
+
+      - name: url_host
+        description: The URL host of the ad.
+
+      - name: url_path
+        description: The URL path of the ad.
+
+      - name: utm_source
+        description: The utm_source parameter of the ad.
+
+      - name: utm_medium
+        description: The utm_medium parameter of the ad.
+
+      - name: utm_campaign
+        description: The utm_campaign parameter of the ad.
+
+      - name: utm_content
+        description: The utm_content parameter of the ad.
+
+      - name: utm_term
+        description: The utm_term parameter of the ad.
+
+      - name: platform
+        description: The ad platform the records relate to.
+
+  - name: dim_bizzabo_event_contacts
+    description: >
+      This model includes contact details that are provided on a per-event basis.
+      As a result, one contact can be associated with many events, and therefore have different properties associated with those events.
+      If you are interested in analyzing event or revenue metrics on a per contact basis, you should group this data by `contact_id`.
+      Note: contacts in Bizzabo aren't inherently registrations, since they also include Sponsors and Speakers.
+    columns:
+      - name: event_contact_id
+        description: "A surrogate key created off of `event_id` and `contact_id`."
+        tests:
+          - unique
+          - not_null
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+
+      - name: salesforce_contact_id
+        description: >
+          The Salesforce contact id for the contact.
+          This is mapped using the email provided by the contact.
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account id for the contact.
+          This is populated using the salesforce account id associated with the salesforce contact.
+
+      - name: first_name
+        description: "The first name of the contact."
+
+      - name: last_name
+        description: "The last name of the contact."
+
+      - name: full_name
+        description: "The full name of the contact."
+
+      - name: email
+        description: "The email of the contact."
+
+      - name: properties
+        description: "A JSON object that contains information held within the registration form."
+
+      - name: roles
+        description: "A list of roles associated with a contact for a given event."
+
+      - name: ticket_types
+        description: "A list of tickets that a contact has purchased for a given event."
+
+      - name: has_tickets
+        description: "A boolean field indicating if a contact purchased tickets for a given event."
+
+      - name: created_at
+        description: "Timestamp indicating when a contact was created for a given event."
+
+      - name: modified_at
+        description: "Timestamp indicating when a contact was last modified for a given event."
+
+      - name: first_registered_at
+        description: >
+          Timestamp indicating when the user first registered for an event.
+          Note: A user can register for an event several times.
+
+      - name: count_of_registrations
+        description: "The number of registrations by a contact for a given event."
+
+      - name: count_of_registered_sessions
+        description: "The number of sessions a contact registered for for a given event."
+
+      - name: total_revenue
+        description: >
+          The total revenue generated from the contact for a given event.
+          This is calculated as the sum of `order_amount`.
+
+  - name: dim_bizzabo_events
+    description: >
+      This model includes all of the details around a specific event in Bizzabo, as well as aggregate stats pertaining to registrations, contacts, and revenue.
+    columns:
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+        tests:
+          - unique
+          - not_null
+
+      - name: attendance_type
+        description: "The attendance type for an event. Examples include Hybrid and Virtual."
+
+      - name: header_logo_url
+        description: "A URL for the image that is used as the event logo in the event website and mobile app."
+
+      - name: language
+        description: "The primary langauge for the event."
+
+      - name: name
+        description: "The name of the event."
+
+      - name: status
+        description: "The current status of the registration."
+
+      - name: support_email
+        description: "The support email as set by the organizer."
+
+      - name: timezone
+        description: "The timezone of the event."
+
+      - name: type
+        description: "The type of event. Examples include Conference & Convetion and Class & Workshop."
+
+      - name: website_url
+        description: "The URL for the event."
+
+      - name: created_at
+        description: "Timestamp indicating when the registration was created."
+
+      - name: modified_at
+        description: "Timestamp indicating when a registration was last updated."
+
+      - name: start_at
+        description: "Timestamp indicating when the event starts."
+
+      - name: end_at
+        description: "Timestamp indicating when the event ends."
+
+      - name: _sdc_batched_at
+        description: "Timestamp indicating when Stitch loaded the batch the record was a part of into the destination."
+
+      - name: count_of_contacts
+        description: >
+          The total number of contacts that registered to attend an event.
+          Note: A contact may register several times.
+          This field is synonymous with "the number of unique people".
+
+      - name: count_of_registrations
+        description: "The total number of registrations for the event."
+
+      - name: count_of_attendees
+        description: "The total number of people that attended an event live or watched an on-demand recording from the event."
+
+      - name: count_of_live_attendees
+        description: "The total number of people that attended an event live (in person or virtually)."
+
+      - name: count_of_unique_recording_viewers
+        description: "The total number of people that watched an on-demand recording from the event."
+
+      - name: count_of_orders
+        description: "The total number of orders for an event."
+
+      - name: total_revenue
+        description: >
+          The total revenue generated from ticket sales for the event.
+          This is calculated as the sum or `order_amount` from registrations.
+
+      - name: total_recording_views
+        description: The total number of times a recordings watched from the event.
+
+  - name: dim_bizzabo_sessions
+    description: >
+      This model includes all of the details around a specific session for an event in Bizzabo, as well as aggregate stats pertaining to session registrations and contacts.
+      There are often several sessions contained within an event.
+      An example of this is the Day 1 Keynote & Day 2 Keynote at Coalesce.
+    columns:
+      - name: session_id
+        description: "The unique identifier of the session the registrant registered for."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: "The unique identifier for the event."
+
+      - name: location_id
+        description: "The unique identifier for a location."
+
+      - name: sublocation_id
+        description: "The unique identifier for a sublocation."
+
+      - name: external_id
+        description: "An external identifier for the session, as defined by the organizer during import."
+
+      - name: associated_contacts
+        description: "A JSON object of the associated contacts with a session."
+
+      - name: description
+        description: "The description of the session."
+
+      - name: description_html
+        description: "The description of the session in HTML format."
+
+      - name: filters
+        description: "A JSON object containing tags associated with the session."
+
+      - name: speakers
+        description: "A JSON object containing details of the speakers associated with a session."
+
+      - name: sponsors
+        description: "An Array of sponsors associated with a session."
+
+      - name: title
+        description: "The title of the session."
+
+      - name: virtual_session_details
+        description: "A JSON object contains virtual session details."
+
+      - name: virtual_session_type
+        description: "The type of virtual session. Examples include Webinar and Embedded."
+
+      - name: virtual_session_video_provider
+        description: "The video provider for the virtual session. Examples include Agora and Mux."
+
+      - name: virtual_session_authorizations
+        description: "A JSON object of virtual session authorization details."
+
+      - name: virtual_session_recording_authorizations
+        description: "A JSON object of virtual session recording authorizations."
+
+      - name: location_name
+        description: "The name of the location for the event and/or session."
+
+      - name: sublocation_name
+        description: "The name of the sublocation for the event and/or session."
+
+      - name: allow_rating
+        description: "A boolean field indicating if attendees are able to rate the session."
+
+      - name: has_registration
+        description: "A boolean field that determines if a session has session registration enabled."
+
+      - name: has_registration_capacity_enabled
+        description: "A boolean field that determines if a session has a capacity limit."
+
+      - name: is_hidden
+        description: "A boolean field indicating if the session is hidden from registrants."
+
+      - name: is_private
+        description: "A boolean field indicating if a session is private."
+
+      - name: is_registration_full
+        description: "A boolean field indicating if registration is full for a session."
+
+      - name: is_registration_visible
+        description: "A boolean field that determines if attendees can see the session in their registration forms."
+
+      - name: is_virtual_session
+        description: "A boolean indicating if the session is enabled virtually."
+
+      - name: start_at
+        description: "Timestamp indicating when a session will start."
+
+      - name: end_at
+        description: "Timestamp indicating when the session will end."
+
+      - name: session_duration_in_seconds
+        description: "The time in seconds the session will last for."
+
+      - name: count_of_registrations
+        description: "The total number of people that pre-registered for a session."
+
+      - name: count_of_attendees
+        description: "The total number of people that attended a session live or watched an on-demand recording of the session."
+
+      - name: count_of_live_attendees
+        description: "The total number of people that attended a session live (in person or virtually)."
+
+      - name: count_of_virtual_attendees
+        description: "The total number of people who attended a session virtually (Online)."
+
+      - name: count_of_in_person_attendees
+        description: "The total number of people who attended a session in person (Physically)."
+
+      - name: count_of_unique_recording_viewers
+        description: "The total number of people who watched an on-demand recording of a session."
+
+      - name: total_recording_views
+        description: "The total number of times a recording of a session was watched on demand."
+
+      - name: total_time_watched_in_seconds
+        description: "The cumulative `time_watched_in_seconds` across all attendees."
+
+      - name: avg_time_watched_in_seconds
+        description: "The average `time_watched_in_seconds` across all attendees."
+
+      - name: avg_pct_watched
+        description: >
+          The average percent of the session that attendees watched.
+          For example, if a session is 1,800 seconds long (30 minutes) and the average time watched is 900 seconds (15 minutes), then the `avg_pct_watched` is 50%.
+
+  - name: dim_bizzabo_speakers
+    description: >
+      This model includes all of the details around a specific speaker for an event in Bizzabo.
+      In addition, this model can be used to aggregate stats for speakers across several events or sessions.
+    columns:
+      - name: speaker_id
+        description: "The unique identifier of the speaker."
+        tests:
+          - unique
+          - not_null
+
+      - name: contact_id
+        description: "The unique identifier for the contact record of the speaker."
+
+      - name: event_id
+        description: "The unique identifier of the event the speaker is associated with."
+
+      - name: event_contact_id
+        description: "A surrogate key created off of `event_id` and `contact_id`."
+
+      - name: salesforce_contact_id
+        description: >
+          The Salesforce contact id for the speaker.
+          This is mapped using the email provided by the speaker.
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account id for the speaker.
+          This is populated using the salesforce account id associated with the salesforce contact.
+
+      - name: bio
+        description: "The bio provided by the speaker."
+
+      - name: blog
+        description: "A URL of the blog provided by the speaker."
+
+      - name: company
+        description: "The name of the company associated with the speaker."
+
+      - name: country
+        description: "The country of the speaker."
+
+      - name: email
+        description: "The email of the speaker."
+
+      - name: first_name
+        description: "The first name of the speaker."
+
+      - name: last_name
+        description: "The last name of the speaker."
+
+      - name: full_name
+        description: "The full name of the speaker."
+
+      - name: linkedin_url
+        description: "A URL to the LinkedIn page for the speaker."
+
+      - name: photo_set
+        description: "A JSON object of URLs that link to photos of the speaker."
+
+      - name: prefix
+        description: "The prefix for the speaker."
+
+      - name: title
+        description: "The job title of the speaker."
+
+      - name: twitter_handle
+        description: "The Twitter handle for the speaker."
+
+      - name: is_hidden
+        description: "A boolean indicating if the speaker is hidden to registrants."
+
+      - name: count_of_events_spoken
+        description: "The total number of events the speaker has spoken at or is scheduled to speak at."
+
+      - name: count_of_sessions_spoken
+        description: "The total number of sessions the speaker has spoked at or is scheduled to speak at."
+
+  - name: dim_bizzabo_sponsors
+    description: >
+      This model includes all of the details around a specific sponsor for an event in Bizzabo.
+      In addition, this model can be used to aggregate stats for sponsors across several events or sessions.
+    columns:
+      - name: sponsor_id
+        description: "The unique identifier of the sponsor."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: "The unique identifier of the event the sponsor is associated with."
+
+      - name: contact_id
+        description: "The unique identifier for the contact record for the sponsor."
+
+      - name: event_contact_id
+        description: "A surrogate key created off of `event_id` and `contact_id`."
+
+      - name: salesforce_contact_id
+        description: >
+          The Salesforce contact id for the sponsor.
+          This is mapped using the email provided by the sponsor.
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account id for the sponsor.
+          This is populated using the salesforce account id associated with the salesforce contact.
+
+      - name: booth
+        description: "The name of the Booth the sponsor purchased."
+
+      - name: contact_email
+        description: "The email address of the contact associated with the sponsorhip."
+
+      - name: contact_phone
+        description: "The phone number of the contact associated with the sponsorship."
+
+      - name: description
+        description: "A description of the sponsor."
+
+      - name: facebook_url
+        description: "The Facebook URL of the contact associated with the sponsorship."
+
+      - name: level
+        description: "The level of sponsorship."
+
+      - name: linkedin_url
+        description: "The LinkedIn URL of the contact associated with the sponsorship."
+
+      - name: logo
+        description: "A URL of the sponsor's logo."
+
+      - name: name
+        description: "The name of the sponsor."
+
+      - name: promoted_offer
+        description: "The offer the sponsor is promoting."
+
+      - name: twitter_handle
+        description: "The Twitter handle of the contact associated with the sponsorship."
+
+      - name: type
+        description: "The type of sponsor. Examples include Sponsor and Exhibitor."
+
+      - name: website_url
+        description: "The URL of the sponsor's website."
+
+      - name: is_visible
+        description: "A bolean indicating if the sponsor is visible to registrants."
+
+      - name: created_at
+        description: "Timestamp indicating when a contact was created for a given event."
+
+      - name: count_of_events_sponsored
+        description: "The total number of events the sponsor has sponsored."
+
+      - name: count_of_sessions_sponsored
+        description: "The total number of sessions the sponsor has sponsored."
+
+  - name: dim_bizzabo_tickets
+    description: >
+      This model includes all of the details around a specific ticket for an event in Bizzabo.
+      Tickets are used to differentiate the level of access a registrant has at an event.
+      An example of this is Coalesce+, which includes in-person attendance versus Coalesce Online, which is limited to online attendance.
+      This model should be used to view orders, registrations, contacts, and total revenue in aggregate for a specific ticket.
+    columns:
+      - name: ticket_id
+        description: "The unique identifier for the ticket."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: "The unique identifier for the event associated with the ticket."
+
+      - name: availability
+        description: "Indicates when tickets will become available. Examples include Immediate and Dates."
+
+      - name: availability_end
+        description: "Indicates when ticket sales will no longer be available. Examples include Dates and Event End."
+
+      - name: currency_code
+        description: "The currency code associated with the order payment."
+
+      - name: description
+        description: "The description of the ticket."
+
+      - name: name
+        description: "The name of the ticket."
+
+      - name: per_order_max
+        description: "The maximum number of tickets that can be purchased in a single order."
+
+      - name: per_order_min
+        description: "The minimum number of tickets that can be purchased in a single order."
+
+      - name: price
+        description: "The price of the ticket."
+
+      - name: quantity
+        description: "The amount of tickets that can be sold, as set by the organizer."
+
+      - name: registration_properties
+        description: "A JSON object of questions asked during registration when purchasing a ticket."
+
+      - name: sale_method
+        description: "The sale method of the ticket. Examples include Online and In-Person."
+
+      - name: tax_rate
+        description: "The tax rate attached to purchases of the ticket."
+
+      - name: availability_end_at
+        description: "Timestamp indicating when ticket sales will no longer be available."
+
+      - name: availability_start_at
+        description: "Timestamp indicating when ticket sales will become available."
+
+      - name: count_of_registrations
+        description: "The total number of registrations where `status` = completed."
+
+      - name: count_of_completed_orders
+        description: "The total number of orders where `status` = completed."
+
+      - name: count_of_refunded_orders
+        description: "The total number of orders where `status` = refunded."
+
+      - name: count_of_contacts
+        description: >
+          The total number of contacts where `status` = completed.
+          Note: a contact may register more than once.
+          This field is synonymous with "the number of unique people".
+
+      - name: quantity_remaining
+        description: "The total number of tickets remaining for a given ticket."
+
+      - name: total_revenue
+        description: >
+          The total revenue amount generated by sales of a ticket.
+          This is calculated using the sum of `order_amount` from registrations where `status` = completed.
+
+      - name: avg_order_amount
+        description: >
+          The average order amount generated by sales of a ticket.
+          This is calculated using the average of `order_amount` from registrations where `status` = completed.
+
+      - name: avg_discount_amount
+        description: >
+          The average discount amount generated by sales of a ticket.
+          This is calculated using average of `discount_amount` from registrations.
+
+      - name: total_discount
+        description: >
+          The total discount amount generated by sales of a ticket.
+          This is calculated using the sum of `discount_amount` from registrations.
+
+  - name: fct_bizzabo_registrations
+    description: >
+      This model includes all of the details around a specific registrant for an event in Bizzabo.
+      A registrant is somebody who completed the registration process and is interested in attending an event.
+      Every registration is linkable to an `event`, `ticket` and `event_contact`.
+      Note: a single contact can register for an event several times.
+      Therefore, if you are interested in knowing the unique number of people registered you should use the `count_of_contacts` field.
+    columns:
+      - name: registration_id
+        description: "The unique identifier for the registration."
+        tests:
+          - unique
+          - not_null
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+
+      - name: event_contact_id
+        description: "A surrogate key created off of `event_id` and `contact_id`."
+
+      - name: order_id
+        description: "The order id associated with a given registration."
+
+      - name: ticket_id
+        description: "The unique identifier for the ticket associated with the registration."
+
+      - name: salesforce_contact_id
+        description: >
+          The Salesforce contact id for the registrant.
+          This is mapped using the email provided in the registration details.
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account id for the registrant.
+          This is populated using the salesforce account id associated with the salesforce contact.
+
+      - name: first_name
+        description: "The first name of the registrant."
+
+      - name: last_name
+        description: "The last name of the registrant."
+
+      - name: full_name
+        description: "The full name of the registrant."
+
+      - name: email
+        description: "The email of the registrant."
+
+      - name: billing_address_properties
+        description: "A JSON object that contains registration details for the contact the completed the regisration."
+
+      - name: billing_address
+        description: "The billing address of the contact who completed the registration."
+
+      - name: billing_contact_name
+        description: "The name of the contact who completed the registration."
+
+      - name: billing_city
+        description: "The city of the contact who completed the registration."
+
+      - name: billing_company
+        description: "The company of the contact who completed the registration."
+
+      - name: billing_country
+        description: "The country of the contact who completed the registration."
+
+      - name: billing_email
+        description: "The email of the contact who completed the registration."
+
+      - name: billing_first_name
+        description: "The first name of the contact who completed the registration."
+
+      - name: billing_last_name
+        description: "The last name of the contact who completed the registration."
+
+      - name: billing_state
+        description: "The state of the contact who completed the registration."
+
+      - name: billing_zip_code
+        description: "The zip code of the contact who completed the registration."
+
+      - name: currency_code
+        description: "The currency code associated with the registration payment."
+
+      - name: magic_link
+        description: "The verification URL sent to the registrant to verify their registration."
+
+      - name: manage_registration_link
+        description: "The personal manage registration details link for a given registration."
+
+      - name: order_type
+        description: "The order type associated with a given registration. Examples include online and in-person."
+
+      - name: payment_method
+        description: "The payment method associated with the registration. Examples include Credit Card and Cash."
+
+      - name: payment_status
+        description: "The current status of the payment associated with the registration. Examples include Pending and Completed."
+
+      - name: promo_code
+        description: The promo code used during registration, as entered during the checkout process.
+
+      - name: promo_name
+        description: >
+          The name of the promo code used during registration, i.e. promo code `purplepeople` maps to promo name `dbt Labs Staff`
+
+      - name: registrant_properties
+        description: "A JSON object that contains registration details for the contact associated with the registration."
+
+      - name: registrant_roles
+        description: >
+          A list of roles assigned to the registrant.
+          Examples include: Attendee, Speaker, Sponsor, etc.
+
+      - name: status
+        description: "The current status of the registration."
+
+      - name: ticket_name
+        description: "The name of the ticket associated with the registration."
+
+      - name: ticket_location
+        description: >
+          The grouped location for each ticket.
+          For example, Coalesce Online+ London = London.
+
+      - name: marketing_campaign
+        description: "The utm_campaign` values parsed from the referring URL when registration was completed."
+
+      - name: marketing_campaign_period
+        description: '{{ doc("marketing_campaign_period") }}'
+
+      - name: marketing_campaign_name
+        description: '{{ doc("marketing_campaign_name") }}'
+
+      - name: marketing_campaign_goal
+        description: '{{ doc("marketing_campaign_goal") }}'
+
+      - name: marketing_content
+        description: "The `utm_content` values parsed from the referring URL when registration was completed."
+
+      - name: marketing_offer
+        description: '{{ doc("marketing_offer") }}'
+
+      - name: marketing_asset
+        description: '{{ doc("marketing_asset") }}'
+
+      - name: marketing_asset_version
+        description: '{{ doc("marketing_asset_version") }}'
+
+      - name: marketing_medium
+        description: "The `utm_medium` values parsed from the referring URL when registration was completed."
+
+      - name: marketing_source
+        description: "The `utm_source` values parsed from the referring URL when registration was completed."
+
+      - name: validity
+        description: "Indicates if a registration was valid."
+
+      - name: has_attended
+        description: >
+          A boolean that indicates if the registrant either checked into the event (virtually or in person) or viewed an on demand recording from the event.
+          This will roll up to any attendance metrics.
+     
+      - name: has_attended_live
+        description: >
+          A boolean that indicates if the registrant checked into the event (virtually or in person).
+          This will roll up to any live attendance metrics.
+      
+      - name: has_invoice
+        description: "A boolean indicating if the registration has an associated invoice."
+
+      - name: is_checked_in
+        description: "A boolean indicating if the registrant is checked-in."
+
+      - name: is_cloud_user
+        description: "A boolean field indicating if a registrant is a dbt Cloud user."
+
+      - name: is_virtual_checkin
+        description: "A boolean indicating if the contact associated with the registration checked-in to the evnet virtually."
+
+      - name: created_at
+        description: "Timestamp indicating when the registration was created."
+
+      - name: modified_at
+        description: "Timestamp indicating when a registration was last updated."
+
+      - name: payment_at
+        description: "Timestamp indicating when payment for the registration was completed at."
+
+      - name: registered_at
+        description: "Timestamp indicating when the registration was completed at."
+
+      - name: checked_in_at
+        description: "Timestamp indicating when a registrant first checked in (or attended) an event."
+
+      - name: charge_amount
+        description: "The amount charged during registration."
+
+      - name: discount_amount
+        description: >
+          The discounted amount of the purchase.
+          This is calculated using `ticket_price` - `charge_amount`.
+
+      - name: fees_amount
+        description: "The amount of fees charged during registration."
+
+      - name: ticket_price
+        description: "The price of the ticket associated with the registration."
+
+  - name: fct_bizzabo_session_activity
+    description: >
+      This model includes 1 row per registrant who either registered, attended live, or viewed a recording of a session.
+      This should be used to analyze how many registrants pre-registered for a session, 
+      how many registrants attended a session, or how many registrants watched a recording of a session.
+      There is also information in this model to understand the `attendance_type` for a given registrant 
+      per session (e.g. Virtual or In Person), as well as the `watch_category` (e.g. Live or On Demand).
+    columns:
+      - name: session_registration_id
+        description: >
+          A surrogate key created off of `session_id` and `registration_id` to get one row per session per registrant.
+        tests:
+          - unique
+          - not_null
+
+      - name: session_id
+        description: "The unique identifier of the session the registrant registered for."
+
+      - name: registration_id
+        description: "The unique identifier for the registration."
+
+      - name: event_contact_id
+        description: >
+          A surrogate key created off of `event_id` and `contact_id`.
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+
+      - name: order_id
+        description: "The order id associated with a given registration."
+
+      - name: ticket_id
+        description: "The unique identifier for the ticket associated with the registration."
+
+      - name: salesforce_contact_id
+        description: >
+          The Salesforce contact id for the registrant.
+          This is mapped using the email provided in the registration details.
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account id for the registrant.
+          This is populated using the salesforce account id associated with the salesforce contact.
+
+      - name: email
+        description: "The email of the registrant."
+
+      - name: attendance_type
+        description: >
+          Indicates if a registrant attended the session either In Person, Virtually, or both.
+          Note: a registrant can attend a session both In Person & Virtually.
+
+      - name: watch_category
+        description: >
+          Indicates if a registrant watched the session Live or On Demand.
+          Live watches can occur either Virtually or In Person, and must happen between the session start & end time.
+          On Demand watches can only occur Virtually, and must happen outside of the session start & end time.
+          Note: a registrant can watch a session both Live & On Demand.
+
+      - name: has_attended
+        description: >
+          A boolean that indicates if the registrant either attended the session live or watched an on-demand recording of the session.
+          This will roll up to any attendance metrics.
+     
+      - name: has_attended_live
+        description: >
+          A boolean that indicates if the registrant checked into the session.
+          If they have checked-in, then they attended the session live.
+          This will roll up to any live attendance metrics.
+
+      - name: has_registered
+        description: "A boolean that indicates if the registrant pre-registered for a session."
+
+      - name: is_checked_in_by_organizer
+        description: "A boolean field that indicates if the registrant was manually checked in by the organizer."
+
+      - name: is_manual_override
+        description: "A boolean field that indicates if the event organizer manually allowed the registrant to attend a session, despite session capacity limits."
+
+      - name: is_virtual_checkin
+        description: >
+          A boolean field that indiciates if the registrant checked into the session virtually.
+          This is synonymous with attended virtually.
+
+      - name: session_check_in_at
+        description: "A timestamp of when the registrant first checked into the session."
+
+      - name: session_check_out_at
+        description: "A timestamp of when the registrant last checked out of the session."
+
+      - name: session_start_at
+        description: "A timestamp of when the session starts at."
+
+      - name: session_end_at
+        description: "A timestamp of when the session ends at."
+
+      - name: session_duration_in_seconds
+        description: "The number of seconds the session lasts for."
+
+      - name: time_watched_in_seconds
+        description: >
+          The number of seconds the registrant was in the session for.
+          This is the difference, in seconds, between their `session_check_in_at` timestamp and their `session_check_out_at` timestamp.
+
+      - name: pct_session_watched
+        description: "A ratio of the `time_watched_in_seconds` to the `session_duration_in_seconds`."

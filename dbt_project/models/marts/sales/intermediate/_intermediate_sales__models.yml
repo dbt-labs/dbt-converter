@@ -1,0 +1,832 @@
+version: 2
+
+models:
+  - name: int_attribution_events__conversion_events_merged
+    description: >
+      This model merges events from `int_attribution_events__web_conversions` and `int_attribution_events__salesforce_touchpoints` based on the `inferred_event_id`.
+      Events are considered to be the same event between these two models if they share the same event name, have happened on the same date, and were triggered by the same user. 
+      This model is necessary because there are several events being captured in Salesforce Touchpoints through native tools.
+      Unfortunately, these native tools don't have a concept of marketing source and medium, among other fields.
+      This model enables us to enrich our Salesforce Touchpoints with our website tracking data from inferred events.
+      For touchpoints that don't have a corresponding conversion, we are still capturing those events in this model so that they can be enriched and synced back to Salseforce.
+      Conversions that do not map to an existing Salesforce Touchpoint are not yet being included.
+    columns:
+      - name: event_id
+        description: >
+          Populated from the `external_touchpoint_id` for salesforce touchpoints and the `event_id` field from website conversions.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The ID of the contact associated with the event.
+
+      - name: data_source
+        description: >
+          The data source of the touchpoint or website conversion.
+
+      - name: event_group
+        description: >
+          The value from `touchpoint_group` for touchpoints and `Website Conversions` from web conversions.
+
+      - name: event_name
+        description: >
+          The `touchpoint_source` for touchpoints and `conversino_name` from web conversions.
+
+      - name: team
+        description: >
+          The team that gets credit for the event, as determined by the Channel Mapping dataset.
+          Examples include: Marketing, Partnerships, and Sales.
+
+      - name: source_type
+        description: >
+          The type of activity that resulted in the event, as determined by the Channel Mapping dataset.
+          Examples include: Demand Generation, Direct Demand, and Partner Referred Inbound.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the event, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: medium
+        description: >
+          The `utm_medium` value from the associated event.
+
+      - name: source
+        description: >
+          The `utm_source` value from the associated event.
+          For partner connect signups, this will be either `snowflake` or `databricks`.
+
+      - name: campaign
+        description: >
+          The `utm_campaign` value from the associated event.
+
+      - name: event_details
+        description: >
+          The `touchpoint_source_details` value from the associated event.
+          This value will be null for web conversions.
+
+      - name: event_timestamp
+        description: The timestamp of when the event occurred at.
+
+      - name: event_date
+        description: The date the touchpoint event at.
+
+  - name: int_attribution_events__salesforce_tasks
+    description: >
+      This model preps data from the `int_salesforce__tasks` model and transforms it into the proper format so that it can be unioned in `int_attribution_events__unioned`.
+    columns:
+      - name: event_id
+        description: >
+          Populated from the `salesforce_task_id` of the associated Salesforce t ask - this is the unique identifier for the event.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The ID of the contact associated with the task.
+
+      - name: data_source
+        description: >
+          The `task_data_source` from `int_salesforce__tasks`.
+          Examples include: Outreach, LinkedIn Sales Navigator, and Salesforce.
+
+      - name: event_group
+        description: Default value of `Salesforce Tasks`.
+
+      - name: event_name
+        description: >
+          The `task_subtype` from the task.
+          Examples include: Email, InMail, and Call.
+
+      - name: team
+        description: >
+          The team that gets credit for the salesforce task, as determined by the Channel Mapping dataset.
+          Examples include: Marketing, Partnerships, and Sales.
+
+      - name: source_type
+        description: >
+          The type of activity that resulted in the salesforce task, as determined by the Channel Mapping dataset.
+          Examples include: Demand Generation, Direct Demand, and Partner Referred Inbound.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the salesforce task, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: medium
+        description: >
+          An extension of the `task_subtype` field. 
+          This enables us to utilize the Channel Mapping dataset.
+
+      - name: source
+        description: >
+          An extension of the `task_data_source` field.
+          This enables us to utilize the Channel Mapping dataset.
+
+      - name: campaign
+        description: This value is null for tasks.
+
+      - name: event_details
+        description: >
+          The `task_details` from the task.
+          These follow the format of: Owner Role Grouping - Task Data Source - Task Sub Type - Task Direction
+          Examples include: SD - Outreach - Email - Outbound.
+
+      - name: event_timestamp
+        description: The timestamp of when the task occurred at.
+
+      - name: event_date
+        description: The date the task occurred at.
+
+  - name: int_attribution_events__salesforce_touchpoints
+    description: >
+      This model preps data from the `fct_touchpoints` model so that it can properly be merged with conversion events in the `int_attribution_events__conversion_events_merged` model.
+    columns:
+      - name: event_id
+        description: >
+          Populated from the `external_touchpoint_id` of the associated salesforce touchpoint - this is the unique identifier for the event.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The ID of the contact associated with the touchpoint.
+
+      - name: data_source
+        description: >
+          The data source of the touchpoint.
+          If a touchpoint has been synced from Salesforce, this will explain its origin.
+          Otherwise, this value will be `Salesforce Touchpoints`.
+
+      - name: event_group
+        description: >
+          The value from `touchpoint_group`.
+          Examples include: Salesforce tasks, Website Sessions, and Website Conversions.
+
+      - name: event_name
+        description: >
+          The `touchpoint_source` value from the touchpoint.
+          Examples include: Sign Up, Enrolled in dbt Learn, and Joined dbt Slack.
+
+      - name: team
+        description: >
+          The team that gets credit for the touchpoint, as determined by the Channel Mapping dataset.
+          Examples include: Marketing, Partnerships, and Sales.
+
+      - name: source_type
+        description: >
+          The type of activity that resulted in the touchpoint, as determined by the Channel Mapping dataset.
+          Examples include: Demand Generation, Direct Demand, and Partner Referred Inbound.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the touchpoint, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: medium
+        description: >
+          The `utm_medium` value from the associated touchpoint.
+
+      - name: source
+        description: >
+          The `utm_source` value from the associated touchpoint.
+          For partner connect signups, this will be either `snowflake` or `databricks`.
+
+      - name: campaign
+        description: >
+          Either the name of the parent campaign that resulted in the touchpoint being created, or
+          the `utm_campaign` value from the associated touchpoint.
+          Typically, the parent campaign name will populate for Webinar, Tradeshow, and Field Marketing touchpoints,
+          while the `utm_campaign` value will populate for website-based touchpoints, including Cloud sign ups,
+          contact sales, and content downloads.
+
+      - name: event_details
+        description: >
+          The `touchpoint_source_details` value from the associated touchpoint.
+
+      - name: event_timestamp
+        description: The timestamp of when the touchpoint occurred at.
+
+      - name: event_date
+        description: The date the touchpoint occured at.
+
+  - name: int_attribution_events__unioned
+    description: >
+      This model unions data from each of the attribution event streams, creating one centralized stream.
+    columns:
+      - name: event_id
+        description: The unique identifier for the event.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The ID of the contact associated with the event.
+
+      - name: data_source
+        description: >
+          The origin of the event data.
+          Examples include: Salesforce Touchpoints, Snowplow Sessions, and Snowplow Conversions.
+
+      - name: event_group
+        description: >
+          A high-level grouping of the `event_name`.
+          Examples include: Website Sessions, Website Conversions, and Salesforce Tasks.
+
+      - name: event_name
+        description: >
+          The name of the specific event.
+
+      - name: team
+        description: >
+          The team that gets credit for the event, as determined by the Channel Mapping dataset.
+          Examples include: Marketing, Partnerships, and Sales.
+
+      - name: source_type
+        description: >
+          The type of activity that resulted in the event, as determined by the Channel Mapping dataset.
+          Examples include: Demand Generation, Direct Demand, and Partner Referred Inbound.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the event, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: medium
+        description: >
+          The `utm_medium` value from the associated event.
+
+      - name: source
+        description: >
+          The `utm_source` value from the associated touchpoint.
+
+      - name: campaign
+        description: >
+          Either the name of the parent campaign that resulted in the touchpoint being created, or
+          the `utm_campaign` value from the associated touchpoint.
+          Typically, the parent campaign name will populate for Webinar, Tradeshow, and Field Marketing touchpoints,
+          while the `utm_campaign` value will populate for website-based touchpoints, including Cloud sign ups,
+          contact sales, and content downloads.
+
+      - name: event_details
+        description: >
+          Any additional details associated with the event.
+          This is not available for all events.
+
+      - name: event_timestamp
+        description: The timestamp of when the event occurred at.
+
+      - name: event_date
+        description: The date the event occured at.
+
+  - name: int_attribution_events__web_conversions
+    description: >
+      This model preps data from teh `fct_web_conversions` model so that it can be properly merged with touchpoints in the `int_attribution_events__conversion_events_merged` model.
+    columns:
+      - name: event_id
+        description: >
+          Populated from the `event_id` of the associated web conversion - this is the unique identifier for the event.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The ID of the contact associated with the website session.
+
+      - name: data_source
+        description: Default value of `Snowplow Conversions`.
+
+      - name: event_group
+        description: Default value of `Website Conversions`.
+
+      - name: event_name
+        description: >
+          The name of the website conversion.
+          For conversions that overlap with Salesforce touchpoints, these have been updated to reflect the Salesforce name.
+          For example, `register_cloud` is transformed into `Sign Up`.
+
+      - name: team
+        description: >
+          The team that gets credit for the website conversion, as determined by the Channel Mapping dataset.
+          Examples include: Marketing, Partnerships, and Sales.
+
+      - name: source_type
+        description: >
+          The type of activity that resulted in the website conversion, as determined by the Channel Mapping dataset.
+          Examples include: Demand Generation, Direct Demand, and Partner Referred Inbound.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the website conversion, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: medium
+        description: >
+          The `marketing_medium` value from the associated website session of the conversion.
+
+      - name: source
+        description: >
+          The `marketing_source` value from the associated website session of the conversion.
+
+      - name: campaign
+        description: >
+          The `marketing_campaign` value from the associated website session of the conversion.
+
+      - name: event_details
+        description: Value will be null for website conversions.
+
+      - name: event_timestamp
+        description: The timestamp of when the website conversion occurred at.
+
+      - name: event_date
+        description: The date the website conversion occured at.
+
+  - name: int_attribution_events__web_sessions
+    description: >
+      This model preps data from the `fct_web_sessions` model and transforms it into the proper format so that it can be unioned in `int_attribution_events__unioned`.
+    columns:
+      - name: event_id
+        description: >
+          Populated from `session_id` - this is the unique identifier for the event.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_contact_id
+        description: The ID of the contact associated with the website session.
+
+      - name: data_source
+        description: Default value of `Snowplow Sessions`.
+
+      - name: event_group
+        description: Default value of `Website Sessions`.
+
+      - name: event_name
+        description: Default value of `Website Session`.
+
+      - name: team
+        description: >
+          The team that gets credit for the website session, as determined by the Channel Mapping dataset.
+          Examples include: Marketing, Partnerships, and Sales.
+
+      - name: source_type
+        description: >
+          The type of activity that resulted in the website session, as determined by the Channel Mapping dataset.
+          Examples include: Demand Generation, Direct Demand, and Partner Referred Inbound.
+
+      - name: channel_grouping
+        description: >
+          The highest level grouping of the website referrer, as determined by the Channel Mapping dataset.
+          Examples include: Inbound Free, Inbound Paid, and Direct.
+
+      - name: channel
+        description: >
+          A grouped version of the `medium` field, as determined by the Channel Mapping dataset.
+          Examples include: Paid Search, Organic Social, and Email.
+
+      - name: sub_channel
+        description: >
+          A grouped version of the `source` field, as determined by the Channel Mapping dataset.
+          Examples include: Google, LinkedIn, and HubSpot.
+
+      - name: medium
+        description: >
+          The `marketing_medium` value from the associated website session.
+
+      - name: source
+        description: >
+          The `marketing_source` value from the associated website session.
+
+      - name: campaign
+        description: >
+          The `marketing_campaign` value from the associated website session.
+
+      - name: event_details
+        description: Value will be null for website sessions.
+
+      - name: event_timestamp
+        description: The timestamp of when the website session started at.
+
+      - name: event_date
+        description: The date of the website session.
+
+  - name: int__opportunity_stages
+    description: >
+      This intermediate table brings in every stage that an opportunity moved into
+      as well as timestamp calculations and their furthest stage/pipeline stage.
+    columns:
+      - name: unique_id
+        description: >
+          Surrogate key between the opportunity_id and the created_at date
+          (i.e. when the opportunity switched stages)
+        tests:
+          - unique
+          - not_null
+
+  - name: int__salesforce_credit_notes
+    description: >
+      This model enriches the salesforce credit note entity before use by marts for credit notes and credit note items. 
+    columns:
+      - name: sfdc_credit_note_id
+        description: '{{ doc("sfdc_credit_note_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: credit_note_name
+        description: '{{ doc("credit_note_name") }}'
+      - name: credit_note_date
+        description: '{{ doc("credit_note_date") }}'
+      - name: sfdc_account_id
+        description: '{{ doc("sfdc_account_id") }}'
+      - name: account_name
+        description: '{{ doc("salesforce_account_name") }}'
+      - name: subtotal_amount
+        description: '{{ doc("credit_note_subtotal_amount") }}'
+      - name: tax_amount
+        description: '{{ doc("credit_note_tax_amount") }}'
+      - name: notes
+        description: '{{ doc("credit_note_notes") }}'
+  
+  - name: int_account_based_marketing_stages
+    description: '{{ doc("int_account_based_marketing_stages") }}'
+    columns:
+      - name: account_name
+        description: >
+          Salesforce account name
+
+      - name: is_target_account
+        description: >
+          The flag in Salesforce that determines whether the Salesforce is a target account for the sales team
+
+      - name: account_id
+        description: >
+          Salesforce account ID
+        tests:
+          - unique
+          - not_null
+
+      - name: account_region
+        description: >
+          The geographic region of the Salesforce account
+
+      - name: account_status
+        description: >
+          The status of the Salesforce account
+
+      - name: number_of_employees
+        description: >
+          The number of employees at the Salesforce account
+
+      - name: count_of_web_sessions
+        description: >
+          The total count of web sessions for the Salesforce account
+
+      - name: count_of_web_sessions_t30d
+        description: >
+          The amount of web sessions for the Salesforce account in the trailing 30 days
+
+      - name: count_of_hres_t30d
+        description: >
+          The amount of HREs for the Salesforce account in the trailing 30 days
+
+      - name: count_of_webinar_touchpoints_t30d
+        description: >
+          The amount of Webinar touchpoints for the Salesforce account in the trailing 30 days
+
+      - name: count_of_field_marketing_touchpoints_t30d
+        description: >
+          The amount of Field Marketing touchpoints for the Salesforce account in the trailing 30 days
+
+      - name: count_of_tradeshow_touchpoints_t30d
+        description: >
+          The amount of Tradeshow touchpoints for the Salesforce account in the trailing 30 days
+
+      - name: count_of_content_download_touchpoints_t30d
+        description: >
+          The amount of Content Download touchpoints for the Salesforce account in the trailing 30 days
+
+      - name: count_of_dbt_learn_touchpoints_t30d
+        description: >
+          The amount of dbt Learn touchpoints for the Salesforce account in the trailing 30 days
+
+      - name: count_of_joined_slack_touchpoints_t30d
+        description: >
+          The amount of Joined Slack touchpoints for the Salesforce account in the trailing 30 days
+
+      - name: count_of_cloud_accounts_t30d
+        description: >
+          The amount of new dct cloud accounts created on the Salesforce account in the trailing 30 days
+
+      - name: models_built_pct_change
+        description: >
+          The perecentage increase of models built for all cloud acccounts associated with a Salesforce account in the trailing 30 days
+
+      - name: jobs_run_pct_change
+        description: >
+          The perecentage increase of job runs for all cloud acccounts associated with a Salesforce account in the trailing 30 days
+
+      - name: cloud_maus_pct_change
+        description: >
+          The perecentage increase of monthly active cloud users for all cloud acccounts associated with a Salesforce account in the trailing 30 days
+
+      - name: abm_stage
+        description: >
+          The ouput of this model which is the ABM Stage
+
+
+  - name: int_enriching_product_pricing_details
+    description: >
+      This model takes the product pricing details seed and adds a more robust product id key (see field description).
+    columns:
+      - name: product_code
+        description: '{{ doc("sfdc_product_code") }}'
+
+      - name: package_product_code
+        description: '{{ doc("package_product_code") }}'
+
+      - name: list_price
+        description: '{{ doc("list_price") }}'
+
+      - name: ssp_low_percentage
+        description: '{{ doc("ssp_low_percentage") }}'
+
+      - name: ssp_midpoint_percentage
+        description: '{{ doc("ssp_midpoint_percentage") }}'
+
+      - name: ssp_high_percentage
+        description: '{{ doc("ssp_high_percentage") }}'
+
+      - name: ssp_midpoint
+        description: '{{ doc("ssp_midpoint") }}'
+
+      - name: low_discount_threshold
+        description: '{{ doc("product_low_discount_threshold") }}'
+
+      - name: high_discount_threshold
+        description: '{{ doc("product_high_discount_threshold") }}'
+
+      - name: effective_date
+        description: > 
+          The date at which the particular product pricing details are considered effective. 
+
+      - name: enriched_product_id
+        description: '{{ doc("enriched_product_id") }}'
+        tests:
+          - unique
+          - not_null
+
+  - name: int_order_items_aggregated
+    description: >
+      This model provides order-level Booleans based on order item characteristics. 
+    columns:
+      - name: sfdc_order_id
+        description: '{{ doc("sfdc_order_id") }}'
+        tests:
+          - unique
+          - not_null
+
+      - name: count_of_service_order_items
+        description: '{{ doc("count_of_service_order_items") }}'
+
+      - name: includes_services
+        description: '{{ doc("order_includes_services") }}'
+
+      - name: count_of_subscription_order_items
+        description: '{{ doc("count_of_subscription_order_items") }}'
+
+      - name: includes_subscriptions
+        description: '{{ doc("order_includes_subscriptions") }}'
+
+  - name: int_order_items_with_product_details
+    description: >
+      An intermediate step adding product code details and a join key to order items
+    columns:
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id") }}'
+        tests:
+          - unique
+          - not_null
+
+      - name: sfdc_order_id
+        description: '{{ doc("sfdc_order_id") }}'
+
+      - name: order_item_number
+        description: '{{ doc("order_item_number") }}'
+
+      - name: list_price
+        description: '{{ doc("list_price") }}'
+
+      - name: unit_price
+        description: '{{ doc("order_item_unit_price") }}'
+
+      - name: quantity
+        description: '{{ doc("order_item_quantity") }}'
+
+      - name: total_price
+        description: '{{ doc("order_item_total_price") }}'
+
+      - name: service_start_date
+        description: '{{ doc("service_start_date") }}'
+
+      - name: service_end_date
+        description: '{{ doc("service_end_date") }}'
+
+      - name: sfdc_opportunity_id
+        description: '{{ doc("sfdc_opportunity_id_foreign") }}'
+
+      - name: product_name
+        description: '{{ doc("product_name") }}'
+
+      - name: product_family
+        description: '{{ doc("product_family") }}'
+
+      - name: product_type
+        description: '{{ doc("product_type") }}'
+
+      - name: order_number
+        description: '{{ doc("order_number") }}'
+
+      - name: order_status
+        description: '{{ doc("order_status") }}'
+
+      - name: product_code
+        description: '{{ doc("sfdc_product_code") }}'
+
+      - name: package_product_code
+        description: '{{ doc("package_product_code") }}'
+
+      - name: enriched_product_id
+        description: '{{ doc("enriched_product_id") }}'
+
+      - name: credit_note_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: credit_note_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: invoice_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: invoice_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: payment_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: payment_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: refund_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: refund_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: rev_rec_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: rev_rec_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+  - name: int_salesforce__territory_mappings
+    description: '{{ doc("int_salesforce__territory_mappings") }}'
+    columns:
+      - name: territory_mapping_id
+        description: A surrogate key generated off of the zipcode, state/province, and country for a territory.
+        tests:
+          - unique
+          - not_null
+
+      - name: territory_id
+        description: The ID of the territory the zip or postal code maps to.
+
+      - name: territory_zipcode_id
+        description: The unique ID of the zip or postal code.
+
+      - name: territory_state_id
+        description: The ID of the state and/or province the zip or postal code maps to.
+
+      - name: territory_country_id
+        description: The ID of the territory country the state and/or province maps to.
+
+      - name: zipcode
+        description: The zip or postal code.
+
+      - name: city
+        description: The name of the city associated with teh zip or postal code.
+
+      - name: state_province
+        description: The name of the state and/or province.
+
+      - name: country_name
+        description: The name of the country.
+
+      - name: country_code
+        description: The two digit country code associated with the `country_name`.
+
+      - name: territory_name
+        description: The name of the sales territory.
+
+      - name: territory_theater
+        description: >
+          The broadest grouping of a territory.
+          Examples include: US, EMEA, and APAC.
+          This is largely used to for account reassignment rules in Salesforce.
+
+      - name: territory_region
+        description: >
+          The region of the territory.
+          Examples include: APAC-ANZ, APAC-Asia, and US-West.
+          Note: this is not the same as account regions, and is largely used for account reassignment rules in Salesforce.
+
+  - name: int_crossbeam_partners
+    description: >
+      An intermediate step adding Crossbeam Partners to the Salesforce Account
+    columns:
+      - name: account_id
+        description: >
+          Salesforce account ID
+        tests:
+          - unique
+          - not_null
+          
+      - name: account_name
+        description: >
+          Salesforce account name
+
+      - name: partner_customers
+        description: >
+          The list of Crossbeam Partners where our Salesforce Accounts is a current customer
+
+      - name: partner_prospects
+        description: >
+          The list of Crossbeam Partners where our Salesforce Accounts is a current prospect
+
+      - name: partner_opportunities
+        description: >
+          The list of Crossbeam Partners where our Salesforce Accounts has an open opportunity with our partner
+
+  - name: int_predicted_cloud_datawarehouse
+    description: '{{ doc("int_predicted_cloud_datawarehouse") }}'
+    columns:
+      - name: predicted_data_warehouse
+        description: >
+          The data warehouse(s) that we predict the Salesforce account is using based on the logic highlighted in the image above
+
+      - name: account_id
+        description: >
+          Salesforce account ID
+        tests:
+          - unique
+          - not_null

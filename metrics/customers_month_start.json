@@ -1,0 +1,1 @@
+{"name": "customers_month_start", "description": "The Customers (Logos) of dbt Labs at the start of a month (end of previous period).\n", "type": "measure_proxy", "type_params": {"measure": {"name": "customers_month_start"}}, "constraint": {"where": "is_last_day_of_month = 1", "linkable_names": ["is_last_day_of_month"], "sql_params": {"param_items": []}}}

@@ -1,0 +1,135 @@
+version: 2
+
+models:
+
+  - name: fct_accounting_transaction_lines
+    description: Details for all accounting transaction lines
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - transaction_id
+            - transaction_line_id
+    columns:
+      - name: foreign_currency_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_amount_paid
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_amount_unpaid
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_net_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_net_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_cash_flow_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_cash_flow_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_cash_flow_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_cash_flow_net_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_net_amount
+        meta:
+          masking_policy: accounting_float
+      - name: transaction_line_rev_rec_start_date
+        description: '{{ doc("revenue_start_date") }}'
+      - name: transaction_line_rev_rec_end_date
+        description: '{{ doc("revenue_end_date") }}'
+  
+  - name: fct_income_statement_transaction_lines
+    description: Details for all income statement accounting transaction lines
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - transaction_id
+            - transaction_line_id
+    columns:
+      - name: foreign_currency_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_amount_paid
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_amount_unpaid
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_credit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_debit_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_account_level_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_account_level_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_account_level_amount
+        meta:
+          masking_policy: accounting_float
+      - name: foreign_currency_net_income_amount
+        meta:
+          masking_policy: accounting_float
+      - name: subsidiary_currency_net_income_amount
+        meta:
+          masking_policy: accounting_float
+      - name: consolidated_general_rate_net_income_amount
+        meta:
+          masking_policy: accounting_float
+      - name: transaction_line_rev_rec_start_date
+        description: '{{ doc("revenue_start_date") }}'
+      - name: transaction_line_rev_rec_end_date
+        description: '{{ doc("revenue_end_date") }}'
+
+  - name: monthly_net_income
+    description: The total net income by month for the company and the associated year over year growth rate
+    columns:
+      - name: net_income
+        meta:
+          masking_policy: accounting_float
+      - name: net_income_yoy_growth
+        meta:
+          masking_policy: accounting_float

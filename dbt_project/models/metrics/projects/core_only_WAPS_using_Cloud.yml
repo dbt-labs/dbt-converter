@@ -1,0 +1,19 @@
+version: 2
+
+metrics:
+  - name: core_only_WAPS_using_Cloud
+    label: Core to Cloud Conversions (WAPs)
+    model: ref('fct_dbt_project_activity')
+    description: '{{ doc("core_only_WAPs_using_Cloud") }}'
+    tags: ['FY2023 - O1']
+
+    calculation_method: sum
+    expression: coalesce(t7d_used_cloud_scheduler, t7d_used_cloud_ide)
+
+    timestamp: date_day
+    time_grains: [day, week, month]
+
+    meta:
+      okr_level: 'Company'
+      owner(s): 'Drew Banin'
+      team: 'Product'

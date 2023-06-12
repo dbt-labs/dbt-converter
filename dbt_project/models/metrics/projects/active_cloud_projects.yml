@@ -1,0 +1,32 @@
+version: 2
+
+metrics:
+  - name: active_cloud_projects
+    label: Active Projects (Cloud)
+    model: ref('fct_dbt_project_activity')
+    description: > 
+      'A measure of engaged activity across a dbt Cloud Project, defined 
+      as whether the project had an invocation during the specified time grain,'
+    tags: ['Company Metric']
+
+    calculation_method: count_distinct
+    expression: project_id
+
+    timestamp: date_day
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - adapter
+      # future dimension: account_region
+
+    filters:
+      - field: max_cloud_account_id
+        operator: "is"
+        value: "NULL"
+      - field: active
+        operator: "="
+        value: "1"
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

@@ -1,0 +1,28 @@
+version: 2
+
+metrics:
+  - name: weekly_active_projects
+    label: Cumulative Weekly Active Projects (WAPs)
+    model: ref('fct_dbt_project_activity')
+    description: '{{ doc("weekly_active_projects") }}'
+    tags: ['Company Metric','FY2023 - O4', 'FY2024 - O1']
+
+    calculation_method: count_distinct
+    expression: project_id
+
+    timestamp: date_day
+    time_grains: [day]
+
+    dimensions:
+      - adapter
+
+    filters:
+      - field: t7d_active
+        operator: "="
+        value: "1"
+
+    meta:
+      metric_level: 'Company'
+      team: 'Leadership'
+      owner(s): ['Andrew Tom' ,'Janessa Lantz', 'Anna Filippova']
+

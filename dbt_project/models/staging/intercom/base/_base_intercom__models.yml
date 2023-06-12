@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: base__intercom_conversations
+    columns:
+      - name: ticket_id
+        tests:
+          - unique
+          - not_null

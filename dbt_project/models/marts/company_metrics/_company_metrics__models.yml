@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: metrics
+    description: >
+      Used in 2021, prior to the metrics layer. This table now only contains dbt WAPs and the historical goals.
+      This is used to power the [WAPs Metrics Dashboard](https://fishtown.looker.com/dashboards/86?Metric+Name=new+dbt+WAPs).
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: t7d_metric_total
+        description: >
+          {{ doc('metrics_t7d') }}
+      - name: t7d_metric_avg
+        description: >
+          {{ doc('metrics_t7d') }}
+      - name: t30d_metric_total
+        description: >
+          {{ doc('metrics_t30d') }}
+      - name: t30d_metric_avg
+        description: >
+          {{ doc('metrics_t30d') }}
+      - name: cm_cumulative_metric_total
+        description: >
+          {{ doc('metrics_cm') }}
+      - name: cm_cumulative_metric_avg
+        description: >
+          {{ doc('metrics_cm') }}
+      - name: cq_cumulative_metric_total
+        description: >
+          {{ doc('metrics_cq') }}
+      - name: cq_cumulative_metric_avg
+        description: >
+          {{ doc('metrics_cq') }}
+      - name: lm_cumulative_metric_total
+        description: >
+          {{ doc('metrics_lm') }}
+      - name: lq_cumulative_metric_total
+        description: >
+          {{ doc('metrics_lq') }}
+      - name: lytm_cumulative_metric_total
+        description: >
+          {{ doc('metrics_lytm') }}
+      - name: lytq_cumulative_metric_total
+        description: >
+          {{ doc('metrics_lytq') }}

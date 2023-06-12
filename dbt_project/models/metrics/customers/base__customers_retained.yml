@@ -1,0 +1,24 @@
+version: 2
+
+metrics:
+  - name: base__customers_retained
+    label: (Base) Customers Retained
+    description: >
+      The starting number of customers (Logos)
+      less churned customers in a given month.
+    tags: []
+
+    calculation_method: derived
+    expression: "{{metric('customers_month_start')}} - coalesce( {{metric('customers_churned')}}, 0)"
+
+    timestamp: date_day
+    time_grains: [month]
+
+    dimensions:
+      - sales_motion
+      - change_category
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'
+  

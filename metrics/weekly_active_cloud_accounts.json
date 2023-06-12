@@ -1,0 +1,1 @@
+{"name": "weekly_active_cloud_accounts", "description": "'The running total of dbt Cloud accounts with at least one\n successful job run in the last trailing 7 days for any given day.'\n", "type": "measure_proxy", "type_params": {"measure": {"name": "weekly_active_cloud_accounts"}}}

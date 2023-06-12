@@ -1,0 +1,1 @@
+{"name": "arr_month_start", "description": "The ARR (Annual Recurring Revenue) of dbt Labs at the start of a month.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_month_start"}}, "constraint": {"where": "is_first_day_of_month = 1", "linkable_names": ["is_first_day_of_month"], "sql_params": {"param_items": []}}}

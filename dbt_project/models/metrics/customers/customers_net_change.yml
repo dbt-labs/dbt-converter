@@ -1,0 +1,29 @@
+version: 2
+
+metrics:
+  - name: customers_net_change
+    label: Net Change in Customers (Logos)
+    description: >
+      The sum total of new customers (logos) less churned customers
+      in a given time period.
+    tags: []
+
+    calculation_method: derived
+    expression: "coalesce( {{metric('customers_new')}}, 0) - coalesce( {{metric('customers_churned')}}, 0)" 
+
+    timestamp: customer_start
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - sales_motion
+      - geo_region
+      - geo_country
+      - geo_state
+      - account_region
+      - account_subregion
+      - market_segment
+      - deployment_type
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'

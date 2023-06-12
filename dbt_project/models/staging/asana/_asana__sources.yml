@@ -1,0 +1,23 @@
+version: 2
+
+sources:
+  - name: asana
+    schema: fivetran_asana_boards
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    database: raw
+    description: '{{ doc("src_asana") }}'
+
+    meta:
+      team: ['ProServ']
+      owner_name: Estelle Wolski
+
+    tables:
+      - name: project
+      - name: project_task
+      - name: section
+      - name: story
+      - name: task
+      - name: task_section
+      - name: team
+      - name: user

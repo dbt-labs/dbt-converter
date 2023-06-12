@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: meetup
+    schema: stitch_meetup
+    database: raw
+    loader: stitch
+    loaded_at_field: _sdc_received_at
+    description: '{{ doc("src_meetup") }}'
+
+    meta:
+      team: ['Marketing','Community']
+      owner_name: Brandon Thomson
+
+    tables:
+      - name: events
+      - name: groups
+      - name: members
+      - name: rsvps

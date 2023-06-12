@@ -1,0 +1,174 @@
+version: 2
+
+macros:
+  - name: clone_prod_to_target
+    description: >
+      A macro for cloning one schema from another. The macro creates the schema
+      if it does not exist and transfers ownership of the new schema to the
+      target role. The intended purpose of this macro is for quick creation of
+      dbt development environments. It is recommended to call this macro from
+      `reset_dev_env` with the following command:
+
+      ```
+      dbt run-operation reset_dev_env --args '{from_schema: analytics}'
+      ```
+    arguments:
+      - name: from_schema
+        type: string
+        description: The schema to clone.
+      - name: from_database
+        type: string
+        description: The database containing the schema to clone.
+
+  - name: create_raw_secure_masked_views
+    description: >
+      This macro operationalizes our sensitive data policy. It is designed to
+      be run as an Ad Hoc dbt Cloud job whenever a new sensitive data source is
+      added to the project or the schema for a sensitive data source is
+      updated. For more information about implementing sensitive sources, read
+      our [How we handle sensitive data in Snowflake](https://www.notion.so/dbtlabs/How-we-handle-sensitive-data-in-Snowflake-c95757c4d627402cb9719291fef26cce?pvs=4)
+      doc in Notion.
+
+      Data loaded into the secure database is not available to developers in
+      our dbt project. We use this macro to mask sensitive data and then create
+      views in our `raw` database to surface the masked data to the rest of the
+      org.  By maintaining a layer of views between the loader source data and
+      the dbt project, we can ensure sensitive data is never exposed if
+      loader-controlled parts of Snowflake are altered (i.e. addition of a
+      column).
+
+      Sources enter this workflow using the meta key-value pair of
+      `create_masked_views: true`. See `_data_masking_example__sources.sql` for
+      an example.
+    arguments:
+      - name: secure_db
+        type: string
+        description: The database where data loader(s) load sensitive data.
+      - name: meta_key
+        type: string
+        description: The meta key used to assigned masking policies to columns.
+      - name: replace_mode
+        type: boolean
+        description: >
+          When `replace_mode=false` the macro generates uses `create view if not
+          exists` statements. This is the default behavior. When 
+          `replace_mode=true`, it instead `create or replace view` statements.
+
+  - name: drop_stale_warehouse_objects
+    description: >
+      Generates `DROP` statements for stale tables and views. Leveraged in a
+      dbt Cloud job with `dbt run-operation drop_stale_warehouse_objects --args '{days_stale: 7}'`
+      to perform maintenance on a desired cadence. Most appropriate for a
+      database with production dbt schemas.
+    arguments:
+      - name: days_stale
+        type: number
+        description: >
+          The number of days that defines the  object stale-ness threshold
+      - name: database
+        type: string
+        description: The database to scan information_schema 
+      - name: exclude_schemas
+        type: array of strings
+        description: A list of schemas to exclude from the scan
+      - name: exclude_incrementals
+        type: boolean
+        description: Whether to exclude incrementally materialized models
+      - name: exclude_snapshots
+        type: boolean
+        description: Whether to exclude a default `snapshots` schema
+      - name: test
+        type: boolean
+        description: A toggle for logging or executing SQL for development.
+
+  - name: drop_stale_schemas
+    description: >
+      Generates `DROP` statements for stale schemas. Leveraged in a dbt Cloud
+      job with `dbt run-operation drop_stale_schemas --args '{days_stale: 7}'`
+      to perform maintence on a desired cadence. Most appropriate for databases
+      with non-production data, such as development or CI.
+    arguments:
+      - name: days_stale
+        type: number
+        description: >
+          The number of days that defines the schema stale-ness threshold.
+      - name: database
+        type: string
+        description: The database to scan information_schema
+      - name: test
+        type: boolean
+        description: A toggle for logging or executing SQL for development.
+      - name: exclude_schemas
+        type: array of strings
+        description: A list of schemas to exclude from the scan
+
+  - name: grant_transformer_to_users
+    description: >
+      We provision access to our Snowflake account through Okta. However, Okta
+      is unable to grant access to roles it did not create, like our default
+      `transformer` ([see docs](https://community.snowflake.com/s/article/FAQ-Things-to-know-about-Okta-and-Snowflake-SCIM-Provisioning))
+      role. This macro automated granting of the transformer role to users
+      newly added to Snowflake so it is not a manual process for any member of
+      the data team.
+    arguments:
+      - name: lookback_hours
+        type: integer
+        description: >
+          Number of hours to filter by user creation timestamp.
+      - name: test
+        type: boolean
+        description: A toggle for logging or executing SQL for development.
+
+  - name: reset_dev_env
+    description: >
+      A macro to drop the current schema and call the `clone_prod_to_target`.
+      This is the recommended method for creating a new dbt development
+      environment in our project. The recommended command is:
+
+      ```
+      dbt run-operation reset_dev_env --args '{from_schema: analytics}'
+      ```
+    arguments:
+      - name: from_schema
+        type: string
+        description: The schema to clone.
+      - name: from_database
+        type: string
+        description: The database containing the schema to clone.
+
+  - name: set_query_tag
+    description:
+      Attaches dbt-level attributes to Snowflake queries as a
+      [query tag](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies).
+      This enables us to identify which dbt models triggered the query, if it
+      was an incremental or full refresh run, etc.
+
+  - name: set_warehouse_config
+    description: > 
+      Generates the appropriate warehouse name, depending on the current dbt
+      environment, for the requested size. It is necessary to generate
+      warehouse names this way to use in model-level configuration blocks.
+    arguments:
+      - name: warehouse_size
+        type: string
+        description: The Snowflake warehouse size.
+      - name: full_refresh_size
+        type: string
+        description: >
+          The Snowflake warehouse size to use when the `--full-refresh` flag is
+          passed.
+  
+  - name: use_role
+    description: >
+      A macro to execute a `use role` statement from a dbt Cloud job. Role
+      changes only work for service accounts that access Snowflake with a
+      username + password. Accounts that authenticate to Snowflake with Okta
+      cannot change the role on the connection. 
+    arguments:
+      - name: role
+        type: string
+        description: >
+          The name of the role to change the connection to.
+      - name: test
+        type: boolean
+        description: A toggle for logging or executing SQL for development.

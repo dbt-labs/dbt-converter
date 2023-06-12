@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: base__arr_retained
+    label: (Base) ARR Retained (Cloud)
+    description: >
+      The starting ARR less downgrades and churn that is retained (renewed) over a given month.
+    tags: []
+
+    calculation_method: derived
+    expression: "coalesce( {{metric('arr_month_start')}}, 0) + coalesce( {{metric('arr_downgrade')}}, 0) + coalesce( {{metric('arr_churned')}}, 0)"
+
+    timestamp: date_day
+    time_grains: [month]
+
+    dimensions:
+      - sales_motion
+      - change_category
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Andrew Tom'
+  

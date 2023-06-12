@@ -1,0 +1,35 @@
+version: 2
+
+metrics:
+  - name: accounts_cohort_ide_success
+    label: (Accounts) Cohort IDE Success
+    model: ref('fct_cloud_accounts')
+    description: >
+      For the cohort of accounts created in a given period, returns
+      the number of accounts in that cohort that have had a first
+      successful ide invocation, at present.
+    tags: []
+
+    calculation_method: count 
+    expression: account_id
+
+    filters:
+      - field: is_account_deleted
+        operator: "="
+        value: "0"
+      - field: is_test_account
+        operator: "="
+        value: "0"
+      - field: first_successful_ide_invocation_at
+        operator: "is not"
+        value: "NULL"
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - database_type
+      - plan
+
+    meta:
+      owner(s): 'Andrew Tom'

@@ -1,0 +1,148 @@
+version: 2
+
+sources:
+  - name: netsuite
+    description: Source for all spend and revenue actuals
+    schema: fivetran_netsuite_suiteanalytics
+    database: raw
+    loader: fivetran
+    meta:
+      team: ['Accounting']
+      owner_name: Kenan Glasgold
+      create_masked_views: true
+    
+    tables:
+      - name: account
+        description: Netsuite Chart of Accounts
+      
+      - name: accounting_period
+        identifier: accountingperiod
+        description: Dimension table for accounting periods in Netsuite
+
+      - name: account_type
+        identifier: accounttype
+        description: Dimension table for Netsuite account types IDs
+      
+      - name: approval_status
+        identifier: approvalstatus
+        description: '{{ doc("netsuite_approvalstatus") }}'
+      
+      - name: consolidated_exchange_rate
+        identifier: consolidatedexchangerate
+        description:  Includes consolidated exchange rates between the base currencies of each subsidiary and its parent or grandparent subsidiary for a specified accounting period.
+
+      - name: currency
+        description: currency mapping for transactions
+
+      - name: currency_rate
+        identifier: currencyrate
+        description: Currency conversion for local to USD
+
+      - name: department
+        description: '{{ doc("netsuite_department") }}'
+
+      - name: entity
+        description: All entities we have transactions with
+      
+      - name: expense_category
+        identifier: expensecategory
+        description: Dimension table for expense category IDs from Netsuite
+    
+      - name: subsidiary
+        description: Dimension table for subsidiaries in Netsuite
+
+      - name: transaction
+        description: All Financial Transactions
+        columns:
+          - name: id
+            description: Primary key of the transaction table
+          - name: foreigntotal
+            meta:
+              masking_policy: accounting_float
+          - name: foreignamountpaid
+            meta:
+              masking_policy: accounting_float
+          - name: foreignamountunpaid
+            meta:
+              masking_policy: accounting_float
+          - name: foreignpaymentamountunused
+            meta:
+              masking_policy: accounting_float
+          - name: foreignpaymentamountused
+            meta:
+              masking_policy: accounting_float
+
+      - name: transaction_accounting_line
+        identifier: transactionaccountingline
+        description: Accounting Line Item Details for All Financial Transactions
+        columns:
+          - name: amount
+            meta:
+              masking_policy: accounting_float
+          - name: amountlinked
+            meta:
+              masking_policy: accounting_float
+          - name: amountpaid
+            meta:
+              masking_policy: accounting_float
+          - name: amountunpaid
+            meta:
+              masking_policy: accounting_float
+          - name: credit
+            meta:
+              masking_policy: accounting_float
+          - name: debit
+            meta:
+              masking_policy: accounting_float
+          - name: netamount
+            meta:
+              masking_policy: accounting_float
+          - name: paymentamountunused
+            meta:
+              masking_policy: accounting_float
+          - name: paymentamountused
+            meta:
+              masking_policy: accounting_float
+
+      - name: transaction_line
+        identifier: transactionline
+        description: Line Item Details for All Financial Transactions
+        columns:
+          - name: transaction
+            description: ID for the parent level transaction
+          - name: id
+            description: ID for the line on the transaction 
+          - name: foreignamount
+            meta:
+              masking_policy: accounting_float
+          - name: foreignamountpaid
+            meta:
+              masking_policy: accounting_float
+          - name: foreignamountunpaid
+            meta:
+              masking_policy: accounting_float
+          - name: foreignpaymentamountunused
+            meta:
+              masking_policy: accounting_float
+          - name: foreignpaymentamountused
+            meta:
+              masking_policy: accounting_float
+          - name: creditforeignamount
+            meta:
+              masking_policy: accounting_float
+          - name: debitforeignamount
+            meta:
+              masking_policy: accounting_float
+          - name: fxamountlinked
+            meta:
+              masking_policy: accounting_float
+          - name: netamount
+            meta:
+              masking_policy: accounting_float
+
+      - name: transaction_status
+        identifier: transactionstatus
+        description: Status of whether or not a transactions has cleared and reason
+      
+      - name: vendor
+        description: Dimension table for vendors in Netsuite

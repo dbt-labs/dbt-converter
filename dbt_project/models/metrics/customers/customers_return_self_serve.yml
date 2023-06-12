@@ -1,0 +1,28 @@
+version: 2
+
+metrics:
+  - name: customers_return_self_serve
+    label: Self-Serve Return Customers
+    model: ref('fct_customer_activity_self_serve')
+    description: >
+      The total number of Self-Serve customers with no change in ARR 
+      during a given time period.
+
+    calculation_method: count_distinct
+    expression: customer_id
+
+    filters:
+      - field: sales_channel
+        operator: "="
+        value: "'Self-Serve'"
+      - field: customer_activity_type
+        operator: "="
+        value: "'return'"
+
+    timestamp: close_month
+    time_grains: [month]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

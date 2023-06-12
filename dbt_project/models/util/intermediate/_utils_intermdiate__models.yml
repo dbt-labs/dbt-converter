@@ -1,0 +1,375 @@
+version: 2
+
+models:
+  - name: int_account_domains__aggregated
+    description: '{{ doc("int_account_domains__aggregated") }}'
+    columns:
+      - name: account_domain_id
+        tests:
+          - unique
+          - not_null
+
+      - name: account_id
+        description: The dbt Cloud account ID.
+
+      - name: email_domain
+        description: The email domain of users on the account.
+
+      - name: count_of_users
+        description: The number of current users associated with the email domain.
+
+      - name: first_license_created_at
+        description: A timestamp indicating when the first license was created for a given email domain on an account.
+
+      - name: last_license_created_at
+        description: A timestamp indicating when the last license was created for a given email domain on an account.
+
+      - name: database_type
+        description: >
+          The type of database the Cloud account information comes from.
+          This can be either `multi-tenant` or `single-tenant`.
+
+      - name: database_source
+        description: '{{ doc("database_source") }}'
+
+      - name: cloud_account_name
+        description: The name of the Cloud account.
+
+      - name: billing_email_domain
+        description: The email domain of the billing email on the account.
+
+      - name: cloud_account_plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account ID associated with the email domain on the account.
+          Note: note every email domain has a Salesforce account associated with it.
+          In these instances, the `salesforce_account_id` will be null.
+
+      - name: salesforce_account_name
+        description: The name of the Salesforce account associated with the email domain on the account.
+
+      - name: salesforce_account_status
+        description: The current account status of the Salesforce account associated with the email domain on the account.
+
+      - name: override_sfdc_account_id
+        description: >
+          The overridden Salesforce account ID for the Cloud account.
+          This is set in the Salesforce UI, and should take the highest priority in how a Cloud account gets mapped to a Salesforce account.
+
+      - name: override_sfdc_account_name
+        description: >
+          The overriden Salesforce account name for the Cloud account.
+          This is set in the Salesforce UI, and should take the highest priority in how a Cloud account gets mapped to a Salesforce account.
+
+      - name: is_partner_training_acct
+        description: A boolean indicating if a Cloud account is a partner training account.
+
+      - name: is_managed_customer
+        description: A boolean indicating if the Salesforce account associated with the email domain is currently a managed customer or a churned managed customer.
+
+      - name: is_account_override
+        description: A boolean, determined at the Cloud account level, indicating if there is a manual override set in Salesforce.
+
+      - name: is_billing_domain
+        description: A boolean indicating if the email domain on the account matches the billing email domain.
+
+      - name: is_internal_domain
+        description: >
+          A boolean indicating if the email domain is an internal domain.
+          Internal domains include `@fishtownanalytics.com` and `@dbtlabs.com`.
+
+      - name: is_partner_domain
+        description: >
+          A boolean indicating if the email domain is a partner domain.
+          This is determined through the `domain` and `account` objects in Salesforce.
+          If a domain is associated with a partner account, this will be True.
+
+      - name: is_consumer_domain
+        description: >
+          A boolean indicating if the email domain is a consumer domain.
+          Example consumer domains include: `@gmail.com`, `@hotmail.com`, etc.
+
+      - name: is_business_domain
+        description: >
+          A boolean indicating if the email domain is a business domain.
+          Business domains are simply any domain that is not a partner, internal, or consumer domain.
+          Ideally, each business domain will be represented in the `domain` object in Salesforce, but this is not always the case.
+
+      - name: count_of_internal_domain_users
+        description: The count of current users for a given internal email domain on the account.
+
+      - name: count_of_partner_domain_users
+        description: The count of current users for a given partner email domain on the account.
+
+      - name: count_of_consumer_domain_users
+        description: The count of current users for a given consumer email domain on the account.
+
+      - name: count_of_business_domain_users
+        description: The count of current users for a given business email domain on the account.
+
+      - name: account_level_is_managed_customer
+        description: A boolean, determined at the Cloud account level, indicating if one of the email domains on the account is associated with a current managed customer or churned managed customer.
+
+      - name: account_level_billing_domain_match
+        description: A boolean, determined at the Cloud account level, indicating if one of the email domains on the account matches the billing email domain.
+
+      - name: account_level_internal_domain_users
+        description: The count of current users associated with an internal email domain on the account.
+
+      - name: account_level_partner_domain_users
+        description: The count of current users associated with a partner email domain on the account.
+
+      - name: account_level_consumer_domain_users
+        description: The count of current users associated with a consumer email domain on the account.
+
+      - name: account_level_business_domain_users
+        description: The count of current users associated with a business email domain on the account.
+
+  - name: int_account_domains__ranked
+    description: '{{ doc("int_account_domains__ranked") }}'
+    columns:
+      - name: account_domain_id
+        tests:
+          - unique
+          - not_null
+
+      - name: account_id
+        description: The dbt Cloud account ID.
+
+      - name: email_domain
+        description: The email domain of users on the account.
+
+      - name: count_of_users
+        description: The number of current users associated with the email domain.
+
+      - name: first_license_created_at
+        description: A timestamp indicating when the first license was created for a given email domain on an account.
+
+      - name: last_license_created_at
+        description: A timestamp indicating when the last license was created for a given email domain on an account.
+
+      - name: database_type
+        description: The type of database the Cloud account information comes from. This can be either `multi-tenant` or `single-tenant`.
+
+      - name: database_source
+        description: '{{ doc("database_source") }}'
+
+      - name: cloud_account_name
+        description: The name of the Cloud account.
+
+      - name: billing_email_domain
+        description: The email domain of the billing email on the account.
+
+      - name: cloud_account_plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account ID associated with the email domain on the account.
+          Note: note every email domain has a Salesforce account associated with it.
+          In these instances, the `salesforce_account_id` will be null.
+
+      - name: salesforce_account_name
+        description: The name of the Salesforce account associated with the email domain on the account.
+
+      - name: salesforce_account_status
+        description: The current account status of the Salesforce account associated with the email domain on the account.
+
+      - name: override_sfdc_account_id
+        description: The overridden Salesforce account ID for the Cloud account. This is set in the Salesforce UI, and should take the highest priority in how a Cloud account gets mapped to a Salesforce account.
+
+      - name: override_sfdc_account_name
+        description: The overriden Salesforce account name for the Cloud account. This is set in the Salesforce UI, and should take the highest priority in how a Cloud account gets mapped to a Salesforce account.
+
+      - name: is_partner_training_acct
+        description: A boolean indicating if a Cloud account is a partner training account.
+
+      - name: is_managed_customer
+        description: A boolean indicating if the Salesforce account associated with the email domain is currently a managed customer or a churned managed customer.
+
+      - name: is_account_override
+        description: A boolean, determined at the Cloud account level, indicating if there is a manual override set in Salesforce.
+
+      - name: is_billing_domain
+        description: A boolean indicating if the email domain on the account matches the billing email domain.
+
+      - name: is_internal_domain
+        description: >
+          A boolean indicating if the email domain is an internal domain.
+          Internal domains include `@fishtownanalytics.com` and `@dbtlabs.com`.
+
+      - name: is_partner_domain
+        description: >
+          A boolean indicating if the email domain is a partner domain.
+          This is determined through the `domain` and `account` objects in Salesforce.
+          If a domain is associated with a partner account, this will be True.
+
+      - name: is_consumer_domain
+        description: >
+          A boolean indicating if the email domain is a consumer domain.
+          Example consumer domains include: `@gmail.com`, `@hotmail.com`, etc.
+
+      - name: is_business_domain
+        description: >
+          A boolean indicating if the email domain is a business domain.
+          Business domains are simply any domain that is not a partner, internal, or consumer domain.
+          Ideally, each business domain will be represented in the `domain` object in Salesforce, but this is not always the case.
+
+      - name: count_of_internal_domain_users
+        description: The count of current users for a given internal email domain on the account.
+
+      - name: count_of_partner_domain_users
+        description: The count of current users for a given partner email domain on the account.
+
+      - name: count_of_consumer_domain_users
+        description: The count of current users for a given consumer email domain on the account.
+
+      - name: count_of_business_domain_users
+        description: The count of current users for a given business email domain on the account.
+
+      - name: account_level_is_managed_customer
+        description: A boolean, determined at the Cloud account level, indicating if one of the email domains on the account is associated with a current managed customer or a churned managed customer.
+
+      - name: account_level_billing_domain_match
+        description: A boolean, determined at the Cloud account level, indicating if one of the email domains on the account matches the billing email domain.
+
+      - name: account_level_internal_domain_users
+        description: The count of current users associated with an internal email domain on the account.
+
+      - name: account_level_partner_domain_users
+        description: The count of current users associated with a partner email domain on the account.
+
+      - name: account_level_consumer_domain_users
+        description: The count of current users associated with a consumer email domain on the account.
+
+      - name: account_level_business_domain_users
+        description: The count of current users associated with a business email domain on the account.
+
+      - name: count_of_leading_business_domains
+        description: >
+          The count of business domains on the account that have the highest number of current users.
+          This is used to determine if there are two email domains with an equal amount of business domains.
+
+      - name: business_domain_rank
+        description: The rank of the business domain on the account as determined by the number of current users.
+
+      - name: business_domain_created_at_rank
+        description: The rank of the business domain on the account as determined by the domain with the most recent license created.
+
+      - name: count_of_leading_partner_domains
+        description: >
+          The count of partner domains on the account that have the highest number of current users.
+          This is used to determine if there are two email domains with an equal amount of partner domains.
+
+      - name: partner_domain_rank
+        description: The rank of the partner domain on the account as determined by the number of current users.
+
+      - name: partner_domain_created_at_rank
+        description: The rank of the partner domain on the account as determined by the domain with the most recent license created.
+
+      - name: count_of_leading_internal_domains
+        description: >
+          The count of internal domains on the account that have the highest number of current users.
+          This is used to determine if there are two email domains with an equal amount of internal domains.
+
+      - name: internal_domain_rank
+        description: The rank of the internal domain on the account as determined by the number of current users.
+
+      - name: internal_domain_created_at_rank
+        description: The rank of the internal domain on the account as determined by the domain with the most recent license created.
+
+      - name: count_of_leading_consumer_domains
+        description: >
+          The count of consumer domains on the account that have the highest number of current users.
+          This is used to determine if there are two email domains with an equal amount of consumer domains.
+
+      - name: consumer_domain_rank
+        description: The rank of the consumer domain on the account as determined by the number of current users.
+
+      - name: consumer_domain_created_at_rank
+        description: The rank of the consumer domain on the account as determined by the domain with the most recent license created.
+
+  - name: int_cloud_account_mappings__primaries
+    description: '{{ doc("int_cloud_account_mappings__primaries") }}'
+    columns:
+      - name: cloud_account_id
+        tests:
+          - unique
+          - not_null
+      - name: sfdc_parent_account_id
+        description: "If a company has subsideraries (e.g. CONA -> CCBU), then this takes the parent Salesforce Account. If it is the parent account, then it will be the same value as the salesforce_account_id."
+      - name: is_primary
+        description: '{{ doc("is_primary_cloud_account") }}'
+      - name: cloud_account_plan
+        description: '{{ doc("cloud_plan") }}'
+      - name: cloud_account_plan_tier
+        description: '{{ doc("cloud_plan_tier") }}'
+  
+  - name: int_cloud_account_mappings__stepped
+    description: '{{ doc("int_cloud_account_mappings__stepped") }}'
+    tests:
+      - dbt_datamocktool.unit_test:
+          input_mapping:
+            ref('int_account_domains__ranked'): ref('cloud_account_mappings_mock_input')
+          expected_output: ref('cloud_account_mappings_mock_output')
+          depends_on:
+            - ref('int_account_domains__ranked')
+          compare_columns:
+            - account_id
+            - salesforce_account_id
+            - mapping_step_index
+    columns:
+      - name: account_id
+        description: The dbt Cloud account ID.
+        tests:
+          - unique
+          - not_null
+
+      - name: salesforce_account_id
+        description: >
+          The Salesforce account ID associated with the email domain on the account.
+          Note: note every email domain has a Salesforce account associated with it.
+          In these instances, the `salesforce_account_id` will be null.
+
+      - name: cloud_account_name
+        description: The name of the Cloud account.
+
+      - name: salesforce_account_name
+        description: The name of the Salesforce account associated with the email domain on the account.
+
+      - name: email_domain
+        description: The email domain of users on the account.
+
+      - name: mapping_confidence
+        description: >
+          The level of confidence in the Cloud account mapping as determined by our [cloud account mappings decision tree logic](https://lucid.app/publicSegments/view/40a71713-0115-48ba-9bd3-fff669666027/image.png).
+          These values range from `Very High` to `Low`, depending on where in the decision tree the account is mapped.
+
+      - name: mapping_step
+        description: >
+          A description of the mapping step to better understand how the Cloud account was mapped to a Salesforce account.
+          This mapping step aligns with the logic in our [cloud account mappings decision tree](https://lucid.app/publicSegments/view/40a71713-0115-48ba-9bd3-fff669666027/image.png).
+        tests:
+          - not_null
+
+      - name: mapping_step_index
+        description: >
+          The corresponding number of our mapping step.
+          This can be utilized to better filter data by step, and is also used as a check in our unit test.
+
+      - name: jarowinkler_score
+        description: >
+          A score, from 0 to 100, that indicates how close of a string match the Cloud account name and Salesforce account name are, after the mapping has occurred.
+          This can be utilized to identify accounts that have largely differing names even after moving through the decision tree logic.
+          This is computed using the `jarowinkly_similarity` function in Salesforce.
+          More information on this function [can in the Snowflake docs](https://docs.snowflake.com/en/sql-reference/functions/jarowinkler_similarity.html).
+
+      - name: string_matching_confidence
+        description: >
+          A text version of the `jarowinkler_score` field that buckets scores into groups from `Very High` to `Low`.
+          Scores from 90 - 100 are `Very High`.
+          Scores from 80 - 89 are `High`.
+          Scores from 70 - 79 are `Moderate`.
+          Scores below 69 are considered `Low`.

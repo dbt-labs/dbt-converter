@@ -1,0 +1,25 @@
+version: 2
+
+metrics:
+
+  - name: web_sessions
+    label: Web Sessions
+    model: ref('web_sessions')
+    description: >
+      {{ doc("web_sessions") }}  
+        
+      {{ doc("querying_dbt_metrics") }}
+
+    calculation_method: count_distinct
+    expression: session_id
+
+    timestamp: session_start
+    time_grains: [day, week, month]
+
+    dimensions:
+      - region_category
+      - channel
+      - sub_channel
+      - sales_territory
+      - market_segment
+      - marketing_campaign

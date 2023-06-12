@@ -1,0 +1,39 @@
+version: 2
+
+models:
+- name: stg_ticket_tailor__events
+  columns:
+    - name: event_id
+      tests:
+        - unique
+        - not_null
+
+- name: stg_ticket_tailor__orders
+  columns:
+    - name: order_id
+      tests:
+        - unique
+        - not_null
+
+    - name: event_id
+      tests:
+        - not_null
+
+    - name: currency_code
+      tests:
+        - accepted_values:
+            values: ['usd']
+
+    - name: status
+      tests:
+        - accepted_values:
+            values: ['cancelled', 'pending', 'completed']
+
+- name: stg_ticket_tailor__tickets
+  columns:
+    - name: ticket_id
+      tests:
+        - unique
+        - not_null
+    - name: percentage_completed
+      description: This is a learn-specific field. We use this is when a Learner has completed a course, which will be 1 (i.e. 100%). This is specifically used when we combine these Learners with On-Demand learners whose completion rate can vary.

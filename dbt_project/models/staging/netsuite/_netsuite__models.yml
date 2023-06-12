@@ -1,0 +1,158 @@
+version: 2
+
+models:
+  - name: stg_netsuite__account_types
+    description: Dimension table for Netsuite account types IDs
+    columns:
+      - name: account_type_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__accounting_periods
+    description: Dimension table for accounting periods in Netsuite
+    columns:
+      - name: accounting_period_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__accounts
+    description: Netsuite Chart of Accounts
+    columns:
+      - name: account_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__approval_statuses
+    description: '{{ doc("stg_netsuite__approvalstatuses") }}'
+    columns:
+      - name: approval_status_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__consolidated_exchange_rates
+    description: Includes consolidated exchange rates between the base currencies of each subsidiary and its parent or grandparent subsidiary for a specified accounting period.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - accounting_book_id
+            - posting_accounting_period_id
+            - from_subsidiary_id
+            - to_subsidiary_id
+  - name: stg_netsuite__currencies
+    description: Currency mapping for financial transactions
+    columns:
+      - name: currency_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__currency_rates
+    description: Currency conversion for local to USD
+    columns:
+      - name: currency_rate_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__departments
+    description: '{{ doc("stg_netsuite__departments") }}'
+    columns:
+      - name: department_id
+        description: Unique identifier for each department in Netsuite
+        tests:
+          - unique
+          - not_null
+      - name: parent_department_id
+        description:  The identifier for the department one level higher in the hierarchy.  The field is null if it is a top level department.
+      - name: department_name
+        description: The name of the department.  This is the primary field to use to run reports by department.
+      - name: department_name_with_parent_names
+        description: '{{ doc("stg_netsuite__departments___department_name_with_parent_names") }}'
+  - name: stg_netsuite__entities
+    description: All entities we have transactions with
+    columns:
+      - name: entity_id
+        tests:
+          - unique
+          - not_null
+      - name: entity_identifier
+        description: The identiifer for the entity that is used inside of Netsuite.  Enter this value into the search bar to access this entity in Nestuite.  Not used for joining tables or views within the data warehouse.   
+  - name: stg_netsuite__expense_categories
+    description: Dimension table for expense category IDs from Netsuite
+    columns:
+      - name: expense_category_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__subsidiaries
+    description: Dimension table for subsidiaries in Netsuite
+    columns:
+      - name: subsidiary_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_netsuite__transaction_accounting_lines
+    description: The debit and credit amounts for all financial transaction line items converted into the subsidiary currency.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - transaction_id
+            - transaction_line_id
+  - name: stg_netsuite__transaction_lines
+    description: Line item details for all Netsuite transactions.  All values in this model are expressed in the currency of the transaction.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - transaction_id
+            - transaction_line_id
+    columns:
+      - name: transaction_id
+        description: The key to identify the parent transaction
+      - name: transaction_line_id
+        description: The key to uniquely identify each indvidual line of the transaction
+      - name: accounting_line_type
+        description: A scriptio continua (i.e. writing without spaces) description of the transaction line type
+      - name: foreign_currency_amount
+        description: The amount of the transaction line item in the transaction currency
+      - name: rev_rec_start_date
+        description: '{{ doc("revenue_start_date") }}'
+      - name: rev_rec_end_date
+        description: '{{ doc("revenue_end_date") }}'
+  - name: stg_netsuite__transaction_statuses
+    description: Status of whether or not a transaction has cleared and reason
+  - name: stg_netsuite__transactions
+    description: All financial transactions from Netsuite
+    columns:
+      - name: transaction_id
+        description: Primary key assigned to the transaction 
+        tests:
+          - unique
+          - not_null
+      - name: currency_id
+        description: The id for the currency in which the transaction occurred.  This currency is associated with the foreign amounts in the transaction tables
+      - name: posting_accounting_period_id
+        description: The id for the accounting period in which the transaction was posted
+      - name: transaction_type_short_code
+        description: An abbreviated code to represent the transaction type
+      - name: transaction_type_id
+        description: A key that represents the transaction type
+      - name: record_type
+        description: A scriptio continua (i.e. writing without spaces) description of the record type
+      - name: transaction_identifier
+        description: The identiifer for the transaction that is used inside of Netsuite.  Enter this value into the search bar to access this transaction in Nestuite.  Not used for joining tables or views within the data warehouse.  
+  - name: stg_netsuite__vendors
+    description: Dimension table for vendors in Netsuite
+    columns:
+      - name: vendor_id
+        description: Primary key assigned to the vendor record
+        tests:
+          - unique
+          - not_null
+      - name: vendor_name
+        description: Vendor name, whether its a person or company
+      - name: vendor_company_name
+        description: This is the name of the vendor if it is a company.  Only set when is_person is false.
+      - name: entity_identifier
+        description: The identiifer for the entity that is used inside of Netsuite.  Enter this value into the search bar to access this entity in Nestuite.  Not used for joining tables or views within the data warehouse. 
+      
+  
+  
+ 

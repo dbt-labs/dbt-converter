@@ -1,48 +1,51 @@
 import os
 import json
+import glob
 import ruamel.yaml
-from metricflow.model.parsing.dir_to_model import ModelBuildResult
+from metricflow.model.parsing.dbt_dir_to_model import ModelBuildResult, parse_dbt_project_to_model
 from metricflow.model.parsing.dbt_cloud_to_model import model_build_result_for_dbt_cloud_job,get_dbt_cloud_metrics, parse_dbt_cloud_metrics_to_model
 
-dbt_auth = os.environ['DBT_AUTH']
 
-def get_and_convert_metrics(auth: str, job_id: int) -> ModelBuildResult:
-    errors_list = []
-    print("Getting metrics from Job ID {}".format(job_id))
-    metrics = get_dbt_cloud_metrics(auth,job_id)
-    print("Converting dbt metrics to UserConfiguredModel")
-    semantic_model = parse_dbt_cloud_metrics_to_model(metrics)
-    if semantic_model.issues.errors:
-        for error in semantic_model.issues.errors:
-            errors_list.append(error.dict()['message'])
-            print(error.dict()['message'])
-        return semantic_model
-    else: 
-        return semantic_model
+#Parsing Steps
+#1. Create a model from a dbt project
+#2. Create all data source in that model as seperate yaml files name data_source_name.yaml
+#3. Create all metrics in a metrics folder called metrics.yaml. Each metric is a seperate yaml document ---
 
-def write_semantic_model_yaml(semantic_model: ModelBuildResult, json_file: str, yaml_file: str):
-    if semantic_model.issues.errors:
-        return print("\nPlease fix errors in semantic model and re run the converter")
-    with open(json_file, 'w') as file:
-        file.write(semantic_model.model.json(exclude_defaults=True))
-    with open(json_file, 'r') as file:
-        configuration = json.load(file)
-    print("Writing semantic model to {}".format(yaml_file))
-    with open(yaml_file, "w") as file:
-        ruamel.yaml.dump(configuration,file, Dumper=ruamel.yaml.RoundTripDumper)
-    print("\nSuccess! Semantic model written to {}".format(yaml_file))
+def get_model() -> ModelBuildResult:
+    return parse_dbt_project_to_model('/Users/jordanstein/Dev/dbt-converter/dbt_project')
 
-write_semantic_model_yaml(get_and_convert_metrics(dbt_auth,940),'config.json','config.yaml')
+def write_metrics(model: ModelBuildResult):
+    # Intialize a new list of metrics
+    metric_list = []
+    # dump json to yaml for each metic in the model
+    for metric in  model.model.metrics:
+            with open(f'metrics/{metric.name}.json','w+') as f:
+                f.write(metric.json(exclude_defaults=True)) # It would probably be cleaner not to write these files, but i can't figure out how to get the encoding to work :^)
+    for filename in glob.glob(f'metrics/*.json'): #iterate over each file name that matches this pattern
+        with open(filename,'r') as f:
+            metric_list.append(json.load(f))
 
-#Test Cloud job ID 221289
-# Prod Cloud jon ID 940
+    with open('metrics.yaml','a') as file:
+        ruamel.yaml.dump_all(metric_list,file, Dumper=ruamel.yaml.RoundTripDumper,)
+            
 
-# todo: Better error messages, write metrics to seperate yaml, option to write data sources to seperate yaml, auto generate empty identifier key, add formating polish to CLI prompts
-# errors = get_and_convert_metrics(dbt_auth,940).issues.errors
-# print(errors)
-# errors_list = []
-# for error in errors:
-#     errors_list.append(error.dict()['message'])
-#     # print(error.dict()['message'])
-# print(errors_list)
 
+def write_semantic_models(model: ModelBuildResult): 
+    """
+    This function takes in a MetricFlow ModelBuildResult and 
+    creates a yaml file for each data source in the ModelBuildResult.
+    """
+    if model.issues.errors:
+         return print("\nPlease fix errors in semantic model and re run the converter")
+    for data_source in model.model.data_sources:
+        with open(f'config_{data_source.name}.json', 'w') as file:
+            file.write(data_source.json(exclude_defaults=True))
+        with open(f'config_{data_source.name}.json', 'r') as file:
+            configuration = json.load(file)
+        with open(f'{data_source.name}.yaml', "w") as file:
+            ruamel.yaml.dump(configuration,file, Dumper=ruamel.yaml.RoundTripDumper)
+    return "Success! Semantic Models Created"
+
+model = get_model()
+write_semantic_models(model)
+write_metrics(model)

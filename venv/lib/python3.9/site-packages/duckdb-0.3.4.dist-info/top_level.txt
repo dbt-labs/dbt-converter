@@ -1,0 +1,4 @@
+_duckdb_extension
+duckdb
+duckdb-stubs
+duckdb_query_graph

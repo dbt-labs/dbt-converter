@@ -1,0 +1,70 @@
+
+version: 2
+
+sources:
+  - name: github
+    loader: stitch_tap
+    loaded_at_field: _sdc_batched_at
+    database: raw
+
+    freshness:
+      error_after: {count: 28, period: hour}
+
+    meta:
+      team: ['Community']
+      owner_name: Elize Papineau
+
+    tables:
+      - name: releases
+      - name: stargazers
+
+  - name: fivetran_github
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+    meta:
+      team: ['Community']
+      owner_name: Elize Papineau
+    database: raw
+    description: '{{ doc("src_github") }}'
+
+    tables:
+      - name: commit
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: commit_pull_request
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: issue
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: issue_merged
+        freshness:
+          warn_after: {count: 48, period: hour}
+          error_after: {count: 7, period: day} # accounting for holidays
+      - name: pull_request_review
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: pull_request
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: repository
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: team_membership
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: team
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: user_email
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: user
+        freshness:
+          error_after: {count: 28, period: hour}
+      - name: issue_label_history
+        freshness:
+          error_after: {count: 72, period: hour}
+      - name: label
+        freshness:
+          error_after: {count: 28, period: hour}

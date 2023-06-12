@@ -1,0 +1,16 @@
+version: 2
+
+exposures:
+  - name: current_month_dbt_cloud_metrics_dashboard
+    type: dashboard
+    maturity: high
+    url: https://fishtown.looker.com/dashboards-next/65
+    description: >
+      Fishtown Analytics uses this dashboard to monitor the status of our Cloud
+      customers (e.g. upgrades/downgrades/churns and mrr). This dashboard is
+      mainly built off of the `fct_subscription_transactions` model.
+    depends_on:
+      - ref('fct_subscription_transactions')
+    owner:
+      name: Erica Louie
+      email: ric@fishtownanalytics.com

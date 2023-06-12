@@ -1,0 +1,96 @@
+version: 2
+
+seeds:
+  - name: stg_quickbooks__customer_id_map
+    description: '{{doc("stg_quickbooks__customer_id_map")}}'
+    columns:
+        - name: customer_id_map_from
+          tests:
+              - unique
+              - not_null
+        - name: customer_id_map_to
+              - not_null
+        - name: quickbooks_display_name
+          tests:
+              - relationships: {to: ref('stg_quickbooks__customers'), field: 'display_name'}
+
+  - name: stg_quickbooks__account_id_map
+    description: '{{doc("stg_quickbooks__account_id_map")}}'
+    columns:
+        - name: quickbooks_customer_id
+          tests:
+              - unique
+              - not_null
+        - name: account_id
+              - unique
+              - not_null
+
+  - name: stg_seed__training_mapping_percent_chapter
+    description: For each training course, this table maps the percent of a given lesson with the name of the chapter.
+    config:
+      column_types:
+        course_id: varchar
+        course_name: varchar
+        chapter: varchar
+        total_lessons: int
+        lessons: int
+        total_complete: int
+
+  - name: stg_seed__clearbit_country_mapping
+    description: >
+      A list of country codes & country names that Clearbit uses for their country mapping.
+      This is utilized in Salesforce, and therefore we use it in our internal data model for enriched these fields from external sources to Salesforce.
+      The source of this data is [this Google Sheet](https://docs.google.com/spreadsheets/d/1erIdqoy60JwLAnpb91EfoJV5YrXDnbwSaA-aqcBlw48/edit#gid=1188894786).
+    columns:
+      - name: country_code
+        tests:
+          - unique
+          - not_null
+      - name: country_name
+        tests:
+          - not_null
+
+  - name: stg_seeds__product_pricing_details
+    description: >
+      A list of dbt products along with pricing details (list price, standalone sales price factors) needed to determine
+      revenue allocations. This is not expected to change frequently (~ once per year), so this seed file serves as a first
+      pass at the maintenance of these items in dbt. 
+    columns:
+      - name: product_code
+        description: '{{ doc("sfdc_product_code") }}'
+        tests:
+          - not_null
+      - name: package_product_code
+        description: '{{ doc("package_product_code") }}'
+      - name: list_price
+        description: '{{ doc("list_price") }}'
+        tests:
+          - not_null
+      - name: ssp_low_percentage
+        description: '{{ doc("ssp_low_percentage") }}'
+        tests:
+          - not_null
+      - name: ssp_midpoint_percentage
+        description: '{{ doc("ssp_midpoint_percentage") }}'
+        tests:
+          - not_null
+      - name: ssp_high_percentage
+        description: '{{ doc("ssp_high_percentage") }}'
+        tests:
+          - not_null
+      - name: ssp_midpoint
+        description: '{{ doc("ssp_midpoint") }}'
+        tests:
+          - not_null
+      - name: low_discount_threshold
+        description: '{{ doc("product_low_discount_threshold") }}'
+        tests:
+          - not_null
+      - name: high_discount_threshold
+        description: '{{ doc("product_high_discount_threshold") }}'
+        tests:
+          - not_null
+      - name: effective_date
+        description: The date at which a particular row of pricing details took effect. 
+        tests:
+          - not_null

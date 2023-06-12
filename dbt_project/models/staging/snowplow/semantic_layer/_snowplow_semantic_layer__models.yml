@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: stg_semantic_layer__queries
+    columns:
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}

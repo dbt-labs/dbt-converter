@@ -1,0 +1,105 @@
+version: 2
+
+models:
+  - name: int__pivot_accounting_amounts
+    description: '{{ doc("fct_managed_deferred_revenue_waterfalls") }}'
+
+  - name: int__order_items_with_revenue_test_cases
+    description: >
+      This model takes the existing order items model and adds in dummy rows for a few particular orders
+      in which the unit price of particular SKUs are overridden to trigger and thus validate revenue
+      allocation patterns. This was added in March of 2023 and should be removed no later than June 30,
+      2023 given that the approach should be validated by that time. 
+
+  - name: int__orders_with_revenue_test_cases
+    description: >
+      This model takes the existing orders model and adds in dummy rows for a few particular orders
+      in which the unit price of particular SKUs are overridden to trigger and thus validate revenue
+      allocation patterns. This was added in March of 2023 and should be removed no later than June 30,
+      2023 given that the approach should be validated by that time. 
+
+  - name: int__enriching_rev_rpo_overrides
+    description: >
+      The baseline googlesheet for these overrides was set up using revenue schedule codes due to the 
+      ease in input for the revenue accounting team. This model adds the more robust join keys from
+      SFDC, spines the overrides over an appropriate range of dates, and accounts for any accidental 
+      duplication (while also throwing an error for it).
+    columns:
+      - name: id
+        description: A unique identifier for the date <> schedule combinations.
+        tests:
+          - unique
+          - not_null
+      - name: sfdc_rev_schedule_id
+        description: '{{ doc("sfdc_rev_schedule_id") }}'
+      - name: revenue_schedule_code
+        description: >
+          {{ doc("revenue_schedule_code") }} In this case, used to further confirm the schedule being overridden.
+      - name: is_rpo_adjusted
+        description: '{{ doc("is_rpo_adjusted") }}'
+      - name: override_type
+        description: '{{ doc("rpo_override_type") }}'
+      - name: override_start_date
+        description: '{{ doc("rpo_override_start_date") }}'
+      - name: override_end_date
+        description: '{{ doc("rpo_override_end_date") }}'
+      - name: flat_amount
+        description: '{{ doc("rpo_override_flat_amount") }}' 
+      - name: comment
+        description: An explanation of the reason for the override.
+      - name: current_applicable_overrides
+        description: '{{ doc("current_applicable_rpo_overrides") }}' 
+      - name: override_error_message
+        description: '{{ doc("rpo_override_error_message") }}' 
+      - name: is_override_error
+        description: '{{ doc("is_rpo_override_error") }}' 
+
+
+  - name: int__enriching_rev_schedule_overrides
+    description: >
+      The baseline googlesheet for these overrides was set up using revenue schedule codes due to the 
+      ease in input for the revenue accounting team. This model adds the more robust join keys from
+      SFDC while also accounting for any accidental duplication.
+    columns:
+      - name: sfdc_rev_schedule_id
+        description: '{{ doc("sfdc_rev_schedule_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: revenue_schedule_code
+        description: >
+          {{ doc("revenue_schedule_code") }} In this case, used to further confirm the schedule being overridden.
+        tests:
+          - not_null
+      - name: initial_catch_up_date
+        description: >
+          {{ doc("initial_catch_up_date") }} In this case, a forced override of the field.
+      - name: final_rollup_date
+        description: >
+          {{ doc("final_rollup_date") }} In this case, a forced override of the field.
+      - name: sign_date
+        description: >
+          {{ doc("salesforce_contract_sign_date") }} In this case, a forced override of the field.
+      - name: revenue_start_date
+        description: >
+          {{ doc("revenue_start_date") }} In this case, a forced override of the field.
+      - name: revenue_end_date
+        description: >
+          {{ doc("revenue_end_date") }} In this case, a forced override of the field.
+      - name: revenue_per_day
+        description: >
+          {{ doc("revenue_per_day") }} In this case, a forced override of the field.          
+      - name: revenue_amount
+        description: >
+          An overall amount of revenue to be recognized. In this case, a forced override of the field.
+      - name: comment
+        description: An explanation of the reason for the override.
+
+      - name: initial_catch_up_date
+        description: '{{ doc("initial_catch_up_date") }}'
+
+      - name: initial_catch_up_amount
+        description: '{{ doc("initial_catch_up_amount") }}'
+
+      - name: as_of_date
+        description: '{{ doc("revenue_schedule_override_as_of_date") }}'

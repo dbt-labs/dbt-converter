@@ -1,0 +1,43 @@
+
+version: 2
+
+sources:
+  - name: stripe
+    schema: dbt_cloud_stripe
+    description: '{{ doc("src_stripe") }}'
+
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+    database: raw
+
+    meta:
+      team: ['Finance']
+      owner_name: Elize Papineau
+
+    freshness:
+      error_after: {count: 4, period: hour}
+
+    tables:
+      - name: charges
+        description: >
+          To charge a credit or a debit card, you create a Charge object.
+          Charges are identified by a unique, random ID.
+      - name: customers
+        description: A customer of your business.
+      - name: events
+        description: >
+          Events occur when the state of another resource changes. The state of
+          that resource at the time of the change is embedded in the event's
+          data field. For example, a charge.succeeded event will contain a
+          charge, and an invoice.payment_failed event will contain an invoice.
+      - name: invoices
+        description: >
+          Invoices are statements of amounts owed by a customer, and are either
+          generated one-off, or generated periodically from a subscription.
+          They contain invoice items, and proration adjustments that may be
+          caused by subscription upgrades/downgrades (if necessary).
+      - name: invoice_line_items
+        description: Invoice Items represent the component lines of an invoice.
+      - name: subscriptions
+        description: >
+          Subscriptions allow you to charge a customer on a recurring basis.

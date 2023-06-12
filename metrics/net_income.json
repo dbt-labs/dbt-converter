@@ -1,0 +1,1 @@
+{"name": "net_income", "description": "Sales minus cost of goods sold, general expenses, taxes, and interest", "type": "measure_proxy", "type_params": {"measure": {"name": "net_income"}}, "constraint": {"where": "accounting_period_end_date < CURRENT_DATE()", "linkable_names": ["accounting_period_end_date"], "sql_params": {"param_items": []}}}

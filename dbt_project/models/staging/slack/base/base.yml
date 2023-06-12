@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: base_slack_current__messages
+    description: >
+      Rename/recast fields, and add any placeholder columns. Construct a message_id.
+    columns:
+      - name: message_id
+        tests:
+          - unique
+          - not_null
+
+  - name: base_slack_historical__messages
+    description: >
+      Rename/recast fields, and add any placeholder columns. The message_id
+      gets built further downstream once we have the column_id.

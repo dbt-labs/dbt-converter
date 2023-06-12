@@ -1,0 +1,1 @@
+{"name": "arr_starting_managed", "description": "The amount of ARR (Annual Recurring Revenue) from Managed customers at the beginning of the given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_starting_managed"}}, "constraint": {"where": "sales_channel = 'Managed'", "linkable_names": ["sales_channel"], "sql_params": {"param_items": []}}}

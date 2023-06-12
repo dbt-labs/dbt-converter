@@ -1,0 +1,414 @@
+name: 'fishtown_internal_analytics'
+version: '1.0'
+require-dbt-version: ">=1.1.0"
+config-version: 2
+
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+target-path: "target"
+clean-targets: ["target", "dbt_modules", "dbt_packages"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+asset-paths: ["assets"]
+
+profile: "garage-snowflake"
+
+on-run-start:
+    - "{%- if target.user == 'dbt_cloud_user' -%}{{ dbt_snow_mask.create_masking_policy('models') }}{%- endif -%}"
+
+tests:
+  +store_failures: true
+  fishtown_internal_analytics:
+    marts:
+      marketing:
+        +meta:
+          team: ['Marketing']
+          owner_name: Brandon Thomson
+          slack_channel_id: C024Z8WRJ1H
+
+  dbt_project_evaluator:
+    +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'error') }}"
+
+vars:
+  testing_days_of_data: 3
+
+  future_proof_date: '9999-12-31'
+
+  disable_cold_storage: false
+  cold_storage_default_date: '2022-01-01'
+  cold_storage_default_period: 'month'
+  cold_storage_default_value: '1'
+
+  'snowplow:timezone': 'UTC'
+  'snowplow:page_ping_frequency': 10
+  'snowplow:events': "{{ ref('stg_snowplow_web_events') }}"
+  'snowplow:page_view_lookback_days': 3
+  'snowplow:context:web_page': "{{ ref('stg_snowplow_web_page_contexts') }}"
+  'snowplow:context:performance_timing': "{{ ref('current_snowplow_performance_timing') }}"
+  'snowplow:context:useragent': false
+  'snowplow:pass_through_columns': ["database_source"]
+
+  support_sla_first_response_min_sev1: 60
+  support_sla_first_response_min_sev2: 120
+  support_sla_first_response_min_sev3: 240
+  support_sla_first_response_min_sev4: 720
+  support_sla_close_min: 1440 # we don't have a close SLA, bumping this but will remove in the future
+
+  # Snowmask configuration
+  use_force_applying_masking_policy: true  # Read about force at https://docs.snowflake.com/en/sql-reference/sql/alter-table.html#table-column-actions-tablecolumnaction
+  use_common_masking_policy_db: true
+  common_masking_policy_db: raw
+  common_masking_policy_schema: analytics
+
+  # Revenue Allocation Toggles
+  reflect_allocation: true
+  allocation_activation_date: '2023-05-01'
+
+  zendesk_schema: fivetran_zendesk
+  zendesk_database: raw
+  
+  using_schedules:            False         #Disable if you are not using schedules
+  using_user_tags:            False         #Disable if you are not using user tags
+  using_organization_tags:    False         #Disable if you are not using organization tags
+
+  hubspot_source:
+    hubspot_database: raw
+    hubspot_schema: fivetran_hubspot
+
+  # Backwards compatibility for dbt-utils 1.0
+  # We should review our exisiting use of macro
+  surrogate_key_treat_nulls_as_empty_strings: true
+
+  # Marketing
+  hubspot_marketing_enabled: true                        # Disables all marketing models
+  hubspot_contact_enabled: true                          # Disables the contact models
+  hubspot_contact_list_enabled: false                     # Disables contact list models
+  hubspot_contact_list_member_enabled: false              # Disables contact list member models
+  hubspot_contact_property_enabled: false                 # Disables the contact property models
+  hubspot_email_event_enabled: true                      # Disables all email_event models and functionality
+  hubspot_email_event_bounce_enabled: true
+  hubspot_email_event_delivered_enabled: true
+  hubspot_email_event_click_enabled: true
+  hubspot_email_event_opens_enabled: true
+  hubspot_email_event_sent_enabled: true
+
+  hubspot_email_event_deferred_enabled: false
+  hubspot_email_event_dropped_enabled: false
+  hubspot_email_event_forward_enabled: false
+  hubspot_email_event_print_enabled: false
+  hubspot_email_event_spam_report_enabled: false
+  hubspot_email_event_status_change_enabled: false
+  
+  hubspot_contact_merge_audit_enabled: false               # Enables contact merge auditing to be applied to final models (removes any merged contacts that are still persisting in the contact table)
+
+  # Sales
+
+  hubspot_sales_enabled: false                            # Disables all sales models
+  hubspot_company_enabled: false
+  hubspot_deal_enabled: false
+  hubspot_deal_company_enabled: false
+  hubspot_engagement_enabled: false                       # Disables all engagement models and functionality
+  hubspot_engagement_contact_enabled: false
+  hubspot_engagement_company_enabled: false
+  hubspot_engagement_deal_enabled: false
+  hubspot_engagement_calls_enabled: false
+  hubspot_engagement_emails_enabled: false
+  hubspot_engagement_meetings_enabled: false
+  hubspot_engagement_notes_enabled: false
+  hubspot_engagement_tasks_enabled: false
+
+  hubspot_service_enabled: false                       # Disables all sales models
+
+  email_metrics: ['bounces',
+                'clicks',
+                'deliveries',
+                'opens']
+
+  # enable custom fields to be passed through
+  hubspot__contact_pass_through_columns:
+    - name: "property_salesforcecontactid"
+      alias: "salesforce_contact_id"
+    - name: "property_sign_up_source"
+      alias: "sign_up_source"
+  
+  # filter out single-tenant staging sources and other exclusions
+  single-tenant-exclusions:
+    - FIVETRAN_ST_SINGLETENANT_STAGING_PUBLIC
+    - FIVETRAN_ST_SINGLETENANTAZURE_STAGING_PUBLIC
+
+  # Ads Reporting
+  ad_reporting__amazon_ads_enabled: False
+  ad_reporting__apple_search_ads_enabled: False
+  ad_reporting__pinterest_ads_enabled: False
+  ad_reporting__microsoft_ads_enabled: False
+  ad_reporting__linkedin_ads_enabled: True
+  ad_reporting__google_ads_enabled: True
+  ad_reporting__twitter_ads_enabled: False
+  ad_reporting__facebook_ads_enabled: False
+  ad_reporting__snapchat_ads_enabled: False
+  ad_reporting__tiktok_ads_enabled: False
+  ad_reporting__reddit_ads_enabled: True
+
+  # LinkedIn Ads
+  linkedin_source:
+    linkedin_ads_database: raw
+    linkedin_ads_schema: fivetran_linkedin_ads
+    creative_history: "{{ ref('base_linkedin_ads__creative_history') }}"
+    
+  linkedin:
+    creative_history: "{{ ref('int_linkedin_ads__creative_enriched') }}"
+  
+  # Google Ads
+  google_ads_source:
+    google_ads_database: raw
+    google_ads_schema: fivetran_google_ads
+
+
+  # Reddit Ads
+  reddit_ads_source:
+    reddit_ads_database: raw
+    reddit_ads_schema: fivetran_reddit_ads
+  
+  # Social Media Reporting
+  social_media_rollup__twitter_enabled: True
+  social_media_rollup__facebook_enabled: False
+  social_media_rollup__linkedin_enabled: True
+  social_media_rollup__instagram_enabled: False
+
+  # LinkedIn Organic
+  linkedin_pages_source:
+    linkedin_pages_database: raw
+    linkedin_pages_schema: fivetran_linkedin_organic
+
+  # Twitter Organic
+  twitter_organic_source:
+    twitter_organic_database: raw
+    twitter_organic_schema: fivetran_twitter_organic
+
+  # Pendo
+  pendo_source:
+    pendo_database: raw
+    pendo_schema: fivetran_pendo
+
+  data_diff:
+    datasource_id: 4230
+    prod_database: analytics
+    prod_schema: analytics
+
+  dbt_project_evaluator:
+    exclude_packages: ['all']
+
+models:
+  +incremental_strategy: delete+insert
+  +on_schema_change: "sync_all_columns"
+
+  fishtown_internal_analytics:
+    +post-hook:
+      - "{{ dbt_snow_mask.apply_masking_policy('models') }}"
+    marts:
+      +materialized: table
+      +meta:
+        datafold:
+          datadiff:
+            slim_diff: diff_when_downstream
+      company_metrics:
+        +materialized: view
+      marketing:
+        +meta:
+          team: ['Marketing']
+          owner_name: Brandon Thomson
+          slack_channel_id: C024Z8WRJ1H
+    staging:
+      +materialized: view
+      cloud_postgres:
+        +materialized: table
+      snowflake:
+        +materialized: table
+    export:
+      +materialized: view
+      +meta:
+        datafold:
+          datadiff:
+            slim_diff: diff_when_downstream
+    util:
+      +materialized: table
+
+  # Disables rules from the dbt_project_evaluator package. Some of these we
+  # will never implement, others will be implemented on a rule-by-rule basis as
+  # we bring our project in line with best practices
+  dbt_project_evaluator:
+    marts:
+      dag:
+        fct_direct_join_to_source:
+         +enabled: false
+        fct_duplicate_sources:
+         +enabled: true
+        fct_hard_coded_references:
+         +enabled: true
+        fct_marts_or_intermediate_dependent_on_source:
+          +enabled: true
+        fct_model_fanout:
+          +enabled: false
+        fct_multiple_sources_joined:
+          +enabled: false
+        fct_rejoining_of_upstream_concepts:
+          +enabled: false
+        fct_root_models:
+         +enabled: true
+        fct_source_fanout:
+          +enabled: true
+        fct_staging_dependent_on_marts_or_intermediate:
+          +enabled: false
+        fct_staging_dependent_on_staging:
+          +enabled: false
+        fct_unused_sources:
+          +enabled: true
+      documentation:
+        +enabled: false
+      performance:
+        fct_chained_views_dependencies:
+          +enabled: true
+        fct_exposure_parents_materializations:
+          +enabled: false
+      structure:
+        fct_model_directories:
+          +enabled: false
+        fct_model_naming_conventions:
+        +enabled: false
+        # This rule conflicts with our convention of keeping same-software
+        # sources in one .yml file.
+        fct_source_directories:
+          +enabled: false
+        fct_test_directories:
+          +enabled: true
+      tests:
+        +enabled: false
+
+  snowplow:
+    base:
+      optional:
+        +enabled: false
+        snowplow_base_performance_timing_context:
+          +enabled: true
+    identification:
+      default:
+        snowplow_id_map:
+          +enabled: false
+    page_views:
+      optional:
+        +enabled: false
+        snowplow_web_timing_context:
+          +enabled: true
+      default:
+        snowplow_page_views:
+          +enabled: false
+        snowplow_web_events:
+          +enabled: false
+    sessions:
+      default:
+        snowplow_sessions:
+          +enabled: false
+        snowplow_sessions_tmp:
+          +enabled: false
+
+  # Disable ad reporting pacakges for unused ad services    
+  pinterest:
+    +enabled: false
+  pinterest_source:
+    +enabled: false
+
+  microsoft_ads:
+    +enabled: false
+  microsoft_ads_source:
+    +enabled: false
+
+  twitter_ads:
+    +enabled: false
+  twitter_ads_source:
+    +enabled: false
+
+  facebook_ads:
+    +enabled: false
+  facebook_ads_source:
+    +enabled: false
+
+  facebook_pages:
+    +enabled: false
+  facebook_pages_source:
+    +enabled: false
+
+  snapchat_ads:
+    +enabled: false
+  snapchat_ads_source:
+    +enabled: false
+
+  tiktok_ads:
+    +enabled: false
+  tiktok_ads_source:
+    +enabled: false
+
+  instagram_business:
+    +enabled: false
+  instagram_business_source:
+    +enabled: false
+  
+  # Change Fivetran package build schemas
+  pendo:
+    +schema: # leave blank for just the target_schema
+  pendo_source:
+    +schema: # leave blank for just the target_schema
+
+  zendesk_source:
+    +schema: # leave blank for just the target_schema
+  
+  ad_reporting:
+    +schema: # leave blank for just the target_schema
+
+  google_ads:
+    +schema: # leave blank for just the target_schema
+  google_ads_source:
+    +schema: # leave blank for just the target_schema
+
+  reddit_ads:
+    +schema: # leave blank for just the target_schema
+  reddit_ads_source:
+    +schema: # leave blank for just the target_schema
+
+  hubspot:
+    +schema: # leave blank for just the target_schema
+  hubspot_source:
+    +schema: # leave blank for just the target_schema
+
+  linkedin:
+    +schema: # leave blank for just the target_schema
+  linkedin_source:
+    +schema: # leave blank for just the target_schema
+  linkedin_pages:
+    +schema: # leave blank for just the target_schema
+  linkedin_pages_source:
+    +schema: # leave blank for just the target_schema
+
+  social_media_reporting:
+    +schema: # leave blank for just the target_schema
+
+  twitter_organic:
+    +schema: # leave blank for just the target_schema
+  twitter_organic_source:
+    +schema: # leave blank for just the target_schema
+
+seeds:
+  +quote_columns: false
+
+  dbt_project_evaluator:
+    dbt_project_evaluator_exceptions:
+      +enabled: false
+
+snapshots:
+  +target_schema: snapshots
+
+sources:
+  zendesk_source:
+    zendesk:
+      user_tag:
+        +enabled: "{{ var('using_user_tags', false) }}"

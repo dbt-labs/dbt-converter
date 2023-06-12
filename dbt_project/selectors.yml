@@ -1,0 +1,64 @@
+selectors:
+  - name: cloud_users
+    description: >
+      Models containing customer information to be refreshed more frequently to
+      enable the customer support team. Used in the
+      [Cloud Users Only - Hourly](https://cloud.getdbt.com/deploy/1/projects/672/jobs/35762)
+      dbt Cloud job.
+    definition:
+      union:
+        - '+export_cloud_users'
+        - '+fct_cloud_user_account_mappings'
+        - '+dim_stripe_subscriptions'
+        - '+fct_touchpoints'
+
+  - name: coalesce
+    description: >
+      Coalesce models that will be run at a more frequent cadence for near live
+      reporting during the event. Used in the
+      [Coalesce Reporting Models - Hourly](https://cloud.getdbt.com/deploy/1/projects/672/jobs/45493)
+      dbt Cloud job. This job is only run during the weeks of Coalesce when
+      more up-to-date data is required to report on event progress.
+    definition:
+      union:
+        - 'source:bizzabo+'
+        - 'source:stitch_youtube+'
+        - 'source:slack+'
+        - 'source:twitter+'
+
+  # Must be defined last to use selectors
+  - name: salesforce
+    description: >
+      Salesforce models to be refreshed more frequently to enable the business
+      to operate. Used in the
+      [Salesforce Only - 30min](https://cloud.getdbt.com/deploy/1/projects/672/jobs/9992)
+      dbt Cloud job.
+    definition:
+      union:
+        - '+fct_opportunities'
+        - '+fct_salesforce_goals'
+        - exclude:
+          - method: selector
+            value: cloud_users
+
+  - name: incremental
+    description: >
+      The selector for the remainder of our project. Used in the
+      [Incremental - 4hrs](https://cloud.getdbt.com/deploy/1/projects/672/jobs/940)
+      dbt Cloud job.
+    definition:
+      union:
+        # Runs all models & tests, including snapshots & packages
+        - method: fqn
+          value: '*'
+        - exclude:
+          - union:
+            - 'single_tenant_freshness_test'
+            - 'stg_snowflake__users'
+            - method: package
+              value: dbt_project_evaluator
+            - method: selector
+              value: cloud_users
+            - method: selector
+              value: salesforce
+  

@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_cloud_s3_single_tenant_docs
+    description: >
+      This model lists out all single tenants with their corresponding database source,
+      hosts and cloud provider & IP information.
+    columns:
+      - name: single_tenant_name
+        tests:
+          - unique
+          - not_null
+      - name: database_source
+        tests:
+          - unique
+          - not_null
+      - name: instance_name
+        description: >
+          The name of the instance defined by the `POD_NAMESPACE` environment variable. 
+          This is defined in each tenant's helm chart like so: 
+          https://github.com/dbt-labs/helm-charts/blob/main/releases/ally/cloud/main.yaml#L5

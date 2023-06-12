@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: fct_partner_project_registrations
+    description: This joins together current and historical project registrations from consulting partners
+  

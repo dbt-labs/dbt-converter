@@ -1,0 +1,38 @@
+version: 2
+
+sources:
+  - name: cloud_s3_single_tenant_docs
+    description: '{{ doc("src_cloud_s3_single_tenant_doc") }}'
+    database: raw
+    loader: s3
+
+    meta:
+      team: ['Product']
+      owner_name: Andrew Escay
+    
+    tables:
+      - name: configs
+        description: >
+            This source table is actually a set of files in external storage.
+            The dbt-external-tables package provides handy macros for getting
+            those files queryable, just in time for modeling.
+        external:
+          location: "@raw.cloud_s3_single_tenant_docs.s3_single_tenant_docs"
+          file_format: "( type = json )"
+          auto_refresh: true
+          pattern: '.*json'
+        
+          partitions:
+            - name: single_tenant_name
+              data_type: varchar
+              expression: split_part(metadata$filename,'.',1)
+
+        columns:
+          - name: cluster_information
+            data_type: variant
+          - name: database_information
+            data_type: variant
+          - name: environment_information
+            data_type: variant
+          - name: network_information
+            data_type: variant

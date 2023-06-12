@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: stg_snowplow_events
+    columns:
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}

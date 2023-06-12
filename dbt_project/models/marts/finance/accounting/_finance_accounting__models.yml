@@ -1,0 +1,1021 @@
+version: 2
+
+models:
+
+  - name: fct_managed_deferred_revenue_waterfalls
+    description: '{{ doc("fct_managed_deferred_revenue_waterfalls") }}'
+    columns:
+      - name: revenue_item_id
+        tests:
+          - unique
+          - not_null
+        description: '{{ doc("revenue_item_id") }}'
+
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id_foreign") }}'
+
+      - name: sfdc_opportunity_id
+        description: '{{ doc("sfdc_opportunity_id_foreign") }}'
+
+      - name: revenue_schedule_code
+        description: '{{ doc("revenue_schedule_code") }}'
+
+      - name: credit_note_name
+        description: '{{ doc("credit_note_name") }}'
+
+      - name: account_name
+        description: '{{ doc("account_name_foreign") }}'
+
+      - name: opportunity_name
+        description: '{{ doc("opportunity_name_foreign") }}'
+
+      - name: opportunity_close_date
+        description: '{{ doc("opportunity_close_date") }}'
+
+      - name: sign_date
+        description: >
+          {{ doc("salesforce_contract_sign_date") }}
+
+      - name: opportunity_type
+        description: '{{ doc("opportunity_type") }}'
+
+      - name: product_name
+        description: '{{ doc("product_name_foreign") }}'
+
+      - name: product_type
+        description: '{{ doc("product_type") }}'
+
+      - name: product_family
+        description: '{{ doc("product_family") }}'
+
+      - name: is_product_excluded_from_revenue_waterfalls
+        description: '{{ doc("is_product_excluded_from_revenue_waterfalls") }}'
+
+      - name: credit_note_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: credit_note_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: invoice_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: invoice_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: payment_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: payment_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: refund_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: refund_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: rev_rec_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: rev_rec_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+
+      - name: revenue_end_date
+        description: '{{ doc("revenue_end_date") }}'
+
+      - name: total_rs_days
+        description: '{{ doc("total_revenue_schedule_days") }}'
+
+      - name: total_order_product_amount_raw
+        description: '{{ doc("total_order_product_amount_raw") }}'
+
+      - name: allocated_revenue
+        description: '{{ doc("allocated_revenue") }}'
+
+      - name: is_order_item_reallocated
+        description: '{{ doc("is_order_item_reallocated") }}'
+
+      - name: total_order_product_amount_reflecting_overrides
+        description: '{{ doc("total_order_product_amount_reflecting_overrides") }}'
+
+      - name: accounting_recognition_type
+        description: '{{ doc("accounting_recognition_type") }}'
+
+      - name: revenue_per_day
+        description: '{{ doc("revenue_per_day") }}'
+
+      - name: initial_catch_up_date
+        description: '{{ doc("initial_catch_up_date") }}'
+
+      - name: initial_catch_up_amount
+        description: '{{ doc("initial_catch_up_amount") }}'
+
+      - name: final_true_up_amount
+        description: '{{ doc("final_true_up_amount") }}'
+        
+      - name: billing_city
+        description: '{{ doc("billing_city") }}'
+
+      - name: billing_state
+        description: '{{ doc("billing_state") }}'
+
+      - name: billing_state_code
+        description: '{{ doc("billing_state_code") }}'
+
+      - name: billing_postal_code
+        description: '{{ doc("billing_postal_code") }}'
+
+      - name: billing_country
+        description: '{{ doc("billing_country") }}'
+
+      - name: billing_country_code
+        description: '{{ doc("billing_country_code") }}'
+
+      - name: billing_region
+        description: '{{ doc("billing_region") }}'
+
+      - name: shipping_city
+        description: '{{ doc("shipping_city") }}'
+
+      - name: shipping_state
+        description: '{{ doc("shipping_state") }}'
+
+      - name: shipping_state_code
+        description: '{{ doc("shipping_state_code") }}'
+
+      - name: shipping_postal_code
+        description: '{{ doc("shipping_postal_code") }}'
+
+      - name: shipping_country
+        description: '{{ doc("shipping_country") }}'
+
+      - name: shipping_country_code
+        description: '{{ doc("shipping_country_code") }}'
+
+      - name: shipping_region
+        description: '{{ doc("shipping_region") }}'
+
+  - name: fct_revenue_allocations
+    description: '{{ doc("fct_revenue_allocations") }}'
+    columns:
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id") }}'
+        tests:
+          - unique
+          - not_null
+
+      - name: order_item_number
+        description: '{{ doc("order_item_number") }}'
+
+      - name: sfdc_order_id
+        description: '{{ doc("sfdc_order_id") }}'
+
+      - name: order_number
+        description: '{{ doc("order_number") }}'
+
+      - name: opportunity_name
+        description: '{{ doc("opportunity_name") }}'
+
+      - name: order_includes_services
+        description: '{{ doc("order_includes_services") }}'
+
+      - name: order_includes_subscriptions
+        description: '{{ doc("order_includes_subscriptions") }}'
+
+      - name: ignore_order_reallocation
+        description: '{{ doc("ignore_revenue_reallocation") }}'  
+
+      - name: sfdc_opportunity_id
+        description: '{{ doc("sfdc_opportunity_id_foreign") }}'
+
+      - name: sfdc_product_id
+        description: '{{ doc("sfdc_product_id_foreign") }}'
+
+      - name: product_name
+        description: '{{ doc("product_name_foreign") }}'
+
+      - name: quantity
+        description: '{{ doc("order_item_quantity") }}'
+
+      - name: service_start_date
+        description: '{{ doc("service_start_date") }}'
+
+      - name: service_end_date
+        description: '{{ doc("service_end_date") }}'
+
+      - name: service_months
+        description: >
+          The number of months between the service start date and the service end date.
+
+      - name: is_license_order_item
+        description: >
+          An indicator as to whether a particular order item represents dbt licenses.
+
+      - name: periods
+        description: '{{ doc("order_item_periods") }}'
+
+      - name: total_order_item_price
+        description: '{{ doc("order_item_total_price") }}'
+
+      - name: total_order_price
+        description: '{{ doc("order_total_price") }}'
+
+      - name: unit_price_per_period
+        description: '{{ doc("order_item_unit_price_per_period") }}'
+
+      - name: list_price
+        description: >
+          {{ doc("list_price") }} This field in particular is pulled from order item details.
+
+      - name: product_distinct_price_points_across_order
+        description: >
+          A count of the distinct price points at which a particular product is sold across all
+          items in an order. This is used to identify whether dissolving discounts or other pricing
+          approaches were used. 
+
+      - name: list_price_reflecting_package
+        description: >
+          {{ doc("list_price") }} This field in particular is determined based on the package purchased in
+          the overall order.
+
+      - name: total_item_list_price
+        description: >
+          The total amount represented by the individual product list price times quantity times relevant number of
+          periods.
+
+      - name: item_level_discount
+        description: >
+          The discount within a particular order for a given item, calculated as contracted unit price over list price.
+
+      - name: contract_price_per_product
+        description: >
+          The total amount charged for all items tied to the same product within an order. This allows for the discount
+          on that product to be calculated.
+
+      - name: list_price_per_product
+        description: >
+          The total list price that would apply for all items tied to the same product within an order. This allows for 
+          the discount on that product to be calculated. 
+
+      - name: product_ssp_midpoint_percentage
+        description: '{{ doc("ssp_midpoint_percentage") }}'
+
+      - name: product_ssp_midpoint
+        description: '{{ doc("ssp_midpoint") }}'
+
+      - name: product_low_discount_threshold
+        description: '{{ doc("product_low_discount_threshold") }}'
+
+      - name: product_high_discount_threshold
+        description: '{{ doc("product_high_discount_threshold") }}'
+
+      - name: is_product_outside_ssp_range
+        description: >
+          An indicator of whether a particular SKU within an order is discounted outside of the standalone sales price
+          (SSP) range for that product. 
+
+      - name: is_override
+        description: >
+          An indicator of whether a record was created as an override to test out allocation functionality (by over-
+          discounting a particular item. )
+
+      - name: order_revenue_allocation_method
+        description: '{{ doc("order_revenue_allocation_method") }}'
+
+      - name: calculated_order_item_ssp
+        description: >
+          The total standalone sales price (SSP) of a line item, representing the unit SSP times quantity times period.
+
+      - name: calculated_order_ssp
+        description: >
+          The total standalone sales price (SSP) of the entire order, summed from the calculated_order_item_ssp.
+
+      - name: priced_allocation_percentage
+        description: >
+          The percentage of order value allocated to the order item, defined as the ratio of the order item's order price 
+          to the entire order price.
+
+      - name: revenue_allocation_percentage
+        description: >
+          The percentage of the total order revenue to be allocated to the given order item, reflecting any reallocation
+          methodologies, such as timing or standalone sales price (SSP) reallocations. See order_revenue_allocation_method
+          for an indication of the methodology used. 
+
+      - name: allocated_revenue
+        description: '{{ doc("allocated_revenue") }}'
+
+      - name: is_order_reallocated
+        description: '{{ doc("is_order_reallocated") }}'
+
+      - name: is_order_item_reallocated
+        description: '{{ doc("is_order_item_reallocated") }}'
+
+  - name: fct_managed_revenue_items
+    description: '{{ doc("fct_managed_revenue_items") }}'
+    columns:
+      - name: revenue_item_id
+        tests:
+          - unique
+          - not_null
+        description: '{{ doc("revenue_item_id") }}'
+
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id_foreign") }}'
+
+      - name: sfdc_opportunity_id
+        description: '{{ doc("sfdc_opportunity_id_foreign") }}'
+
+      - name: revenue_schedule_code
+        description: '{{ doc("revenue_schedule_code") }}'
+
+      - name: credit_note_name
+        description: '{{ doc("credit_note_name") }}'
+
+      - name: account_name
+        description: '{{ doc("account_name_foreign") }}'
+
+      - name: opportunity_name
+        description: '{{ doc("opportunity_name_foreign") }}'
+
+      - name: opportunity_close_date
+        description: '{{ doc("opportunity_close_date") }}'
+
+      - name: sign_date
+        description: >
+          {{ doc("salesforce_contract_sign_date") }}
+
+      - name: opportunity_type
+        description: '{{ doc("opportunity_type") }}'
+
+      - name: product_name
+        description: '{{ doc("product_name_foreign") }}'
+
+      - name: product_type
+        description: '{{ doc("product_type") }}'
+
+      - name: product_family
+        description: '{{ doc("product_family") }}'
+
+      - name: is_product_excluded_from_revenue_waterfalls
+        description: '{{ doc("is_product_excluded_from_revenue_waterfalls") }}'
+
+      - name: order_revenue_allocation_method
+        description: '{{ doc("order_revenue_allocation_method") }}'
+
+      - name: is_order_item_reallocated
+        description: '{{ doc("is_order_item_reallocated") }}'
+
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+
+      - name: revenue_end_date
+        description: '{{ doc("revenue_end_date") }}'
+
+      - name: total_rs_days
+        description: '{{ doc("total_revenue_schedule_days") }}'
+
+      - name: total_order_product_amount_raw
+        description: '{{ doc("total_order_product_amount_raw") }}'
+
+      - name: allocated_revenue
+        description: '{{ doc("allocated_revenue") }}'
+
+      - name: is_order_item_reallocated
+        description: '{{ doc("is_order_item_reallocated") }}'
+
+      - name: total_order_product_amount_reflecting_overrides
+        description: '{{ doc("total_order_product_amount_reflecting_overrides") }}'
+
+      - name: allocated_revenue
+        description: '{{ doc("allocated_revenue") }}'
+
+      - name: is_order_item_reallocated
+        description: '{{ doc("is_order_item_reallocated") }}'
+
+      - name: accounting_recognition_type
+        description: '{{ doc("accounting_recognition_type") }}'
+
+      - name: revenue_per_day
+        description: '{{ doc("revenue_per_day") }}'
+
+      - name: initial_catch_up_date
+        description: '{{ doc("initial_catch_up_date") }}'
+
+      - name: initial_catch_up_amount
+        description: '{{ doc("initial_catch_up_amount") }}'
+
+      - name: final_rollup_date
+        description: '{{ doc("final_rollup_date") }}'
+
+      - name: final_rollup_days
+        description: '{{ doc("final_rollup_days") }}'
+
+      - name: final_rollup_amount
+        description: '{{ doc("final_rollup_amount") }}'
+
+      - name: final_true_up_amount
+        description: '{{ doc("final_true_up_amount") }}'
+
+      - name: billing_city
+        description: '{{ doc("billing_city") }}'
+
+      - name: billing_state
+        description: '{{ doc("billing_state") }}'
+
+      - name: billing_state_code
+        description: '{{ doc("billing_state_code") }}'
+
+      - name: billing_postal_code
+        description: '{{ doc("billing_postal_code") }}'
+
+      - name: billing_country
+        description: '{{ doc("billing_country") }}'
+
+      - name: billing_country_code
+        description: '{{ doc("billing_country_code") }}'
+
+      - name: billing_region
+        description: '{{ doc("billing_region") }}'
+
+      - name: shipping_city
+        description: '{{ doc("shipping_city") }}'
+
+      - name: shipping_state
+        description: '{{ doc("shipping_state") }}'
+
+      - name: shipping_state_code
+        description: '{{ doc("shipping_state_code") }}'
+
+      - name: shipping_postal_code
+        description: '{{ doc("shipping_postal_code") }}'
+
+      - name: shipping_country
+        description: '{{ doc("shipping_country") }}'
+
+      - name: shipping_country_code
+        description: '{{ doc("shipping_country_code") }}'
+
+      - name: shipping_region
+        description: '{{ doc("shipping_region") }}'
+
+      - name: revenue_bucket
+        description: '{{ doc("revenue_bucket") }}'
+
+      - name: rpo_bucket
+        description: '{{ doc("rpo_bucket") }}'
+
+  - name: fct_managed_accounting_activity
+    description: '{{ doc("accounting_activity") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+        description: >
+          The unique identifier linking a revenue item and a particular day in its schedule.
+
+      - name: applicable_month_end
+        description: '{{ doc("applicable_month_end") }}'
+
+      - name: revenue_item_id
+        description: '{{ doc("revenue_item_id") }}'
+
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id_foreign") }}'
+
+      - name: sfdc_opportunity_id
+        description: '{{ doc("sfdc_opportunity_id_foreign") }}'
+
+      - name: revenue_schedule_code
+        description: '{{ doc("revenue_schedule_code") }}'
+
+      - name: account_name
+        description: '{{ doc("account_name_foreign") }}'
+
+      - name: billing_city
+        description: '{{ doc("billing_city") }}'
+
+      - name: billing_state
+        description: '{{ doc("billing_state") }}'
+
+      - name: billing_state_code
+        description: '{{ doc("billing_state_code") }}'
+
+      - name: billing_postal_code
+        description: '{{ doc("billing_postal_code") }}'
+
+      - name: billing_country
+        description: '{{ doc("billing_country") }}'
+
+      - name: billing_country_code
+        description: '{{ doc("billing_country_code") }}'
+
+      - name: billing_region
+        description: '{{ doc("billing_region") }}'
+
+      - name: shipping_city
+        description: '{{ doc("shipping_city") }}'
+
+      - name: shipping_state
+        description: '{{ doc("shipping_state") }}'
+
+      - name: shipping_state_code
+        description: '{{ doc("shipping_state_code") }}'
+
+      - name: shipping_postal_code
+        description: '{{ doc("shipping_postal_code") }}'
+
+      - name: shipping_country
+        description: '{{ doc("shipping_country") }}'
+
+      - name: shipping_country_code
+        description: '{{ doc("shipping_country_code") }}'
+
+      - name: shipping_region
+        description: '{{ doc("shipping_region") }}'
+
+      - name: credit_note_name
+        description: '{{ doc("credit_note_name") }}'
+
+      - name: opportunity_name
+        description: '{{ doc("opportunity_name_foreign") }}'
+
+      - name: opportunity_type
+        description: '{{ doc("opportunity_type") }}'
+
+      - name: opportunity_close_date
+        description: '{{ doc("opportunity_close_date") }}'
+
+      - name: sign_date
+        description: >
+          {{ doc("salesforce_contract_sign_date") }}
+
+      - name: product_name
+        description: '{{ doc("product_name_foreign") }}'
+
+      - name: product_type
+        description: '{{ doc("product_type") }}'
+
+      - name: product_family
+        description: '{{ doc("product_family") }}'
+
+      - name: is_product_excluded_from_revenue_waterfalls
+        description: '{{ doc("is_product_excluded_from_revenue_waterfalls") }}'
+
+      - name: credit_note_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: credit_note_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: invoice_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: invoice_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: payment_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: payment_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: refund_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: refund_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: rev_rec_credit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: rev_rec_debit
+        description: '{{ doc("accounting_credit_debit_pair") }}'
+
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+
+      - name: revenue_end_date
+        description: '{{ doc("revenue_end_date") }}'
+
+      - name: total_rs_days
+        description: '{{ doc("total_revenue_schedule_days") }}'
+
+      - name: total_order_product_amount_raw
+        description: '{{ doc("total_order_product_amount_raw") }}'
+
+      - name: allocated_revenue
+        description: '{{ doc("allocated_revenue") }}'
+
+      - name: is_order_item_reallocated
+        description: '{{ doc("is_order_item_reallocated") }}'
+
+      - name: total_order_product_amount_reflecting_overrides
+        description: '{{ doc("total_order_product_amount_reflecting_overrides") }}'
+
+      - name: accounting_recognition_type
+        description: '{{ doc("accounting_recognition_type") }}'
+
+      - name: first_invoice_date
+        description: '{{ doc("first_invoice_date") }}'
+
+      - name: last_invoice_date
+        description: '{{ doc("first_invoice_date") }}'
+
+      - name: accounting_start_date
+        description: '{{ doc("accounting_start_date") }}'
+        tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: accounting_end_date
+        description: '{{ doc("accounting_end_date") }}'
+
+      - name: initial_catch_up_date
+        description: '{{ doc("initial_catch_up_date") }}'
+
+      - name: initial_catch_up_in_period
+        description: >
+          {{ doc("initial_catch_up_amount") }} If this is a value other than 0, then the date in question
+          should be the first day of revenue recognition.
+
+      - name: final_rollup_in_period
+        description: >
+          {{ doc("final_rollup_amount") }} If this is a value other than 0, then the date in question
+          should be the final day of the recognition schedule. 
+
+      - name: final_true_up_in_period
+        description: >
+          {{ doc("final_true_up_amount") }} If this is a value other than 0, then the date in question
+          should be the final day of the recognition schedule. 
+
+      - name: daily_amount_in_period
+        description: >
+          The amortized amount of revenue recognized during the give day. {{ doc("revenue_per_day") }}
+
+      - name: service_deliver_amount
+        description: >
+          The flat amount of service-related revenue recognized on the given day, determined based
+          on the date of service delivery. 
+
+      - name: recognized_amount
+        description: '{{ doc("recognized_amount") }}'
+
+      - name: invoiced_amount
+        description: '{{ doc("invoiced_amount") }}'
+
+      - name: tax_amount
+        description: >
+          Tax amount of the order item invoiced on a given day. In the case of rebilled invoices, 
+          this represents the tax amount from the most recent invoice.
+
+      - name: rev_rec_running_total
+        description: '{{ doc("revenue_recognition_running_total") }}'
+
+      - name: invoice_running_total
+        description: '{{ doc("invoice_running_total") }}'
+
+      - name: deferred_revenue
+        description: '{{ doc("deferred_revenue") }}'
+
+      - name: short_term_deferred_revenue
+        description: '{{ doc("short_term_deferred_revenue") }}'
+
+      - name: long_term_deferred_revenue
+        description: '{{ doc("long_term_deferred_revenue") }}'
+
+      - name: gross_remaining_performance_obligation
+        description: '{{ doc("gross_remaining_performance_obligation") }}'
+
+      - name: override_type
+        description: '{{ doc("rpo_override_type") }}'
+
+      - name: is_rpo_adjusted
+        description: '{{ doc("is_rpo_adjusted") }}'
+
+      - name: rpo_adjustment
+        description: '{{ doc("rpo_adjustment") }}'
+
+      - name: net_remaining_performance_obligation
+        description: '{{ doc("net_remaining_performance_obligation") }}'
+
+      - name: revenue_bucket
+        description: '{{ doc("revenue_bucket") }}'
+
+      - name: rpo_bucket
+        description: '{{ doc("rpo_bucket") }}'
+
+  - name: dim_salesforce_revenue_schedules
+    description: '{{ doc("fct_salesforce_revenue_schedules") }}'
+    columns:
+      - name: sfdc_rev_schedule_id
+        description: "The Salesforce ID of the revenue recognition schedule."
+        tests:
+          - unique
+          - not_null
+
+      - name: revenue_schedule_code
+        description: '{{ doc("revenue_schedule_code") }}'
+
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+
+      - name: revenue_end_date
+        description: '{{ doc("revenue_end_date") }}'
+
+      - name: total_revenue_amount
+        description: "The total amount of revenue being recognized for the order item."
+
+      - name: opportunity_name
+        description: '{{ doc("opportunity_name_foreign") }}'
+
+      - name: sfdc_order_item_id
+        description: '{{ doc("sfdc_order_item_id_foreign") }}'
+
+      - name: order_product_start_date
+        description: "The date on which the product or service becomes available to the customer."
+
+      - name: product_name
+        description: "The human-readable identified of the product associated with the revenue."
+
+      - name: product_category
+        description: "The overarching group of product offerings into which the product falls."
+
+      - name: credit_account_line_1
+        description: "Detail on the credit account through which the revenue is recognized."
+
+      - name: credit_account_line_2
+        description: "Detail on the credit account through which the revenue is recognized."
+
+      - name: debit_account_line_1
+        description: "Detail on the debit account through which the revenue is recognized."
+
+      - name: debit_account_line_2
+        description: "Detail on the debit account through which the revenue is recognized."
+
+      - name: sfdc_rev_rec_treatment_id
+        description: '{{ doc("sfdc_rev_rec_treatment_id") }}'
+
+      - name: rev_rec_treatment_name
+        description: "A descriptor of the type of revenue treatment applied on the given schedule."
+
+      - name: processing_order_num
+        description: "The human-readable identifier of the processing order associated with the schedule."
+
+      - name: rev_rec_treatment_billing_type
+        description: "An indicator of how billing for the revenue is applied (e.g. Percentage)."
+
+      - name: rev_distribution_method_name
+        description: >
+          Detail on how revenue distribution occurs, whether from specific accounts or a 
+          manual distribution
+
+      - name: rev_distribution_method_type
+        description: "The period at which the revenue is distributed (e.g. Daily)."
+
+      - name: billing_type
+        description: "An indicator of whether the schedule is billed by Order or Credit Note."
+
+      - name: created_at
+        description: "The timestamp at which the revenue schedule was created."
+
+      - name: created_by_id
+        description: "The Salesforce identifier of the user that created the schedule."
+
+      - name: owner_id
+        description: "The Salesforce identifier of the revenue schedule owner."
+
+  - name: fct_salesforce_revenue_transactions
+    description: '{{ doc("fct_salesforce_revenue_transactions") }}'
+    columns:
+      - name: sfdc_rev_transaction_id
+        description: "The Salesforce ID for the given revenue schedule transaction."
+        tests:
+          - unique
+          - not_null
+
+      - name: revenue_transaction_code
+        description: "The human-readable identifier of the given revenue schedule transaction."
+
+      - name: revenue_schedule_code
+        description: '{{ doc("revenue_schedule_code") }}'
+
+      - name: rev_transaction_amount
+        description: "The amount of revenue recognized during the given transaction."
+
+      - name: status
+        description: "The status of the given transaction."
+
+      - name: period_start_date
+        description: "The start date of the period during which the given transaction is recognized."
+
+      - name: sfdc_rev_finance_period_id
+        description: "The Salesforce ID of the associated finance period."
+
+      - name: sfdc_rev_schedule_id
+        description: "The Salesforce ID of the associated revenue recognition schedule."
+
+      - name: sfdc_rev_rec_treatment_id
+        description: '{{ doc("sfdc_rev_rec_treatment_id") }}'
+
+      - name: sfdc_order_item_id
+        description: "The Salesforce ID of the associated order item."
+
+  - name: fct_self_service_accounting_activity
+    description: '{{ doc("accounting_activity") }}'
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+        description: >
+          The unique database identifier of the NetSuite transaction.
+      - name: transaction_identifier
+        description: '{{ doc("netsuite_transaction_identifier") }}'
+      - name: transaction_date
+        description: >
+          The date at which the transaction was logged.
+      - name: transaction_memo
+        description: >
+          A manual entry field providing additional context for the transaction.
+      - name: revenue_amount
+        description: >
+          The total revenue amount in need of recognition.
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+      - name: revenue_end_date
+        description: '{{ doc("revenue_end_date") }}'
+      - name: accounting_start_date
+        description: '{{ doc("accounting_start_date") }}'
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: accounting_end_date
+        description: '{{ doc("accounting_end_date") }}' 
+      - name: total_rs_days
+        description: '{{ doc("total_revenue_schedule_days") }}'
+      - name: revenue_per_day
+        description: '{{ doc("revenue_per_day") }}'
+      - name: final_true_up_amount
+        description: '{{ doc("final_true_up_amount") }}'
+      - name: final_true_up_in_period
+        description: '{{ doc("final_rollup_amount") }}'
+      - name: daily_amount_in_period
+        description: >
+          The amortized amount of revenue recognized during the give day. {{ doc("revenue_per_day") }}
+      - name: recognized_amount
+        description: '{{ doc("recognized_amount") }}'
+      - name: invoiced_amount
+        description: '{{ doc("invoiced_amount") }}'
+      - name: rev_rec_running_total
+        description: '{{ doc("revenue_recognition_running_total") }}'
+      - name: invoice_running_total
+        description: '{{ doc("invoice_running_total") }}'
+      - name: deferred_revenue
+        description: '{{ doc("deferred_revenue") }}'
+      - name: short_term_deferred_revenue
+        description: '{{ doc("short_term_deferred_revenue") }}'
+      - name: long_term_deferred_revenue
+        description: '{{ doc("long_term_deferred_revenue") }}'
+      - name: remaining_performance_obligation
+        description: '{{ doc("net_remaining_performance_obligation") }}'
+      - name: legacy_final_true_up_in_period
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: legacy_daily_amount_in_period
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: legacy_recognized_amount
+        description: '{{ doc("recognized_amount") }}'
+      - name: billing_city
+        description: '{{ doc("billing_city") }}'
+      - name: billing_state
+        description: '{{ doc("billing_state") }}'
+      - name: billing_postal_code
+        description: '{{ doc("billing_postal_code") }}'
+      - name: billing_country
+        description: '{{ doc("billing_country") }}'
+      - name: billing_country_code
+        description: '{{ doc("billing_country_code") }}'
+      - name: billing_region
+        description: '{{ doc("billing_region") }}'
+
+  - name: fct_self_service_revenue_items
+    description: '{{ doc("fct_self_service_revenue_items") }}'
+    columns:
+      - name: revenue_item_id
+        tests:
+          - unique
+          - not_null
+        description: >
+          The unique database identifier of the NetSuite transaction.
+      - name: transaction_identifier
+        description: '{{ doc("netsuite_transaction_identifier") }}'
+      - name: transaction_date
+        description: >
+          The date at which the transaction was logged.
+      - name: transaction_memo
+        description: >
+          A manual entry field providing additional context for the transaction.
+      - name: transaction_line_id
+        description: '{{ doc("netsuite_transaction_line_id") }}'
+      - name: revenue_amount
+        description: >
+          The total revenue amount in need of recognition.
+      - name: revenue_start_date
+        description: '{{ doc("revenue_start_date") }}'
+      - name: revenue_end_date
+        description: '{{ doc("revenue_end_date") }}'  
+      - name: total_rs_days
+        description: '{{ doc("total_revenue_schedule_days") }}'
+      - name: revenue_per_day
+        description: '{{ doc("revenue_per_day") }}'
+      - name: final_true_up_amount
+        description: '{{ doc("final_true_up_amount") }}'
+      - name: legacy_revenue_start_date
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: legacy_revenue_end_date
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: legacy_total_rs_days
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: legacy_revenue_per_day
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: legacy_final_true_up_amount
+        description: '{{ doc("self_service_legacy_fields") }}'
+      - name: billing_city
+        description: '{{ doc("billing_city") }}'
+      - name: billing_state
+        description: '{{ doc("billing_state") }}'
+      - name: billing_postal_code
+        description: '{{ doc("billing_postal_code") }}'
+      - name: billing_country
+        description: '{{ doc("billing_country") }}'
+      - name: billing_country_code
+        description: '{{ doc("billing_country_code") }}'
+      - name: billing_region
+        description: '{{ doc("billing_region") }}'
+
+  - name: fct_simple_journal_entries
+    description: '{{ doc("fct_simple_journal_entries") }}'
+    columns:
+      - name: simple_journal_entry_id
+        tests:
+          - unique
+          - not_null
+      
+      - name: date_day
+        description: '{{ doc("journal_entry_date") }}'
+
+      - name: revenue_schedule_code
+        description: '{{ doc("revenue_schedule_code") }}'
+
+      - name: order_item_number
+        description: '{{ doc("order_item_number") }}'
+
+      - name: order_number
+        description: '{{ doc("order_number") }}'
+
+      - name: amount
+        description: '{{ doc("journal_entry_amount") }}'
+
+      - name: entry_type
+        description: '{{ doc("journal_entry_type") }}'
+
+      - name: process_group
+        description: '{{ doc("process_group") }}'
+
+      - name: account
+        description: '{{ doc("journal_entry_account") }}'
+
+      - name: salesforce_account_name
+        description: '{{ doc("account_name_foreign") }}'
+
+  - name: fct_compound_journal_entries
+    description: '{{ doc("fct_compound_journal_entries") }}'
+    columns:
+      - name: compound_journal_entry_id
+        tests:
+          - unique
+          - not_null
+
+      - name: date_day
+        description: '{{ doc("journal_entry_date") }}'
+
+      - name: process_group
+        description: '{{ doc("process_group") }}'
+
+      - name: account
+        description: '{{ doc("journal_entry_account") }}'
+
+      - name: debit
+        description: '{{ doc("journal_entry_amount") }}''{{ doc("journal_entry_type") }}'
+
+      - name: credit
+        description: '{{ doc("journal_entry_amount") }}''{{ doc("journal_entry_type") }}'

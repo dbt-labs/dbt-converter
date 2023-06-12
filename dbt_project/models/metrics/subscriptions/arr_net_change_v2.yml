@@ -1,0 +1,25 @@
+version: 2
+
+metrics:
+  - name: arr_net_change_v2
+    label: Net ARR
+    description: >
+      The sum of Gross (Land + Expand (+ Reactivated for Self-Serve)) 
+      less Churn (Cancelled + Downsell (+ ARR moved from Self-Serve to Managed)) 
+      ARR (Annual Recurring Revenue) for Managed and Self-Serve customers 
+      over a given time period.
+
+    calculation_method: derived
+    expression: "{{metric('arr_net_managed')}} + {{metric('arr_net_self_serve')}}"
+
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

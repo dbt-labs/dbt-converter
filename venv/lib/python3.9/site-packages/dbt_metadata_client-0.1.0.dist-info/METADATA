@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: dbt-metadata-client
+Version: 0.1.0
+Summary: A simple python client for interacting with dbt's metadata API
+Author: Transform
+Author-email: hello@transformdata.io
+Requires-Python: >=3.8,<3.10
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Requires-Dist: sgqlc (>=16.0,<17.0)
+Description-Content-Type: text/markdown
+
+

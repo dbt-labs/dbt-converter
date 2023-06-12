@@ -1,0 +1,19 @@
+version: 2
+
+models:
+
+- name: stg_fivetran_log__connectors
+  description: "One row per Fivetran connection"
+  columns:
+    - name: connector_id
+      tests:
+        - unique
+        - not_null
+
+- name: stg_fivetran_log__users
+  description: "One row per Fivetran user"
+  columns:
+    - name: user_id
+      tests:
+        - unique
+        - not_null

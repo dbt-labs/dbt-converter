@@ -1,0 +1,26 @@
+version: 2
+
+metrics:
+
+  - name: new_verified_accounts_activated
+    label: New Verified Accounts Activated
+    model: ref('fct_cloud_accounts')
+    description: '{{ doc("new_verified_accounts_activated") }}'
+
+    tags: ['FY2023 - O1']
+
+    calculation_method: count 
+    expression: account_id
+
+    timestamp: cloud_activation_due_at
+    time_grains: [day, week, month]
+
+    filters:
+      - field: first_cloud_activated_at
+        operator: '!='
+        value: 'null'
+
+    meta:
+      okr_level: 'Company'
+      owner(s): 'Drew Banin'
+      team: 'Product'

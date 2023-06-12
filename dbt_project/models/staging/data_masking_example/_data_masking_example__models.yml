@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: stg_data_masking_example__fake_pii_sample
+    description: >
+      A disabled model used to demonstrate application of a masking policy in
+      `models.yml`.
+    columns:
+      - name: masked_email
+        meta:
+          masking_policy: dev_string
+      - name: unmasked_state
+      - name: unmasked_zipcode
+      - name: masked_street
+        meta:
+          masking_policy: dev_string
+      - name: unmasked_city
+      - name: unmasked_name

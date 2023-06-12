@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: stg_intercom_admins
+    columns:
+      - name: admin_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_intercom_companies
+    columns:
+      - name: company_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_intercom_conversations
+    description: >
+      Intercom conversations are equivalent to `tickets` in Zendesk.
+    columns:
+      - name: ticket_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_intercom_conversation_parts
+    description: >
+      The purpose of this model is to flatten conversations to the grain of one 
+      row per conversation part or message. Intercom conversations are equivalent 
+      to `ticket_comments` in Zendesk.
+    columns:
+      - name: ticket_comment_id
+        tests:
+          - unique
+          - not_null
+              
+  - name: stg_intercom_segments
+    columns:
+      - name: segment_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_intercom_tags
+    description: The grain of this table is one row per tag.
+    columns:
+      - name: tag_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_intercom_users
+    columns:
+      - name: submitter_id
+        tests:
+          - unique
+          - not_null
+              
+  - name: stg_intercom_conversation_tags
+    description: >
+      The grain of this model is one row per tag per conversation. This is used 
+      in Looker to map tags to conversations.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: tag_category
+        tests:
+          - accepted_values:
+              values: ['support', 'user', 'bug report', 'feature request']

@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_meetup__events
+    description: "All Meetup events (including geo location, event name, the day of the event)."
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_meetup__groups
+    description: "All Meetup groups. Groups represent our dbt Community hub cities and this table contains all information around their general details (e.g. name, description, founded_at, etc), demographic, and other event metrics."
+    columns:
+      - name: group_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_meetup__members
+    description: "All Meetup members (including dbt Labs employees and the community)"
+    columns:
+      - name: member_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_meetup__rsvps
+    description: "All RSVPs to an event and their associated member_id"
+    columns:
+      - name: rsvp_id
+        tests:
+          - unique
+          - not_null

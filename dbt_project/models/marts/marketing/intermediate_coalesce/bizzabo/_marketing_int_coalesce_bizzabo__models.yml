@@ -1,0 +1,284 @@
+version: 2
+
+models:
+  - name: int__bizzabo_registration_questions
+    description: >
+      This model extends the `stg_bizzabo__registrations` model to feature one row per question per registration.
+      Registrants are asked several questions during the registration process, and these vary event to event.
+      For additional information related to registrations, this model can be joined to `stg_bizzabo__registrations` using `registration_id`.
+    columns:
+      - name: registration_question_id
+        description: >
+          A surrogate key created off of `registration_id` and `question_api_name` to ensure 1 row per registration per question.
+        tests:
+          - unique
+          - not_null
+
+      - name: question_api_name
+        description: "The API value of the registration question."
+
+      - name: ticket_id
+        description: "The unique identifier for the ticket associated with the registration."
+
+      - name: registration_id
+        description: "The unique identifier for the registration."
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+
+      - name: order_id
+        description: "The order id associated with a given registration."
+
+      - name: email
+        description: The email address for the registrant.
+
+      - name: answer
+        description: "The answer to the question provided by the registrant."
+
+      - name: question_type
+        description: >
+          The type of question.
+          Examples include Text and Single Select
+
+      - name: question_label
+        description: "The question as the registrant would see it in the UI."
+
+  - name: int__bizzabo_recording_views
+    description: "One row per registrant who watched a recording of a session."
+    columns:
+      - name: session_registration_id
+        description: A surrogate key created off of the session_id and the registration_id.
+        tests:
+          - unique
+          - not_null
+
+      - name: event_id
+        description: The unique identifier for the overall event.
+
+      - name: registration_id
+        description: The unique identifier for the registrant who viewed the recording.
+
+      - name: session_id
+        description: The unique identifier of the session the registrant watched a recording of.
+
+      - name: event_contact_id
+        description: >
+          A surrogate key created off of `event_id` and `contact_id`.
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: order_id
+        description: "The order id associated with a given registration."
+
+      - name: ticket_id
+        description: "The unique identifier for the ticket associated with the registration."
+
+      - name: email
+        description: The registrants email address
+
+      - name: attendance_type
+        description: "Default field set to 'Virtual' for recording views."
+
+      - name: watch_category
+        description: "Default field set to 'On Demand' for recording views."
+
+      - name: has_watched_recording
+        description: A boolean field indicating that the registrant watched a recording for the session.
+
+      - name: viewed_recording_at
+        description: A timestamp indicating when the registrant viewed the recording.
+
+      - name: count_of_recording_views
+        description: The total number of times a registrant watched a recording for a specific session.
+
+      - name: count_of_unique_recording_viewers
+        description: >
+          The unique number of registrants that watched a recording for a specific session.
+          This field should always be 1 in this model, as it is used for aggregation downstream.
+
+  - name: int__bizzabo_session_checkins
+    description: >
+      This model extends the `stg_bizzabo__registrations` model to feature one row per session per checkin.
+      A checkin is synonymous with attendance.
+      Registrants are able to checkin (or attend) to multiple sessions in an event.
+      For additional information related to registrations or sessions, this model can be joined to 
+      `stg_bizzabo__registrations` using `registration_id` or to `stg_bizzabo__sessions` using `session_id`.
+    columns:
+      - name: session_registration_id
+        description: >
+          A surrogate key created off of `session_id` and `registration_id` to get one row per session per registrant.
+        tests:
+          - unique
+          - not_null
+
+      - name: registration_id
+        description: "The unique identifier for the registration."
+
+      - name: event_contact_id
+        description: >
+          A surrogate key created off of `event_id` and `contact_id`.
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+
+      - name: order_id
+        description: "The order id associated with a given registration."
+
+      - name: ticket_id
+        description: "The unique identifier for the ticket associated with the registration."
+
+      - name: session_id
+        description: "The unique identifier of the session the registrant registered for."
+
+      - name: email
+        description: The email address for the registrant.
+
+      - name: attendance_type
+        description: "Indicates if a registrant attended the session either In Person, Virtually, or both."
+
+      - name: watch_category
+        description: Default value set to 'Live' for session attendance.
+
+      - name: has_attended_live
+        description: >
+          A boolean that indicates if the registrant checked into the session.
+          If they have checked-in, then they attended the session.
+          From this model forward, check-ins will be called "live attendance".
+
+      - name: is_checked_in_by_organizer
+        description: "A boolean field that indicates if the registrant was manually checked in by the organizer."
+
+      - name: is_manual_override
+        description: "A boolean field that indicates if the event organizer manually allowed the registrant to attend a session, despite session capacity limits."
+
+      - name: is_virtual_checkin
+        description: >
+          A boolean field that indiciates if the registrant checked into the session virtually.
+          This is synonymous with attended virtually.
+
+      - name: session_check_in_at
+        description: "A timestamp of when the registrant first checked into the session."
+
+      - name: session_check_out_at
+        description: "A timestamp of when the registrant last checked out of the session."
+
+  - name: int__bizzabo_session_registrations
+    description: >
+      This model extends the `stg_bizzabo__registrations` model to feature one row per session per registration.
+      Registrants are able to register for individual sessions in an event, if allowed.
+      For additional information related to registrations or sessions, this model can be joined to `stg_bizzabo__registrations` using `registration_id` or to `stg_bizzabo__sessions` using `session_id`.
+    columns:
+      - name: session_registration_id
+        description: >
+          A surrogate key created off of `session_id` and `registration_id` to get one row per session per registrant.
+        tests:
+          - unique
+          - not_null
+
+      - name: registration_id
+        description: "The unique identifier for the registration."
+
+      - name: event_contact_id
+        description: >
+          A surrogate key created off of `event_id` and `contact_id`.
+
+      - name: contact_id
+        description: "The unique identifier for the contact associated with the registration."
+
+      - name: event_id
+        description: "The unique identifier for the overall event associated with the registration."
+
+      - name: order_id
+        description: "The order id associated with a given registration."
+
+      - name: ticket_id
+        description: "The unique identifier for the ticket associated with the registration."
+
+      - name: session_id
+        description: "The unique identifier of the session the registrant registered for."
+
+      - name: email
+        description: The email address for the registrant.
+
+      - name: has_registered
+        description: "A boolean that indicates if the registrant pre-registered for a session."
+
+  - name: int__bizzabo_session_speakers
+    description: >
+      This model extends the `stg_bizzabo__sessions` model to feature one row per speaker per session.
+      Speakers are able to speak at multiple sessions.
+      For additional information related to sessions or speakers, this model can be joined to `stg_bizzabo__sessions` using `session_id` or to `stg_bizzabo__speakers` using `speaker_id`.
+    columns:
+      - name: session_speaker_id
+        description: >
+          A surrogate key created off of `session_id` and `speaker_id` to ensure one row per session per speaker.
+        tests:
+          - unique
+          - not_null
+
+      - name: session_id
+        description: "The unique identifier for the session."
+
+      - name: event_id
+        description: "The unique identifier of the event the session is associated with."
+
+      - name: speaker_id
+        description: "The unique identifier of the speaker for the session."
+
+      - name: location_id
+        description: >
+          The location_id of the session the speaker is speaking at.
+          This is utilized downstream in `fct_bizzabo_registrations` to correct the ticket location for Speakers.
+
+      - name: email
+        description: The email address for the speaker.
+
+  - name: int__bizzabo_session_sponsors
+    description: >
+      This model extends the `stg_bizzabo__sessions` model to feature one row per sponsor per session.
+      Sponsors are able to sponsor multiple sessions or an event as a whole.
+      For additional information related to sessions or sponsors, this model can be joined to `stg_bizzabo__sessions` using `session_id` or to `stg_bizzabo__sponsors` using `sponsor_id`.
+    columns:
+      - name: session_sponsor_id
+        description: >
+          A surrogate key created off of `session_id` and `sponsor_id` to ensure one row per session per sponsor.
+        tests:
+          - unique
+          - not_null
+
+      - name: session_id
+        description: "The unique identifier for the session."
+
+      - name: event_id
+        description: "The unique identifier of the event the session is associated with."
+
+      - name: sponsor_id
+        description: "The unique identifier of the sponsor for the session."
+
+  - name: int__bizzabo_session_tags
+    description: >
+      This model extends the `stg_bizzabo__sessions` model to feature one row per session per tag.
+      A tag is a custom variable created in Bizzabo to allow for segmentating and filtering sessions.
+      In addition, a tag is comprised of a `group` and a `tag`, and follows the pattern of `Group Name - Tag Name` in the Bizzabo UI.
+      An example of this is `Region - APAC Friendly`.
+      For additional information related to sessions or tags, this model can be joined to `stg_bizzabo__sessions` using `session_id` or to `stg_bizzabo__tags` using `tag_id`.
+    columns:
+      - name: session_tag_id
+        description: >
+          A surrogate key created off of `session_id` and `tag_id` to ensure one row per session per tag.
+        tests:
+          - unique
+          - not_null
+
+      - name: session_id
+        description: "The unique identifier for the session."
+
+      - name: tag_id
+        description: "The unique identifier of the tag."

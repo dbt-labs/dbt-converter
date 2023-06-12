@@ -1,0 +1,5 @@
+# These owners below will be the default owners for everything in
+# the repo. Unless a later match takes precedence, the list below will
+# be requested for review when someone opens a pull request.
+
+*       @dbt-labs/data-team

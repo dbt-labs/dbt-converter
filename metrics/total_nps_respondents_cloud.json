@@ -1,0 +1,1 @@
+{"name": "total_nps_respondents_cloud", "description": "'The count of users responding to NPS surveys in dbt Cloud.'\n", "type": "measure_proxy", "type_params": {"measure": {"name": "total_nps_respondents_cloud"}}, "constraint": {"where": "feedback_source = 'dbt_cloud_nps'", "linkable_names": ["feedback_source"], "sql_params": {"param_items": []}}}

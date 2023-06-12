@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_google_search_console__keywords
+    description: >
+      Search traffic data of the pages of the site based on the query string a user searched for on Google.
+      Each record shows how the site appeared in the search result for a particular search query.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_google_search_console__pages
+    description: >
+      Search traffic data for the pages of the site.
+      Each record shows how a particular page on the site appeared in the search result on a particular day and it's corresponding metrics.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_google_search_console__sites
+    description: >
+      Search traffic data of the site based on the query strings a user searched for on Google.
+      Each record shows how the site appeared in the search result for a particular search query.
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null

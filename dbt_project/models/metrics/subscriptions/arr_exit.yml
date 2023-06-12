@@ -1,0 +1,23 @@
+version: 2
+
+metrics:
+  - name: arr_exit
+    label: Exit ARR
+    description: >
+      The amount of ARR (Annual Recurring Revenue) from Managed and Self-Serve customers
+      at the end of the given time period.
+
+    calculation_method: derived
+    expression: "{{metric('arr_exit_managed')}} + {{metric('arr_exit_self_serve')}}"
+    
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

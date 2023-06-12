@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_snowflake__production_objects
+    description: >
+      Current object metadata for the contents of our `analytics` database
+    columns:
+      - name: snowflake_object_name
+        tests:
+          - not_null
+          - unique
+  - name: stg_snowflake__production_queries
+    description: >
+      The last six months of Snowflake query history data for queries
+      associated with our dbt Cloud production user.
+    columns:
+      - name: query_id
+        tests:
+          - not_null
+          - unique
+  - name: stg_snowflake__users
+  - name: stg_snowflake__warehouse_metering_history

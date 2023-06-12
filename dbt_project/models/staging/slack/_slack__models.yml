@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: stg_slack__messages
+    description: >
+      This dataset unions together historical and current slack messages into
+      a single, consistent structure.
+
+      One record represents a "message", where messages includes channel joins etc.
+
+      Replies to a thread are represented as their own record.
+
+    columns:
+      - name: message_id
+        description: >
+          A surrogate key constructed on the unique combination of a message's
+          timestamp and channel_id.
+        tests:
+          - unique
+          - not_null
+
+      - name: is_post
+        description: >
+          TRUE when a message is not a reply to a thread (inverse of is_reply).
+          NULL if the message is not an "actual" message.
+
+      - name: is_reply
+        description: >
+          TRUE when a message is a threaded reply to another message (inverse of
+          is_post). NULL if the message is not an "actual" message.
+
+  - name: stg_slack__reactions
+    description: One record per message, per user, per reaction emoji.
+
+    columns:
+      - name: reaction_id
+        description: >
+          Surrogate key based on a unique combination of message_id, user_id
+          and reaction.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_slack__users
+    columns:
+      - name: has_joined_workspace
+        description: Light remap of the is_invited_user source field to make more sense
+        tests:
+          - not_null

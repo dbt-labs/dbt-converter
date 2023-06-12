@@ -1,0 +1,1 @@
+{"name": "average_order_amount", "description": "The average size of a jaffle order", "type": "measure_proxy", "type_params": {"measure": {"name": "average_order_amount"}}}

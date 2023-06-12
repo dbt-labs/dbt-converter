@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: int__customer_onboarding_events_unioned
+    description: Specific
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - salesforce_account_id
+            - event_name
+    columns:
+      - name: salesforce_account_id
+        tests:
+          - not_null
+  - name: int__historical_trello_sprints
+    description: >
+      Historical PS engagement data from May 2021 back, when Trello was used as project
+      management tool.
+    columns:
+      - name: card_id
+        tests:
+          - unique
+          - not_null
+      - name: name
+        tests:
+          - not_null
+  - name: int__services_utilization_periods
+    columns:
+      - name: unique_id
+        tests:
+          - unique
+          - not_null

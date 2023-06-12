@@ -1,0 +1,50 @@
+version: 2
+
+metrics:
+  - name: active_projects_with_metrics
+    label: Active Projects with dbt Metrics Defined
+    model: ref('fct_dbt_project_activity')
+    description: "The sum of all active dbt projects that were invoked with dbt Metrics defined in them."
+    tags: ['Product Metric']
+
+    calculation_method: count
+    expression: "case when max_project_count_metrics > 0 then 1 else 0 end"
+
+    timestamp: date_day
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - adapter
+      - dbt_product_mix
+      - t7d_completed_invocations
+      - t7d_active
+      - project_complexity
+
+    meta:
+      metric_level: 'Product'
+      owner: 'Cameron Afzal'
+
+  - name: pct_active_projects_using_metrics
+    label: Percent of Active Projects Using Metrics
+    description: >
+      'A measure of the percentage of models actively using dbt metrics
+      functionality, represented as a numerator over a denominator.
+      The numerator is defined as projects referenced by an invocation 
+      which included a metrics model, limited to the specified time grain.
+      The denominator is defined as projects referenced by an invocation, 
+      limited to the specified time grain.'
+    tags: ['Product Metric']
+
+    calculation_method: derived
+    expression: "{{metric('active_projects_with_metrics')}} / {{metric('active_projects')}}" 
+
+    timestamp: date_day
+    time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - adapter
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Cameron Afzal'
+  

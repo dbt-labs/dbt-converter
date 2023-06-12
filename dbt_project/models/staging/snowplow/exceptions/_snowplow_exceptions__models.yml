@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: exceptions_2023__v1_4_scheduler_invocations
+    description: '{{ doc("exceptions_2023__v1_4_scheduler_invocations") }}'
+    columns:
+      - name: event_id
+        description: The unique event ID from the Snowplow event.
+        tests:
+          - unique
+          - not_null
+
+      - name: synthetic_invocation_id
+        description: >
+          A surrogate-key created off of the `invocation_id` and the `invocation_index.`
+          It follow the format of: `concat(invocation_id,'-',invocation_index)`.
+          This ID is used to correct invocation IDs in downstream models, to ensure each step in a Cloud run has a unique key.
+        tests:
+          - not_null
+
+      - name: invocation_id
+        description: The unique ID of the invocation in dbt.
+        tests:
+          - not_null
+
+      - name: invocation_index
+        description: >
+          An index of invocation start events over a single invocation.
+          Any invocation with an index > 1 assumes that subsequent invocations have retained the original `invocation_id`.
+          This field is used to generate the `synthetic_invocation_id`, which ensures we have uniqueness per invocation per run.
+        tests:
+          - not_null

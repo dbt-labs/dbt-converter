@@ -1,0 +1,1 @@
+{"name": "customers_new", "description": "The sum total of new customers (Logos) starting during a given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "customers_new"}}}

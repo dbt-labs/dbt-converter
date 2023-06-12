@@ -1,0 +1,21 @@
+version: 2
+
+models:
+
+- name: current_snowplow_context_splitter
+  description: >
+    Additional step to split out Snowplow events with desired information
+    stored in the `context` field. 
+  columns:
+    - name: _loaded_at
+      description: >
+        {{ doc("_loaded_at") }}
+
+- name: current_snowplow_unstruct_event_splitter
+  description: >
+    Additional step to split out Snowplow events with desired information
+    stored in the `unstruct_event` field.
+  columns:
+    - name: _loaded_at
+      description: >
+        {{ doc("_loaded_at") }}

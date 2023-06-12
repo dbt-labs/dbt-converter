@@ -1,0 +1,28 @@
+name: Run dbt Cloud deploy job on merge to main
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+
+  run_dbt_cloud_job:
+    name: Run dbt Cloud Job
+    runs-on: ubuntu-latest
+
+    env:
+      DBT_ACCOUNT_ID: 1
+      DBT_PROJECT_ID: 672
+      DBT_PR_JOB_ID: 271035
+      DBT_API_KEY: ${{ secrets.DBT_CLOUD_SERVICE_TOKEN }}
+      DBT_JOB_CAUSE: 'GitHub Pipeline Deploy Job' 
+      DBT_JOB_BRANCH: ${{ github.ref_name }}
+
+    steps:
+      - uses: "actions/checkout@v3"
+      - uses: "actions/setup-python@v4"
+        with:
+          python-version: "3.9"
+      - name: Run dbt Cloud job
+        run: "python .github/workflows/snippets/run_and_monitor_dbt_job.py"

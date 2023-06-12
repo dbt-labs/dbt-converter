@@ -1,0 +1,18 @@
+
+version: 2
+
+models:
+  - name: current_snowplow_event
+    description: >
+      Primary pipeline of all events collected by snowplow, prior to field parsing and separation into different event
+      types.
+    columns:
+      - name: event_id
+        tests:
+          - unique:
+              where: "_loaded_at >= dateadd('day',-1,current_date())"
+          - not_null:
+              where: "_loaded_at >= dateadd('day',-1,current_date())"
+      - name: _loaded_at
+        description: >
+          {{ doc("_loaded_at") }}

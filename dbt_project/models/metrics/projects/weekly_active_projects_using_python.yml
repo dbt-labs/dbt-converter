@@ -1,0 +1,51 @@
+version: 2
+
+metrics:
+  - name: weekly_active_projects_using_python 
+    label: Cumulative Weekly Active Projects Using Python Models
+    model: ref('fct_dbt_project_activity')
+    description: >
+      'The running total of dbt Projects with at least one
+      invocation using python models in the last trailing 7 
+      days for any given day.'
+    tags: ['Company Metric']
+    
+    calculation_method: count_distinct
+    expression: project_id
+
+    timestamp: date_day
+    time_grains: [day]
+
+    dimensions:
+      - adapter
+
+    filters:
+      - field: t7d_used_python
+        operator: "="
+        value: "1"
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Ian Fahey'
+
+
+  - name: pct_weekly_active_projects_using_python
+    label: Percent of Weekly Active Projects Using Python Models
+    description: >
+      'The percentage of dbt Projects with at least one
+      invocation using python models out of all active projects
+      in the last trailing 7 days for any given day.'
+    tags: []
+
+    calculation_method: derived
+    expression: "{{metric('weekly_active_projects_using_python')}} / {{metric('weekly_active_projects')}}" 
+
+    timestamp: date_day
+    time_grains: [day]
+
+    dimensions:
+      - adapter
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Ian Fahey'

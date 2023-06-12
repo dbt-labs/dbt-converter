@@ -1,0 +1,253 @@
+version: 2
+
+models:
+  - name: fct_support_max_entitlements
+    description: >
+      This model determines the list of accounts that a given email address is associated
+      with on any given day and three days before/after that date and, from this, determines
+      the highest product plan tier (e.g. Enterprise) that the customer is entitled to.
+      (e.g. if associated with both a teams plan and an enterprise plan, mark as enterprise)
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique 
+  - name: fct_support_tickets
+    description: >
+      This model calculates key ticket metrics and then filters to create 
+      one row per ticket. Timestamps suffixed with `_business` means that the timestamp 
+      fell outside of support business hours and changes it to the next business hour
+      (example: ticket comes in at 10pm EST, the next business hour is 8am EST)
+    columns:
+      - name: ticket_id
+        tests:
+          - not_null
+          - unique
+      - name: status
+        description: '{{ doc("support_ticket_status") }}'
+        tests:
+          - accepted_values:
+              values: ['closed','deleted','hold','new','open','pending']
+      - name: is_automated
+        description: >
+          A flag that designates whether or not a ticket is a result of an automated 
+          process on the customer's side. The model should only have non automated tickets 
+        tests:
+          - accepted_values:
+              values: [0]
+              quote: false
+      - name: is_merged
+        description: >
+          A flag that designates whether this ticket has been merged into another ticket.
+      - name: is_proactive
+        description: >
+          A flag that designates whether this ticket was created proactively by us on 
+          behalf of a customer.  This is used for things like notifying a customer about 
+          a problem with a run that we noticed (instead of them writing in).  Setup tickets
+          are not currently considered proactive.
+      - name: all_ticket_tags
+        description: >
+          A comma separated list of all tags applied to the ticket.  Can be used to eliminate
+          tickets with a given tag or surface only those tickets with a specific tag 
+      - name: created_at
+        description: The timestamp the ticket was created in America/New York timezone
+      - name: first_closed_at
+        description: > 
+          The timestamp the ticket was first closed in America/New York timezone. Tickets 
+          can be closed multiple times if they are reopened for any reason.
+      - name: last_closed_at
+        description: > 
+          The timestamp the ticket was last closed in America/New York timezone. Tickets 
+          can be closed multiple times if they are reopened for any reason.
+      - name: submitter_date_joined
+        description: >
+          The timestamp the user that submitted the ticket joined dbt Cloud. This is based off of 
+          the first time the user ever joined, regardless of account since users (based on email address) 
+          can be associated with multiple cloud_user_id's and multiple accounts. Note, this timestamp is
+          in currently in America/New_York timezone to follow the pattern in customer support models.
+      - name: cloud_account_created_at
+        description: >
+          The timestamp the dbt Cloud account was created. Note, this timestamp is
+          in currently in America/New_York timezone to follow the pattern in customer support models.
+      - name: days_submitter_date_joined_to_ticket_created
+        description: >
+          The number of days between when the user who submitted the ticket joined dbt (i.e. 
+          set up an account) and when the ticket was first created. This can be negative if a user
+          created a ticket before joining dbt cloud.
+      - name: days_submitter_date_joined_to_ticket_first_close
+        description: >
+          The number of days between when the user who submitted the ticket joined dbt (i.e. 
+          set up an account) and when the ticket was first closed. This can be negative if a user
+          created a ticket before joining dbt cloud.
+      - name: days_submitter_date_joined_to_ticket_last_close
+        description: >
+          The number of days between when the user who submitted the ticket joined dbt (i.e. 
+          set up an account) and when the ticket was last closed. This can be negative if a user
+          created a ticket before joining dbt cloud.
+      - name: days_account_created_to_ticket_created
+        description: >
+          The number of days between when the account who submitted the ticket was created
+          and when the ticket was first created. Note, this value can be negative as a user can
+          create a ticket before they end up creating an account with dbt.
+        tests:
+          - not_null:
+              config:
+                where: "cloud_account_id is not null"
+      - name: days_account_created_to_ticket_first_close
+        description: >
+          The number of days between when the account who submitted the ticket was created
+          and when the ticket was first closed. Note, this value can be negative as a user can
+          create a ticket before they end up creating an account with dbt.
+        tests:
+          - not_null:
+              config:
+                where: "cloud_account_id is not null and first_closed_at is not null"
+      - name: days_account_created_to_ticket_last_close
+        description: >
+          The number of days between when the account who submitted the ticket was created
+          and when the ticket was last closed. Note, this value can be negative as a user can
+          create a ticket before they end up creating an account with dbt.
+        tests:
+          - not_null:
+              config:
+                where: "cloud_account_id is not null and last_closed_at is not null"
+      - name: last_customer_response_at
+        description: >
+          The timestamp of the last customer response received on the ticket.
+      - name: last_agent_response_at
+        description: >
+          The timestamp of the last public agent response on the ticket.  
+          Internal comments are not included in this.
+      - name: last_response_at
+        description: >
+          The timestamp of the last public response on a ticket.  
+          Can be either the agent or the customer.  Internal comments 
+          are not included in this calculation.
+      - name: last_responder
+        description: >
+          This is a calculated value for whom the last party is on the
+          ticket, that responded in a public comment.  Valid values are 'agent' and 'customer'.
+
+  - name: fct_support_ticket_current_field_values
+    description: >
+      This model contains all _current_ Zendesk Support fields for a given ticket.
+    columns:
+      - name: ticket_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_support_ticket_updates
+    description: >
+      This models computes the state values of support ticket for each period in its lifecycle.
+      One row represents an update of one (or several if simultaneous) fields that are helpful to compute those states.
+      For each update, the values of each state field at the time is computed.
+    columns:
+      - name: ticket_field_history_id
+        description: Surrogate key of the ticket udpate generated from the `ticket_id`, `field_name`, `valid_starting_at`.
+        tests:
+          - not_null
+          - unique
+      - name: ticket_id
+        description: The unique identifier of the ticket defined by Zendesk
+      - name: valid_starting_at
+        description: Timestamp of the ticket update from which the values are valid.
+      - name: valid_ending_at
+        description: Timestamp of the ticket update up to which the values are valid.
+      - name: changed_fields
+        description: List of fields that had changed values for this ticket.
+      - name: status
+        description: |
+          Current stage of the ticket in itss lifecycle
+          - New [default]: no action has been taken on the ticket. Note: once a New ticket's status has been changed, it can never be set back to New.
+          - Open: ticket has been assigned to an agent and is in progress. It is waiting for action by the agent.
+          - Pending: the agent is waiting for more information from the requester.
+          - On-hold: the agent is waiting for information or action from another internal team (e.g. engineering).
+          - Closed: ticket has been resolved or closed after too long inactivity.
+          - Deleted: ticket was deleted.
+      - name: priority
+        description: |
+          Level of importance assigned to the ticket at the time of the update. Falls into: Low, Normal, High, and Urgent.
+      - name: severity
+        description: |
+          Level of urgency assigned to the ticket at the time of the update. Falls into: sev1, sev2, sev3, and sev4.
+      - name: assignee_id
+        description: The Zendesk unique identifier of the support member appointed to the ticket at the time of the update.
+      - name: assignee_name
+        description: Full name of the assignee of the ticket at the time of the update.
+        tests:
+          - not_null:
+              config:
+                where: assignee_id is not null
+                severity: warn # will not break logic but can heavily bias analyses
+      - name: group_id
+        description: The Zendesk unique identifier of the support group in charge of the ticket at the time of the update.
+      - name: group_name
+        description: |
+          Support group in charge of the ticket at the time of the update. This usually refers to the role of the assignee.
+          Main groups are:
+          - Tier 1: Customer Support
+          - Tier 2: Support Engineering
+          - Tier 3: Sr. Support Engineering
+          - SSE: Strategic Support Engineering
+        # waiting on Zendesk package PR to merge to add back in
+        # https://github.com/fivetran/dbt_zendesk_source/pull/36
+        # tests:
+        #   - not_null:
+        #       config:
+        #         where: group_id is not null
+        #         severity: warn # will not break logic but can heavily bias analyses
+      - name: due_at
+        description: Timestamp by which the ticket requires an action from the team. Can work as a reminder to the agent to take action on the ticket.
+      - name: jira_issue_ids
+        description: Comma-separated string list of the Jira issues associated to the support ticket at the time of the update.
+      - name: is_open
+        description: A boolean flag indicating if the ticket is CURRENTLY open.
+      - name: is_setup
+        description: A boolean flag indicating if the ticket is an account setup ticket.
+      - name: is_internal_user
+        description: A boolean flag indicating if the requester is a part of the dbt Labs organization.
+      - name: is_proactive
+        description: A boolean flag indicating if the ticket was proactively sent by our Support team to our customers.
+      - name: did_respond_in_sla
+        description: A boolean flag indicating if the ticket was responded within the limit set in the service level agreement.
+      - name: did_close_in_sla
+        description: A boolean flag indicating if the ticket was closed within the limit set in the service level agreement.
+      - name: predicted_plan_tier
+        description: >
+          Highest product plan tier (e.g. Enterprise) that the customer is entitled to.
+          This is based on the submitter email address and the accounts it associated with
+           from either the ticket creation or ticket close, whichever plan is higher.
+      - name: created_channel
+        description: Channel through which the ticket was created (e.g. chat, email...)
+
+  - name: fct_support_messages
+    description: >
+      This model joins business hours to messages to map timestamps after hours
+      to 9am EST. This will allow date diff calculations in Looker for time to
+      first response and time to first response (business hours) for more accurate
+      metrics.
+    columns:
+      - name: ticket_comment_id
+        tests:
+          - not_null
+          - unique
+      - name: ticket_status
+        description: '{{ doc("support_ticket_status") }}'
+        tests:
+          - accepted_values:
+              values: ['closed','deleted','hold','new','open','pending']
+
+  - name: fct_support_ticket_tags
+    description: >
+      This model unions tags from Zendesk and Intercom. The grain of the table is one 
+      row per tag per ticket
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ticket_id
+            - tag_name
+    columns:
+      - name: ticket_id
+        tests:
+          - not_null

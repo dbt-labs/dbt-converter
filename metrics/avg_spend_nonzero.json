@@ -1,0 +1,1 @@
+{"name": "avg_spend_nonzero", "description": "Average ad spend, ignores zero-spend days.", "type": "measure_proxy", "type_params": {"measure": {"name": "avg_spend_nonzero"}}, "constraint": {"where": "spend > 0", "linkable_names": ["spend"], "sql_params": {"param_items": []}}}

@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: stg_asana__projects
+    description: "All projects in Asana (e.g. Data Q3 Roadmap or Data Kanban Board)"
+    columns:
+      - name: project_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__sections
+    description: "All sections in Asana and which project they belong in (e.g. Data Kanban Board -> Icebox)."
+    columns:
+      - name: section_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__project_tasks
+    description: "A list of every project's task. Note that one task can belong to multiple projects."
+    columns:
+      - name: project_task_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__task_events
+    description: "All events that occur to a single task (e.g. Comments, moving to different stages, completion, etc)."
+    columns:
+      - name: task_event_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__task_sections
+    description: "All tasks in Asana, their associated sections in each project (e.g. Data Kanban Board -> Icebox -> 'Task: Add Asana staging models')."
+    columns:
+      - name: task_section_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__tasks
+    description: "All tasks in Asana and their associated fields (e.g. est hours, assignee, start date, completion date, etc)."
+    columns:
+      - name: task_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__teams
+    description: "A list of all teams (e.g. Marketing, Data, Product, etc)."
+    columns:
+      - name: team_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_asana__users
+    description: "A list of all dbt Labs users in Asana."
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null

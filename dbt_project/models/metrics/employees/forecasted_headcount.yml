@@ -1,0 +1,22 @@
+version: 2
+
+metrics:
+  - name: forecasted_headcount
+    label: Headcount
+    model: ref('fct_hiring_opportunities')
+    description: '{{ doc("forecasted_headcount") }}'
+    tags: ['FY2023 - O3']
+
+    calculation_method: sum
+    expression: was_hired
+
+    timestamp: last_advanced_at
+    time_grains: [day, week, month]
+
+    dimensions:
+      - team_name
+
+    meta:
+      okr_level: 'Company'
+      owner(s): 'Meg Colon'
+      team: 'People Ops'

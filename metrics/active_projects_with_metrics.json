@@ -1,0 +1,1 @@
+{"name": "active_projects_with_metrics", "description": "The sum of all active dbt projects that were invoked with dbt Metrics defined in them.", "type": "measure_proxy", "type_params": {"measure": {"name": "active_projects_with_metrics"}}}

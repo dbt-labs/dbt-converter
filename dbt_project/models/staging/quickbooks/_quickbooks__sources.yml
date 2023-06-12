@@ -1,0 +1,42 @@
+
+version: 2
+
+sources:
+  - name: quickbooks
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+    description: |
+      Quickbooks data for `Fishtown Analytics, LLC` (deprecated early 2020,
+      use the [quickbooks_inc](/#!/source_list/quickbooks_inc) source instead.
+
+    meta:
+      team: ['Finance']
+      owner_name: Elize Papineau
+
+    database: raw
+
+    tables:
+      - name: customers
+        identifier: quickbooks_customers
+        description: '{{ doc("quickbooks_customer") }}'
+      - name: invoices
+        identifier: quickbooks_invoices
+        description: '{{ doc("quickbooks_invoice") }}'
+
+  - name: quickbooks_inc
+    loader: stitch
+    loaded_at_field: _sdc_batched_at
+    meta:
+      team: ['Finance']
+      owner_name: Elize Papineau
+    database: raw
+    description: |
+      Quickbooks data for `Fishtown Analytics, Inc` (effective early 2020).
+
+    tables:
+      - name: customers
+        identifier: quickbooks_customers
+        description: '{{ doc("quickbooks_customer") }}'
+      - name: invoices
+        identifier: quickbooks_invoices
+        description: '{{ doc("quickbooks_invoice") }}'

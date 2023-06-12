@@ -1,0 +1,163 @@
+
+  create or replace   view analytics_dev.dbt_jstein.stg_snowplow_web_events
+  
+   as (
+    
+
+select 
+    "COLLECTOR",
+  "APP_ID",
+  "DATABASE_SOURCE",
+  "BR_COLORDEPTH",
+  "BR_COOKIES",
+  "BR_FAMILY",
+  "BR_FEATURES_DIRECTOR",
+  "BR_FEATURES_FLASH",
+  "BR_FEATURES_GEARS",
+  "BR_FEATURES_JAVA",
+  "BR_FEATURES_PDF",
+  "BR_FEATURES_QUICKTIME",
+  "BR_FEATURES_REALPLAYER",
+  "BR_FEATURES_SILVERLIGHT",
+  "BR_FEATURES_WINDOWSMEDIA",
+  "BR_LANG",
+  "BR_NAME",
+  "BR_RENDERENGINE",
+  "BR_TYPE",
+  "BR_VERSION",
+  "COLLECTOR_TSTAMP",
+  "CONTEXTS",
+  "DERIVED_TSTAMP",
+  "DOC_CHARSET",
+  "DOMAIN_SESSIONID",
+  "DOMAIN_SESSIONIDX",
+  "DOMAIN_USERID",
+  "DVCE_CREATED_TSTAMP",
+  "DVCE_ISMOBILE",
+  "DVCE_SENT_TSTAMP",
+  "DVCE_TYPE",
+  "ETL_TSTAMP",
+  "EVENT",
+  "EVENT_FORMAT",
+  "EVENT_ID",
+  "EVENT_NAME",
+  "EVENT_VENDOR",
+  "EVENT_VERSION",
+  "GEO_CITY",
+  "GEO_COUNTRY",
+  "GEO_LATITUDE",
+  "GEO_LONGITUDE",
+  "GEO_REGION",
+  "GEO_REGION_NAME",
+  "GEO_TIMEZONE",
+  "GEO_ZIPCODE",
+  "NAME_TRACKER",
+  "NETWORK_USERID",
+  "OS_FAMILY",
+  "OS_MANUFACTURER",
+  "OS_NAME",
+  "PAGE_TITLE",
+  "PAGE_URL",
+  "PAGE_URLFRAGMENT",
+  "PAGE_URLHOST",
+  "PAGE_URLPATH",
+  "PAGE_URLPORT",
+  "PAGE_URLSCHEME",
+  "PLATFORM",
+  "PP_XOFFSET_MAX",
+  "PP_XOFFSET_MIN",
+  "PP_YOFFSET_MAX",
+  "PP_YOFFSET_MIN",
+  "SE_ACTION",
+  "SE_CATEGORY",
+  "SE_LABEL",
+  "USER_FINGERPRINT",
+  "USER_ID",
+  "USER_IPADDRESS",
+  "V_COLLECTOR",
+  "V_ETL",
+  "V_TRACKER",
+  "REFR_URLSCHEME",
+  "REFR_MEDIUM",
+  "REFR_URLHOST",
+  "REFR_URLFRAGMENT",
+  "REFR_URLPORT",
+  "REFR_URLPATH",
+  "REFR_SOURCE",
+  "USERAGENT",
+  "PAGE_URLQUERY",
+  "SE_PROPERTY",
+  "REFR_URLQUERY",
+  "PAGE_REFERRER",
+  "REFR_TERM",
+  "MKT_CLICKID",
+  "MKT_NETWORK",
+  "IP_ISP",
+  "IP_ORGANIZATION",
+  "IP_DOMAIN",
+  "IP_NETSPEED",
+  "MKT_SOURCE",
+  "MKT_MEDIUM",
+  "MKT_CAMPAIGN",
+  "MKT_TERM",
+  "MKT_CONTENT",
+  "SEQUENCE_NUMBER",
+  "TXN_ID",
+  "SE_VALUE",
+  "TR_ORDERID",
+  "TR_AFFILIATION",
+  "TR_TOTAL",
+  "TR_TAX",
+  "TR_SHIPPING",
+  "TR_CITY",
+  "TR_STATE",
+  "TR_COUNTRY",
+  "TI_ORDERID",
+  "TI_SKU",
+  "TI_NAME",
+  "TI_CATEGORY",
+  "TI_PRICE",
+  "TI_QUANTITY",
+  "TR_CURRENCY",
+  "TI_CURRENCY",
+  "BROWSER",
+  "BROWSER_NAME",
+  "BROWSER_MAJOR_VERSION",
+  "BROWSER_MINOR_VERSION",
+  "BROWSER_BUILD_VERSION",
+  "BROWSER_ENGINE",
+  "BROWSER_LANGUAGE",
+  "BR_VIEWWIDTH",
+  "BR_VIEWHEIGHT",
+  "DOC_HEIGHT",
+  "DOC_WIDTH",
+  "DVCE_SCREENWIDTH",
+  "DVCE_SCREENHEIGHT",
+  "UNSTRUCT_EVENT",
+  "IS_DEV_EVENT",
+  "CITY_ID",
+  "_DEDUPE",
+
+    
+    case os_timezone
+        when 'Etc/Unknown' then null
+        when 'Unknown/Unknown' then null
+        when 'Europe/Saratov' then 'Etc/GMT-4'
+        when 'Asia/Atyrau' then 'Etc/GMT-5'
+        when 'Asia/Qostanay' then 'Etc/GMT-6'
+        when 'Asia/Yangon' then 'Asia/Rangoon'
+        when 'Asia/Famagusta' then 'Asia/Nicosia'
+        when 'Asia/Calcutt' then 'Asia/Kolkata'
+        when 'America/Nuuk' then 'America/Godthab'
+        when 'America/Punta_Arenas' then 'America/Santiago'
+        when 'America/Ne' then 'America/New_York'
+        when 'Asia/SaigonMinh' then 'Asia/Saigon'
+        when 'Europe/Kyiv' then 'Europe/Kiev'
+        else os_timezone
+    end as os_timezone
+
+from analytics_dev.dbt_jstein.stg_snowplow_events
+where platform = 'web'
+    and is_dev_event = false
+  );
+

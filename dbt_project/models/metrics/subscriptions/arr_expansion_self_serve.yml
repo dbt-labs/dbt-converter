@@ -1,0 +1,29 @@
+version: 2
+
+metrics:
+  - name: arr_expansion_self_serve
+    label: Self-Serve Expansion ARR
+    model: ref('fct_arr_aggregated')
+    description: >
+      The amount of incremental ARR (Annual Recurring Revenue) from existing Self-Serve customers 
+      expanding for the time period.
+
+    calculation_method: sum
+    expression: ss_expand_arr
+
+    filters:
+      - field: sales_channel
+        operator: "="
+        value: "'Self-Serve'"
+
+    dimensions:
+      - fiscal_quarter
+      - fiscal_year
+
+    timestamp: close_month
+    time_grains: [month, quarter, year, all_time]
+
+    meta:
+      metric_level: 'Company'
+      owner(s): 'Paige Berry'
+      

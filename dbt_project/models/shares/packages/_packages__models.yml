@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: dbt_package_installs
+    description: >
+      This model is a secure view that is shared with Fivetran.
