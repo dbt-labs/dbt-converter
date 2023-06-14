@@ -3,36 +3,36 @@ description: Each record represents daily metrics by ad, ad group, campaign and 
 sql_table: ANALYTICS.dbt_jstein.ad_reporting__ad_report
 dbt_model: ANALYTICS.dbt_jstein.ad_reporting__ad_report
 measures:
-- name: spend
-  agg: sum
+- name: avg_spend
+  agg: average
   expr: spend
+  agg_time_dimension: date_day
+- name: clicks
+  agg: sum
+  expr: clicks
   agg_time_dimension: date_day
 - name: impressions
   agg: sum
   expr: impressions
   agg_time_dimension: date_day
-- name: avg_spend
-  agg: average
+- name: spend
+  agg: sum
   expr: spend
   agg_time_dimension: date_day
 - name: active_ads
   agg: count_distinct
   expr: ad_id
   agg_time_dimension: date_day
-- name: clicks
-  agg: sum
-  expr: clicks
-  agg_time_dimension: date_day
 - name: avg_spend_nonzero
   agg: average
   expr: spend
   agg_time_dimension: date_day
 dimensions:
-- name: ad_group_name
+- name: account_name
   type: categorical
-- name: ad_group_id
+- name: spend
   type: categorical
-- name: campaign_id
+- name: account_id
   type: categorical
 - name: date_day
   type: time
@@ -41,15 +41,15 @@ dimensions:
     time_granularity: day
 - name: platform
   type: categorical
-- name: account_id
-  type: categorical
-- name: spend
-  type: categorical
 - name: ad_name
-  type: categorical
-- name: campaign_name
   type: categorical
 - name: ad_id
   type: categorical
-- name: account_name
+- name: campaign_name
+  type: categorical
+- name: campaign_id
+  type: categorical
+- name: ad_group_name
+  type: categorical
+- name: ad_group_id
   type: categorical

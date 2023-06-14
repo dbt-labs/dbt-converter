@@ -1,0 +1,19 @@
+name: fct_customer_health
+description: This model is an an account-level table that aggregates account feature
+  usage data and joins it to fields in salesforce data to provide a holistic view
+  of a customers health.
+sql_table: ANALYTICS.dbt_jstein.fct_customer_health
+dbt_model: ANALYTICS.dbt_jstein.fct_customer_health
+measures:
+- name: weekly_active_cloud_accounts
+  agg: sum
+  expr: t7d_successful_job_active
+  agg_time_dimension: date_day
+dimensions:
+- name: account_region
+  type: categorical
+- name: date_day
+  type: time
+  type_params:
+    is_primary: true
+    time_granularity: day

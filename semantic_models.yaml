@@ -1,0 +1,1081 @@
+semantic_models:
+- name: fct_dbt_project_activity
+  description: "One row per project per day, between a project's first invocation
+    and 30 days after its last one.\n"
+  measures:
+  - name: core_only_waps_using_cloud
+    agg: sum
+    expr: coalesce(t7d_used_cloud_scheduler, t7d_used_cloud_ide)
+    agg_time_dimension: date_day
+  - name: active_projects_using_python
+    agg: count_distinct
+    expr: project_id
+    agg_time_dimension: date_day
+  - name: active_cloud_projects
+    agg: count_distinct
+    expr: project_id
+    agg_time_dimension: date_day
+  - name: active_projects_with_metrics
+    agg: sum
+    expr: CASE WHEN case when max_project_count_metrics > 0 then 1 else 0 end IS NOT
+      NULL THEN 1 ELSE 0 END
+    agg_time_dimension: date_day
+  - name: active_projects
+    agg: count_distinct
+    expr: project_id
+    agg_time_dimension: date_day
+  - name: active_core_projects
+    agg: count_distinct
+    expr: project_id
+    agg_time_dimension: date_day
+  - name: weekly_active_projects
+    agg: count_distinct
+    expr: project_id
+    agg_time_dimension: date_day
+  - name: weekly_active_projects_using_python
+    agg: count_distinct
+    expr: project_id
+    agg_time_dimension: date_day
+  dimensions:
+  - name: project_complexity
+    type: categorical
+  - name: active
+    type: categorical
+  - name: adapter
+    type: categorical
+  - name: dbt_product_mix
+    type: categorical
+  - name: t7d_completed_invocations
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  - name: max_cloud_account_id
+    type: categorical
+  - name: t7d_used_python
+    type: categorical
+  - name: t7d_active
+    type: categorical
+  - name: used_python
+    type: categorical
+  model: ref('fct_dbt_project_activity')
+  defaults:
+    agg_time_dimension: date_day
+- name: dim_salesforce_accounts
+  description: ''
+  measures:
+  - name: mutual_action_plan
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: subscription_date
+  dimensions:
+  - name: subscription_date
+    type: time
+    type_params:
+      time_granularity: day
+  - name: account_status
+    type: categorical
+  model: ref('dim_salesforce_accounts')
+  defaults:
+    agg_time_dimension: subscription_date
+- name: net_new_arr
+  description: ''
+  measures:
+  - name: self_service_net_new_arr
+    agg: sum
+    expr: net_new_arr
+    agg_time_dimension: date_day
+  dimensions:
+  - name: channel
+    type: categorical
+  - name: employee_count_range
+    type: categorical
+  - name: market_segment
+    type: categorical
+  - name: marketing_campaign
+    type: categorical
+  - name: plan_tier
+    type: categorical
+  - name: region_category
+    type: categorical
+  - name: sign_up_source
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('net_new_arr')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_opportunities
+  description: ''
+  measures:
+  - name: lost_pipeline_to_core
+    agg: sum
+    expr: CASE WHEN opportunity_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: close_date
+  dimensions:
+  - name: close_date
+    type: time
+    type_params:
+      time_granularity: day
+  - name: discover_at
+    type: categorical
+  - name: lost_sub_reason
+    type: categorical
+  model: ref('fct_opportunities')
+  defaults:
+    agg_time_dimension: close_date
+- name: dim_slack_users
+  description: "One record per user that has, or has ever had, the ability to post
+    a message in dbt Slack. This includes admin users, bots, and deactivated users,
+    and _excludes_ users that have been invited, but have not yet accepted their invite.\n
+    Note: the # of users in \"announcements\" includes invited users, so calculating
+    `count(*)` on this model will result in a lower number than the number reported
+    in Slack.\n"
+  measures:
+  - name: community_slack_members_new
+    agg: sum
+    expr: CASE WHEN user_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: joined_at
+  dimensions:
+  - name: has_messaged
+    type: categorical
+  - name: is_partner
+    type: categorical
+  - name: is_active_past_quarter
+    type: categorical
+  - name: region_category
+    type: categorical
+  - name: country_name
+    type: categorical
+  - name: country_code
+    type: categorical
+  - name: joined_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: has_joined_workspace
+    type: categorical
+  model: ref('dim_slack_users')
+  defaults:
+    agg_time_dimension: joined_at
+- name: metadata_daily_user_activity
+  description: "Summary of metadata feature usage at the daily user level. This table
+    is  here to reduce the computational load in `fct_cloud_user_account_activities`.\
+    \  This intermediate table builds up to `metadata_account_usage`.\n"
+  measures:
+  - name: external_metadata_active_accounts
+    agg: count_distinct
+    expr: account_id
+    agg_time_dimension: event_date
+  - name: metadata_active_accounts
+    agg: count_distinct
+    expr: account_id
+    agg_time_dimension: event_date
+  - name: metadata_api_requests
+    agg: sum
+    expr: total_metadata_api_requests
+    agg_time_dimension: event_date
+  dimensions:
+  - name: total_metadata_api_requests
+    type: categorical
+  - name: source_count
+    type: categorical
+  - name: event_date
+    type: time
+    type_params:
+      time_granularity: day
+  - name: total_external_metadata_api_requests
+    type: categorical
+  - name: account_id
+    type: categorical
+  model: ref('metadata_daily_user_activity')
+  defaults:
+    agg_time_dimension: event_date
+- name: fct_customer_health
+  description: This model is an an account-level table that aggregates account feature
+    usage data and joins it to fields in salesforce data to provide a holistic view
+    of a customers health.
+  measures:
+  - name: weekly_active_cloud_accounts
+    agg: sum
+    expr: t7d_successful_job_active
+    agg_time_dimension: date_day
+  dimensions:
+  - name: account_region
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_customer_health')
+  defaults:
+    agg_time_dimension: date_day
+- name: onboarded_accounts
+  description: ''
+  measures:
+  - name: onboarded_accounts
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  dimensions:
+  - name: channel
+    type: categorical
+  - name: employee_count_range
+    type: categorical
+  - name: market_segment
+    type: categorical
+  - name: marketing_campaign
+    type: categorical
+  - name: region_category
+    type: categorical
+  - name: sign_up_source
+    type: categorical
+  - name: created_at
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('onboarded_accounts')
+  defaults:
+    agg_time_dimension: created_at
+- name: fct_cloud_account_activities
+  description: "This model helps BI users calculate daily, weekly, and monthly active
+    account metrics on top of our Cloud account activity data. Activity metrics are
+    measured the `fct_web_pageviews` (for general activity), `fct_cloud_ide_sessions`
+    for IDE sessions/development usage, and `dbt_docs_sessions` for docs usage/activity.
+    This follows similar logic as our other existing activity models (e.g. `fct_dbt_project_activty`
+    and `fct_slack_user_account_activity`).\n\nNote: This only contains verified accounts
+    (i.e. Cloud Accounts with at least one verified user, meaning they verified their
+    email). This removes any spam accounts from this model."
+  measures:
+  - name: active_semantic_layer_accounts
+    agg: count_distinct
+    expr: account_id
+    agg_time_dimension: date_day
+  - name: active_cloud_accounts
+    agg: count_distinct
+    expr: account_id
+    agg_time_dimension: date_day
+  - name: semantic_layer_query_count
+    agg: sum
+    expr: count_semantic_layer_queries
+    agg_time_dimension: date_day
+  dimensions:
+  - name: is_semantic_layer_eligible
+    type: categorical
+  - name: name
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  - name: is_semantic_layer_active
+    type: categorical
+  - name: is_active_metrics
+    type: categorical
+  - name: total_count_pageviews
+    type: categorical
+  - name: plan
+    type: categorical
+  - name: is_locked
+    type: categorical
+  model: ref('fct_cloud_account_activities')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_github_pull_requests
+  description: This model contains all pull requests, their repository, author information,
+    status, and whether the pr was merged.
+  measures:
+  - name: dora_score
+    agg: sum
+    expr: CASE WHEN pull_request_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: date_day
+  dimensions:
+  - name: users_engineering_team
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_github_pull_requests')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_customer_nps
+  description: "Net Promoter Score (NPS) survey submissions for dbt Cloud, Group Training,
+    and Rapid Onboarding.\n"
+  measures:
+  - name: total_nps_respondents_cloud
+    agg: sum
+    expr: CASE WHEN unique_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  - name: base__count_nps_promoters_cloud
+    agg: sum
+    expr: CASE WHEN unique_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  - name: base__count_nps_detracters_cloud
+    agg: sum
+    expr: CASE WHEN unique_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  dimensions:
+  - name: nps_category
+    type: categorical
+  - name: account_plan
+    type: categorical
+  - name: feedback_source
+    type: categorical
+  - name: created_at
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_customer_nps')
+  defaults:
+    agg_time_dimension: created_at
+- name: fct_cloud_accounts
+  description: "Address data is pulled from Stripe (if available) then Salesforce
+    (if available). Cloud accounts that never were signed up via Stripe (i.e., on
+    a Team plan), will never have data from Stripe.\n"
+  measures:
+  - name: new_verified_accounts_activated
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: cloud_activation_due_at
+  - name: accounts_first_ide_session
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_used_ide_at
+  - name: accounts_first_ide_success
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_successful_ide_invocation_at
+  - name: accounts_first_paid
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_paid_at
+  - name: accounts_cohort_ide_success
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  - name: accounts_cohort_job_success
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  - name: accounts_cohorted
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: created_at
+  - name: semantic_layer_enabled_accounts
+    agg: count_distinct
+    expr: account_id
+    agg_time_dimension: last_successful_run_at
+  - name: accounts_first_job_created
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_job_created_at
+  - name: accounts_time_to_first_job_success
+    agg: average
+    expr: DATEDIFF(DAYS, created_at, first_successful_run_at)
+    agg_time_dimension: created_at
+  - name: accounts_time_to_first_ide_success
+    agg: average
+    expr: DATEDIFF(DAYS, created_at, first_successful_ide_invocation_at)
+    agg_time_dimension: created_at
+  - name: accounts_first_repo_connected
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_repo_created_at
+  - name: accounts_first_job_run_success
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_successful_run_at
+  - name: accounts_first_warehouse_connected
+    agg: sum
+    expr: CASE WHEN account_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: first_connection_created_at
+  dimensions:
+  - name: last_metadata_api_request_at
+    type: categorical
+  - name: first_used_ide_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: database_type
+    type: categorical
+  - name: is_test_account
+    type: categorical
+  - name: account_id
+    type: categorical
+  - name: name
+    type: categorical
+  - name: has_successful_semantic_layer_run
+    type: categorical
+  - name: first_successful_ide_invocation_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: last_successful_run_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: first_repo_created_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: cloud_activation_due_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: is_account_deleted
+    type: categorical
+  - name: created_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: first_paid_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: is_partner_training_acct
+    type: categorical
+  - name: first_cloud_activated_at
+    type: categorical
+  - name: has_metrics
+    type: categorical
+  - name: is_primary_cloud_account
+    type: categorical
+  - name: first_job_created_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: first_connection_created_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: first_successful_run_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: plan
+    type: categorical
+  model: ref('fct_cloud_accounts')
+  defaults:
+    agg_time_dimension: created_at
+- name: fct_customer_activity_managed_quarterly_types
+  description: "'**Managed Customer Activity Movement**: Counts of `customer_id` field
+    \non `fct_opportunities` ([dbt docs link](https://cloud.getdbt.com/accounts/1/jobs/940/docs/#!/model/model.fishtown_internal_analytics.fct_opportunities))
+    \nfor all closed won (or lost, for Renew), or currently open opportunities. `expected_arr_delta`
+    is also used to identify customer movements.\n\n**Managed Customer Activity Movement**
+    is identified based on the `close_month` date of the related opportunity record.\n
+    This differs from the way Managed ARR is calculated, which uses the `contract_start_date`
+    for all non-Land opportunities.\nThis means, for eample, a customer can be counted
+    as an \"Expand\" customer in a different month \nthan their ARR is counted amongst
+    \"Expand\" ARR totals.\n\nThis model contains 1 row per month, per customer, per
+    customer activity type, and only includes Managed customers. \nThe `customer_activity_type`
+    field describes the customer's activity categorization for the month.\n\n####
+    Activity aka Movement Categories:\n- **Land** - Customer is Net New to dbt Cloud,
+    or moved from Self-Serve to Managed Plan\n- **Expand** - Customer has a Closed
+    Won Renew or Expand Opportunity where the expected Delta ARR is positive (> 0),
+    \nmeaning they are paying more than they were before\n- **Renew** - Customer has
+    a Closed Won Renew or Expand Opportunity where the expected Delta ARR is zero
+    (= 0), \nmeaning they are paying the same as they were before\n- **Churn** - Customer
+    has a Closed Lost Renew Opportunity\n- **Downsell** - Customer has a Closed Won
+    Renew Opportunity where the expected Delta ARR is negative (< 0), \nmeaning they
+    are paying less than they were before\n- **Expected Churn** - Customer has an
+    open Renew Opportunity that has a probability of zero, meaning they are expected
+    to churn\n- **Expected Downsell** - Customer has an open Renew Opportunity that
+    has a positive probability (> 0), \nand the expected Delta ARR is negative (<
+    0), meaning they are likely to renew and to pay us less than before\n- **Up for
+    Expansion** - Customer has an open Expand opportunity that has a positive probability
+    (> 0), \nand the expected Delta ARR is positive or zero (>= 0), meaning they may
+    expand and are likely to pay us more than or the same as before\n- **Up for Renewal**
+    - Customer has an open Renew opportunity that has a positive probability (> 0),
+    \nand the expected Delta ARR is positive or zero (>= 0), meaning they may renew
+    and are likely to pay us more than or the same as before\n- **Open Pipeline**
+    - Customer has an open Land opportunity that has a positive probability (> 0),
+    \nmeaning they may become a Managed customer/move from Self-Serve to Managed'
+    '**Managed Customer Activity Movement by Quarter** is based on a hierarchical
+    calculation:\n\n- If a customer has an upsell / downsell opportunity and neither
+    a cancel (aka churn) or land opportunity in the quarter, \nlook at their net change
+    in ARR for all opportunities in the quarter to determine where to bucket them
+    \n(if < 0: downsell; if => 0: upsell) \n\n#### In order of precedence of the type:\n
+    - Land and/or Churn\n- Expand & Downsell\n- Renew\n- Expected Churn\n- Expected
+    Downsell / Up for Expansion \n- Up for Renewal\n- Open Pipeline\n \n#### In practice,
+    the logic should be:\n- **Land and/or Churn**: include either, or both, records
+    and exclude any others for this customer\n- **Expand & Downsell**: based on sum
+    of arr delta\n- **Expand & anything below**: Expand\n- **Downsell & anything below**:
+    Downsell\n- **Renew & anything below**: Renew\n- **Expected Churn & anything below**:
+    Epected Churn\n- **Expected Downsell / Up for Expansion (& anything below)**:
+    based on sum of arr delta (< 0 downsell; >= 0 expansion)\n- **Up for Renewal and
+    anything below**: Up for Renewal\n- **Open Pipeline**: itself'"
+  measures:
+  - name: customers_up_for_renewal_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_year
+  - name: customers_churned_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_expected_churn_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_renewed_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_expansion_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_land_plus_ss_upgrade_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_expected_downsell_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_up_for_expansion_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_downsell_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  - name: customers_open_pipeline_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  dimensions:
+  - name: sales_channel
+    type: categorical
+  - name: fiscal_year
+    type: time
+    type_params:
+      time_granularity: day
+  - name: customer_activity_type
+    type: categorical
+  - name: fiscal_quarter
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_customer_activity_managed_quarterly_types')
+  defaults:
+    agg_time_dimension: fiscal_quarter
+- name: fct_quarterly_enterprise_upgrade_customers
+  description: "This model is at the quarter and customer grain. A customer included
+    in this model has upgraded  from Self-Serve to a Managed plan within this quarter.\n"
+  measures:
+  - name: customers_moved_into_managed_from_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: fiscal_quarter
+  dimensions:
+  - name: fiscal_quarter
+    type: time
+    type_params:
+      time_granularity: day
+  - name: fiscal_year
+    type: time
+    type_params:
+      time_granularity: day
+  - name: fiscal_quarter
+    type: time
+    type_params:
+      time_granularity: day
+  - name: sales_channel
+    type: categorical
+  - name: customer_activity_type
+    type: categorical
+  model: ref('fct_quarterly_enterprise_upgrade_customers')
+  defaults:
+    agg_time_dimension: fiscal_quarter
+- name: dim_employee_daily_summary
+  description: "A daily record of employee information\n** Department data is not
+    currently handled as a timeseries, but will be updated to a timeseries after the
+    organization snapshot gathers some data**\n"
+  measures:
+  - name: ending_headcount
+    agg: sum
+    expr: headcount
+    agg_time_dimension: date_day
+  dimensions:
+  - name: job_title
+    type: categorical
+  - name: department_name
+    type: categorical
+  - name: management_position
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('dim_employee_daily_summary')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_cloud_user_account_activities
+  description: "This model reports on daily user activity. Activity is broken down
+    into pageview + time-on-site metrics for each use-case that is is addressed in
+    dbt Cloud (ie. Deployment and Development)\n"
+  measures:
+  - name: active_cloud_ide_users
+    agg: sum
+    expr: t7d_ide_active
+    agg_time_dimension: date_day
+  - name: weekly_active_cloud_users
+    agg: sum
+    expr: t7d_active
+    agg_time_dimension: date_day
+  - name: active_cloud_users
+    agg: count_distinct
+    expr: user_id
+    agg_time_dimension: date_day
+  dimensions:
+  - name: is_active
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_cloud_user_account_activities')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_arr_aggregated
+  description: "This model contains 1 row per month and includes ARR from both Managed
+    and Self-Serve customers.\nLand, Expansion, Downsell, and Churn ARR for Managed
+    customers for this model comes from Salesforce Opportunities data.\nAll other
+    ARR in this model comes from the fct_arr_waterfall model."
+  measures:
+  - name: arr_enterprise_upgrade_self_serve
+    agg: sum
+    expr: ent_upgrade_ss_arr
+    agg_time_dimension: close_month
+  - name: arr_downsell_self_serve
+    agg: sum
+    expr: ss_downsell_arr
+    agg_time_dimension: close_month
+  - name: arr_exit_managed
+    agg: sum
+    expr: ending_arr
+    agg_time_dimension: close_month
+  - name: arr_starting_managed
+    agg: sum
+    expr: starting_arr
+    agg_time_dimension: close_month
+  - name: arr_cancelled_self_serve
+    agg: sum
+    expr: ss_churn_arr
+    agg_time_dimension: close_month
+  - name: arr_starting_self_serve
+    agg: sum
+    expr: starting_arr
+    agg_time_dimension: close_month
+  - name: arr_land_managed
+    agg: sum
+    expr: mg_land_arr
+    agg_time_dimension: close_month
+  - name: arr_reactivation_self_serve
+    agg: sum
+    expr: ss_reactivation_arr
+    agg_time_dimension: close_month
+  - name: arr_exit_self_serve
+    agg: sum
+    expr: ending_arr
+    agg_time_dimension: close_month
+  - name: arr_downsell_managed
+    agg: sum
+    expr: mg_downsell_arr
+    agg_time_dimension: close_month
+  - name: arr_expansion_self_serve
+    agg: sum
+    expr: ss_expand_arr
+    agg_time_dimension: close_month
+  - name: arr_land_self_serve
+    agg: sum
+    expr: ss_land_arr
+    agg_time_dimension: close_month
+  - name: arr_cancelled_managed
+    agg: sum
+    expr: mg_churn_arr
+    agg_time_dimension: close_month
+  - name: arr_expansion_managed
+    agg: sum
+    expr: mg_expansion_arr
+    agg_time_dimension: close_month
+  - name: arr_enterprise_upgrade_managed
+    agg: sum
+    expr: mg_starting_arr
+    agg_time_dimension: close_month
+  dimensions:
+  - name: sales_channel
+    type: categorical
+  - name: close_month
+    type: time
+    type_params:
+      time_granularity: day
+  - name: fiscal_year
+    type: time
+    type_params:
+      time_granularity: day
+  - name: fiscal_quarter
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_arr_aggregated')
+  defaults:
+    agg_time_dimension: close_month
+- name: dim_customers
+  description: "This model is a collected list of all of our paying dbt Cloud customers
+    and their associated entity identifiers. We define a customer as someone who has
+    paid us to use dbt Cloud. For on-prem customers, they will not have an associated
+    account_id because we do not have access to that data (yet).\n"
+  measures:
+  - name: customers_churned
+    agg: sum
+    expr: CASE WHEN customer_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: customer_end
+  - name: customers_new
+    agg: sum
+    expr: CASE WHEN customer_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: customer_start
+  dimensions:
+  - name: geo_state
+    type: categorical
+  - name: market_segment
+    type: categorical
+  - name: customer_end
+    type: time
+    type_params:
+      time_granularity: day
+  - name: sales_motion
+    type: categorical
+  - name: account_subregion
+    type: categorical
+  - name: geo_region
+    type: categorical
+  - name: customer_start
+    type: time
+    type_params:
+      time_granularity: day
+  - name: account_region
+    type: categorical
+  - name: deployment_type
+    type: categorical
+  - name: is_current
+    type: categorical
+  - name: geo_country
+    type: categorical
+  model: ref('dim_customers')
+  defaults:
+    agg_time_dimension: customer_start
+- name: web_sessions
+  description: ''
+  measures:
+  - name: web_sessions
+    agg: count_distinct
+    expr: session_id
+    agg_time_dimension: session_start
+  dimensions:
+  - name: region_category
+    type: categorical
+  - name: channel
+    type: categorical
+  - name: sub_channel
+    type: categorical
+  - name: sales_territory
+    type: categorical
+  - name: market_segment
+    type: categorical
+  - name: marketing_campaign
+    type: categorical
+  - name: session_start
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('web_sessions')
+  defaults:
+    agg_time_dimension: session_start
+- name: fct_dbt_invocations
+  description: "One row per invocation (dbt command). This could either be in the
+    form of a standard invocation, or an individual task under the `dbt rpc` invocation.
+    All invocations that occur within dbt Cloud are tracked. Users can opt out of
+    anonymous usage tracking when using the CLI\n([docs](https://docs.getdbt.com/docs/running-a-dbt-project/using-the-command-line-interface/configure-your-profile#usage-statistics))."
+  measures:
+  - name: active_cloud_warehouse_adapters
+    agg: count_distinct
+    expr: "case\n  when develop_request_id is not null\n    then adapter_unique_id\n\
+      \  when run_id is not null\n    then adapter_unique_id\n  else null\nend\n"
+    agg_time_dimension: started_at
+  - name: active_core_warehouse_adapters
+    agg: count_distinct
+    expr: "case when develop_request_id is NULL then adapter_unique_id when run_id
+      is NULL then adapter_unique_id else NULL end\n"
+    agg_time_dimension: started_at
+  - name: active_scheduler_warehouse_adapters
+    agg: count_distinct
+    expr: adapter_unique_id
+    agg_time_dimension: started_at
+  - name: active_ide_warehouse_adapters
+    agg: count_distinct
+    expr: adapter_unique_id
+    agg_time_dimension: started_at
+  - name: active_warehouse_adapters
+    agg: count_distinct
+    expr: adapter_unique_id
+    agg_time_dimension: started_at
+  dimensions:
+  - name: run_id
+    type: categorical
+  - name: started_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: adapter
+    type: categorical
+  - name: adapter_unique_id
+    type: categorical
+  - name: develop_request_id
+    type: categorical
+  - name: plan
+    type: categorical
+  model: ref('fct_dbt_invocations')
+  defaults:
+    agg_time_dimension: started_at
+- name: fct_customer_activity_self_serve
+  description: "**Self-Service Customer Activity Movement**: Counts of `customer_id`
+    field \non `fct_arr_waterfall` ([dbt docs link](https://cloud.getdbt.com/accounts/1/jobs/940/docs/#!/model/model.fishtown_internal_analytics.fct_arr_waterfall))
+    \nfor team (Self-Serve) customers.\n\nThis model contains 1 row per month, per
+    customer, and only includes Self-Serve customers. \nThe customer_activity_type
+    field describes the customer's activity categorization for the month.\n\n- **moved_channel_ss_to_mg**
+    - moved to Managed plan within the month\n- **land** - began paying us for the
+    first time ever\n- **churn** - stopped paying us during the month\n- **contract**
+    - was paying less at end of month than the beginning\n- **expand** - was paying
+    more at end of month than the beginning\n- **reactivate** - had stopped paying
+    for at least one day, then began paying again this month\n- **return** - no change
+    in amount paying between this month and previous month"
+  measures:
+  - name: customers_churned_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  - name: customers_moved_out_of_self_serve_to_managed
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  - name: customers_downsell_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  - name: customers_expansion_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  - name: customers_return_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  - name: customers_land_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  - name: customers_reactivation_self_serve
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: close_month
+  dimensions:
+  - name: sales_channel
+    type: categorical
+  - name: close_month
+    type: time
+    type_params:
+      time_granularity: day
+  - name: fiscal_year
+    type: time
+    type_params:
+      time_granularity: day
+  - name: fiscal_quarter
+    type: time
+    type_params:
+      time_granularity: day
+  - name: customer_activity_type
+    type: categorical
+  model: ref('fct_customer_activity_self_serve')
+  defaults:
+    agg_time_dimension: close_month
+- name: fct_subscription_transactions
+  description: ''
+  measures:
+  - name: forecasting_mrr
+    agg: sum
+    expr: CASE WHEN transaction_id IS NOT NULL THEN 1 ELSE 0 END
+    agg_time_dimension: date_day
+  dimensions:
+  - name: users_engineering_team
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  - name: category
+    type: categorical
+  model: ref('fct_subscription_transactions')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_cloud_subscription_transactions
+  description: "This model contains each Cloud customer's ARR and Revenue Run Rate
+    per day and categorizes their changes in ARR with the ability to segment by Sales
+    Motion (Self-Service or Managed).\n\nSumming R3 will give the actual revenue per
+    customer.\n \nHowever, if you want to see ARR at the beginning/end of a month
+    or quarter, we suggest using the utility flags within the model (e.g. `is_last_day_of_month`,
+    `is_last_day_of_quarter`, etc).\n\n**Resources:**\n* [FP&A's Revenue Metrics Definitions](https://www.notion.so/dbtlabs/dbt-Labs-Key-Metrics-Definitions-eb9a65e358fd455b955b8382e0148df6#ea4695f8b4ac4c90b38e434ea6bc14ee):
+    This document contains the definitions for ARR and Revenue Run Rate, as well as
+    examples of how ARR and Revenue Run Rate across Managed Accounts and Self-Service
+    accounts are calculated/recognized."
+  measures:
+  - name: arr_s2m
+    agg: sum
+    expr: arr
+    agg_time_dimension: date_day
+  - name: arr_downgrade
+    agg: sum
+    expr: arr_change
+    agg_time_dimension: date_day
+  - name: arr_month_end
+    agg: sum
+    expr: arr
+    agg_time_dimension: date_day
+  - name: arr_reactivation
+    agg: sum
+    expr: arr_change
+    agg_time_dimension: date_day
+  - name: arr_churned
+    agg: sum
+    expr: arr_change
+    agg_time_dimension: date_day
+  - name: arr_new
+    agg: sum
+    expr: arr_change
+    agg_time_dimension: date_day
+  - name: active_customer_cloud_accounts
+    agg: count_distinct
+    expr: cloud_account_id
+    agg_time_dimension: date_day
+  - name: customers_month_start
+    agg: count_distinct
+    expr: customer_id
+    agg_time_dimension: date_day
+  - name: arr_month_start
+    agg: sum
+    expr: arr
+    agg_time_dimension: date_day
+  - name: arr_upgrade
+    agg: sum
+    expr: arr_change
+    agg_time_dimension: date_day
+  - name: gross_dollar_renewal_rate
+    agg: sum
+    expr: arr
+    agg_time_dimension: date_day
+  dimensions:
+  - name: geo_region
+    type: categorical
+  - name: is_last_day_of_month
+    type: categorical
+  - name: geo_state
+    type: categorical
+  - name: is_first_day_of_month
+    type: categorical
+  - name: market_segment
+    type: categorical
+  - name: geo_country
+    type: categorical
+  - name: churn_type
+    type: categorical
+  - name: date_day
+    type: time
+    type_params:
+      time_granularity: day
+  - name: account_subregion
+    type: categorical
+  - name: arr
+    type: categorical
+  - name: change_category
+    type: categorical
+  - name: deployment_type
+    type: categorical
+  - name: sales_motion
+    type: categorical
+  - name: account_region
+    type: categorical
+  model: ref('fct_cloud_subscription_transactions')
+  defaults:
+    agg_time_dimension: date_day
+- name: fct_income_statement_transaction_lines
+  description: Details for all income statement accounting transaction lines
+  measures:
+  - name: net_income
+    agg: sum
+    expr: round(consolidated_general_rate_net_income_amount,2)
+    agg_time_dimension: accounting_period_end_date
+  dimensions:
+  - name: subsidiary_name
+    type: categorical
+  - name: account_full_name
+    type: categorical
+  - name: department_name
+    type: categorical
+  - name: accounting_period_end_date
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_income_statement_transaction_lines')
+  defaults:
+    agg_time_dimension: accounting_period_end_date
+- name: fct_hiring_opportunities
+  description: This model includes all hiring opportunities, the roles they applied
+    for, and their current statuses (e.g. current stage name, when they were archived,
+    archived reason, etc).
+  measures:
+  - name: forecasted_headcount
+    agg: sum
+    expr: was_hired
+    agg_time_dimension: last_advanced_at
+  dimensions:
+  - name: team_name
+    type: categorical
+  - name: last_advanced_at
+    type: time
+    type_params:
+      time_granularity: day
+  model: ref('fct_hiring_opportunities')
+  defaults:
+    agg_time_dimension: last_advanced_at
+- name: fct_heysummit_registrations
+  description: "This dataset includes one row per event and talk registration for
+    a HeySummit event. If a user registered for an event but no talks, then the talk
+    data will be null. Answers to the questions that were asked during the registration
+    process are also available in this dataset.\n"
+  measures:
+  - name: coalesce_registrants
+    agg: count_distinct
+    expr: attendee_id
+    agg_time_dimension: registered_at
+  dimensions:
+  - name: region_category
+    type: categorical
+  - name: company_size
+    type: categorical
+  - name: registered_at
+    type: time
+    type_params:
+      time_granularity: day
+  - name: registration_status
+    type: categorical
+  - name: is_current_year
+    type: categorical
+  model: ref('fct_heysummit_registrations')
+  defaults:
+    agg_time_dimension: registered_at

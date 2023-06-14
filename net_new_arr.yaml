@@ -1,0 +1,29 @@
+name: net_new_arr
+description: ''
+sql_table: ANALYTICS.dbt_jstein.net_new_arr
+dbt_model: ANALYTICS.dbt_jstein.net_new_arr
+measures:
+- name: self_service_net_new_arr
+  agg: sum
+  expr: net_new_arr
+  agg_time_dimension: date_day
+dimensions:
+- name: channel
+  type: categorical
+- name: employee_count_range
+  type: categorical
+- name: market_segment
+  type: categorical
+- name: marketing_campaign
+  type: categorical
+- name: plan_tier
+  type: categorical
+- name: region_category
+  type: categorical
+- name: sign_up_source
+  type: categorical
+- name: date_day
+  type: time
+  type_params:
+    is_primary: true
+    time_granularity: day

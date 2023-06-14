@@ -1,0 +1,27 @@
+name: web_sessions
+description: ''
+sql_table: ANALYTICS.dbt_jstein.web_sessions
+dbt_model: ANALYTICS.dbt_jstein.web_sessions
+measures:
+- name: web_sessions
+  agg: count_distinct
+  expr: session_id
+  agg_time_dimension: session_start
+dimensions:
+- name: region_category
+  type: categorical
+- name: channel
+  type: categorical
+- name: sub_channel
+  type: categorical
+- name: sales_territory
+  type: categorical
+- name: market_segment
+  type: categorical
+- name: marketing_campaign
+  type: categorical
+- name: session_start
+  type: time
+  type_params:
+    is_primary: true
+    time_granularity: day
