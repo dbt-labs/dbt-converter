@@ -1,1 +1,0 @@
-{"name": "arr_upgrade", "description": "The ARR (Annual Recurring Revenue) associated with upgrade transactions (upsells) over a given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_upgrade"}}, "constraint": {"where": "change_category = 'upgrade'", "linkable_names": ["change_category"], "sql_params": {"param_items": []}}}

@@ -1,1 +1,0 @@
-{"name": "arr_s2m", "description": "The ARR (Annual Recurring Revenue) that moves from the self-service channel to managed accounts (SFDC) channel over a given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_s2m"}}, "constraint": {"where": "change_category = 'S2M'", "linkable_names": ["change_category"], "sql_params": {"param_items": []}}}

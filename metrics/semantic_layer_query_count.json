@@ -1,1 +1,0 @@
-{"name": "semantic_layer_query_count", "description": "The count of semantic layer queries run by eligible accounts in the period.", "type": "measure_proxy", "type_params": {"measure": {"name": "semantic_layer_query_count"}}, "constraint": {"where": "is_semantic_layer_eligible = true", "linkable_names": ["is_semantic_layer_eligible"], "sql_params": {"param_items": []}}}

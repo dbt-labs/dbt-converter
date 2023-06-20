@@ -1,0 +1,37 @@
+name: orders
+description: This table has basic information about orders, as well as some derived
+  facts based on payments
+node_relation:
+  alias: orders
+  schema_name: dbt_jstein
+  relation_name: dbt_jstein.orders
+measures:
+- name: average_order_amount
+  agg: average
+  expr: amount
+  agg_time_dimension: order_date
+- name: expenses
+  agg: sum
+  expr: amount / 4
+  agg_time_dimension: order_date
+- name: revenue
+  agg: sum
+  expr: amount
+  agg_time_dimension: order_date
+dimensions:
+- name: status
+  type: categorical
+- name: order_date
+  type: time
+  type_params:
+    time_granularity: day
+- name: customer_status
+  type: categorical
+- name: had_credit_card_payment
+  type: categorical
+- name: had_coupon_payment
+  type: categorical
+- name: had_gift_card_payment
+  type: categorical
+- name: had_bank_transfer_payment
+  type: categorical

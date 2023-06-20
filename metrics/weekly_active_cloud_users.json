@@ -1,1 +1,0 @@
-{"name": "weekly_active_cloud_users", "description": "'The sum total of dbt Cloud users that logged in and interacted with at least one feature in the last trailing 7 days.'\n", "type": "measure_proxy", "type_params": {"measure": {"name": "weekly_active_cloud_users"}}}

@@ -1,1 +1,0 @@
-{"name": "clicks", "description": "Total clicks", "type": "measure_proxy", "type_params": {"measure": {"name": "clicks"}}}

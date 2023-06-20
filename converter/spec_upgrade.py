@@ -2,6 +2,8 @@ import yaml
 import ruamel.yaml
 import glob
 from typing import List, Dict
+import textwrap
+
 
 class MetricFLowConfig:
     models = []
@@ -23,66 +25,75 @@ class MetricFLowConfig:
 
     def update_sql_table(self):
         for model in self.models:
-            del model["sql_table"]
-            dbt_model_list = str.split(model["dbt_model"],".")
-            model["model"] = f'ref(\'{dbt_model_list[2]}\')'
-            del model["dbt_model"]
-    
-    def update_agg_time_dimension(self):
-        for model in configs.models:
-            for dimension in model["dimensions"]:
-                if dimension["type"] == 'time' and dimension["type_params"][list(dimension["type_params"].keys())[0]] == True : # the time dimension is the primary time dimension
-                    model["defaults"] = {"agg_time_dimension": dimension["name"]}
-                    dimension["type_params"] = {'time_granularity': dimension["type_params"]["time_granularity"] }
+            if "node_relation" in model.keys():
+                model["model"] = f'ref(\'{model["node_relation"]["alias"]}\')'
+                del model["node_relation"]
+    def add_label(self):
+        for metric in self.metrics:
+            metric["label"] = " "
 
-    def measure_proxy_to_simple(self):
+
+    def filter_format(self):
         for metric in self.metrics:
-            if metric["type"] == 'measure_proxy':
-                metric["type"] = 'simple'
-    def constraint_to_filter(self):
+            if "filter" in metric.keys():
+                metric["filter"] = f'{metric["filter"]["where_sql_template"]}'
+    def nest_measures(self):
         for metric in self.metrics:
-            if 'constraint' in list(metric.keys()):
-                metric["filter"] = metric['constraint']["where"]
-                # print(metric)
-        for metric in self.metrics:
-            if 'filter' in list(metric.keys()):
-                for dimension in metric['constraint']["linkable_names"]:
-                    metric['filter']= metric['filter'].replace(dimension, f'{{{{dimension(\'{dimension}\')}}}}') 
-    def delete_constraint(self):
-        for metric in self.metrics:
-            if 'constraint' in list(metric.keys()):
-                del metric['constraint']
-        
+            if "type" in metric.keys():
+                if metric["type"] == "simple":
+                    measures = []
+                    for measure in metric["type_params"]["measure"]:
+                        measures.append(metric["type_params"]["measure"]["name"])
+                    # print(measures)
+                    metric["type_params"]["measures"] = measures
+                    # print(metric)
+                    del metric["type_params"]["measure"]
     
 def to_yaml_monofile(config: MetricFLowConfig):
     config.update_sql_table()
-    config.update_agg_time_dimension()
-    config.measure_proxy_to_simple()
-    config.constraint_to_filter()
-    config.delete_constraint()
-
+    config.filter_format()
+    config.nest_measures()
+    config.add_label()
+    
+    yaml = ruamel.yaml.YAML()
+    yaml.indent(mapping=2, sequence=4, offset=2)
     semantic_models = {}
     mertics = {}
-    semantic_models["semantic_models"] = configs.models #next all models under the semantic models key
+    semantic_models["semantic_models"] = configs.models #nest all models under the semantic models key
     mertics["metrics"] = config.metrics
-    with open('semantic_models.yaml', 'w') as stream:
-         ruamel.yaml.dump(semantic_models,stream, Dumper=ruamel.yaml.RoundTripDumper)
-    with open('metrics.yaml', 'w') as stream:
-        ruamel.yaml.dump(mertics,stream, Dumper=ruamel.yaml.RoundTripDumper)
+    with open('semantic_models/semantic_models.yaml', 'w') as stream:
+         yaml.dump(semantic_models,stream)
+    with open('metrics/metrics.yaml', 'w') as stream:
+       yaml.dump(mertics,stream)
 
 def to_yaml_mutli_file(config: MetricFLowConfig):
     config.update_sql_table()
-    config.update_agg_time_dimension()
+    config.filter_format()
+    config.nest_measures()
+    config.add_label()
+    
+    yaml = ruamel.yaml.YAML()
+    yaml.indent(mapping=2, sequence=4, offset=2)
+
     for model in config.models:
+        model_list=[]
+        model_list.append(model)
         semantic_models = {}
-        semantic_models["semantic_models"] =  model #next all models under the semantic models key
-        with open(f'{model["name"]}.yaml', 'w') as stream:
-            ruamel.yaml.dump(semantic_models,stream, Dumper=ruamel.yaml.RoundTripDumper)
+        semantic_models["semantic_models"] =  model_list #nest all models under the semantic models key
+        with open(f'semantic_models/{model["name"]}.yaml', 'w') as stream:
+            yaml.dump(semantic_models,stream)
+    for metric in config.metrics:
+        metric_list=[]
+        metric_list.append(metric) #need to nest metric under a metrics key
+        metrics = {}
+        metrics["metrics"] =  metric_list #next all models under the semantic models key
+        with open(f'metrics/{metric["name"]}.yaml', 'w') as stream:
+          yaml.dump(metrics,stream, )
 
 
 
 configs = MetricFLowConfig('/Users/jordanstein/Dev/dbt-converter/semantic_models','/Users/jordanstein/Dev/dbt-converter/metrics')
-to_yaml_monofile(configs)
+to_yaml_mutli_file(config=configs)
 
 #{'name': 'semantic_layer_enabled_accounts', 'description': 'The sum of all active dbt Cloud accounts with the Semantic Layer enabled in their environment.', 'type': 'measure_proxy', 'type_params': {'measure': {'name': 'semantic_layer_enabled_accounts'}},
 #  'constraint': {'where': 'has_successful_semantic_layer_run = 1 AND is_primary_cloud_account = true AND is_partner_training_acct = false', 'linkable_names': ['has_successful_semantic_layer_run', 'is_primary_cloud_account', 'is_partner_training_acct'], 'sql_params': {'param_items': []}}}

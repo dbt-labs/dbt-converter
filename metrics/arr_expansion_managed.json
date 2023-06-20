@@ -1,1 +1,0 @@
-{"name": "arr_expansion_managed", "description": "The incremental ARR (Annual Recurring Revenue) from existing Managed accounts  expanding over a given time period.\n", "type": "measure_proxy", "type_params": {"measure": {"name": "arr_expansion_managed"}}, "constraint": {"where": "sales_channel = 'Managed'", "linkable_names": ["sales_channel"], "sql_params": {"param_items": []}}}

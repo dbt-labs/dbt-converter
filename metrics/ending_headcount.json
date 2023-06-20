@@ -1,1 +1,0 @@
-{"name": "ending_headcount", "description": "The employee headcount at the end of the period", "type": "measure_proxy", "type_params": {"measure": {"name": "ending_headcount"}}}

@@ -1,1 +1,0 @@
-{"name": "active_ads", "description": "Count of ads witth spend > 0.", "type": "measure_proxy", "type_params": {"measure": {"name": "active_ads"}}, "constraint": {"where": "spend > 0", "linkable_names": ["spend"], "sql_params": {"param_items": []}}}
