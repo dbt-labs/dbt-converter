@@ -4,8 +4,6 @@ type: simple
 type_params:
   measure:
     name: average_order_amount
-  input_measures:
-  - name: average_order_amount
 ---
 name: revenue
 description: The total revenue of our jaffle business
@@ -13,8 +11,6 @@ type: simple
 type_params:
   measure:
     name: revenue
-  input_measures:
-  - name: revenue
 filter:
   where_sql_template: "{{dimension('status')}} = 'completed'"
 ---
@@ -24,7 +20,5 @@ type: simple
 type_params:
   measure:
     name: expenses
-  input_measures:
-  - name: expenses
 filter:
   where_sql_template: "{{dimension('status')}} = 'completed'"

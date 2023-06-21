@@ -6,6 +6,7 @@ from dbt_semantic_interfaces.parsing.dir_to_model import SemanticManifestBuildRe
 from metricflow_parsing.dbt_dir_to_model import parse_dbt_project_to_model
 
 
+
 #Parsing Steps
 #1. Create a model from a dbt project
 #2. Create all data source in that model as seperate yaml files name data_source_name.yaml
@@ -21,6 +22,7 @@ def write_metrics(model: SemanticManifestBuildResult):
         os.mkdir('metrics')
     else:
         os.mkdir('metrics')
+
     # Intialize a new list of metrics
     metric_list = []
     # dump json to yaml for each metic in the model
@@ -46,6 +48,12 @@ def write_semantic_models(model: SemanticManifestBuildResult):
         os.mkdir('data_source')
     else:
         os.mkdir('data_source')
+    
+    if os.path.exists('semantic_models'):
+        os.system('rm -rf semantic_models')
+        os.mkdir('semantic_models')
+    else:
+        os.mkdir('semantic_models')
 
     if model.issues.errors:
          return print("\nPlease fix errors in semantic model and re run the converter")
@@ -63,12 +71,3 @@ def delete_json_files(model_dir_path: str):
     for config in json_configs:
         os.remove(config)
 
-
-model = get_model()
-print(os.curdir)
-# print(model)
-write_semantic_models(model)
-write_metrics(model)
-
-delete_json_files('metrics')
-delete_json_files('data_source')

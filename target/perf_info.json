@@ -1,0 +1,42 @@
+{
+    "path_count": 229,
+    "parsed_path_count": 0,
+    "static_analysis_path_count": 0,
+    "static_analysis_parsed_path_count": 0,
+    "is_partial_parse_enabled": true,
+    "is_static_analysis_enabled": true,
+    "read_files_elapsed": 0.0304909160000002,
+    "load_all_elapsed": 0.059634584000000324,
+    "projects": [
+        {
+            "project_name": "jaffle_shop_metrics",
+            "elapsed": 0.0,
+            "parsers": [],
+            "parsed_path_count": 0
+        },
+        {
+            "project_name": "dbt_snowflake",
+            "elapsed": 0.0,
+            "parsers": [],
+            "parsed_path_count": 0
+        },
+        {
+            "project_name": "dbt",
+            "elapsed": 0.0,
+            "parsers": [],
+            "parsed_path_count": 0
+        },
+        {
+            "project_name": "metrics",
+            "elapsed": 0.0,
+            "parsers": [],
+            "parsed_path_count": 0
+        },
+        {
+            "project_name": "dbt_utils",
+            "elapsed": 0.0,
+            "parsers": [],
+            "parsed_path_count": 0
+        }
+    ]
+}
