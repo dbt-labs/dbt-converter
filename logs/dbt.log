@@ -516,3 +516,115 @@ Runtime Error
 [0m21:14:18.157084 [debug] [MainThread]: Command `cli parse` failed at 21:14:18.157009 after 0.01 seconds
 [0m21:14:18.157260 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103811760>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104a73d60>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104a73be0>]}
 [0m21:14:18.157421 [debug] [MainThread]: Flushing usage events
+[0m10:05:52.742683 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107979fd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108badbb0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108bdb1c0>]}
+
+
+============================== 10:05:52.744968 | 9f280bd4-e271-402a-a34a-58c8bf8a6927 ==============================
+[0m10:05:52.744968 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:05:52.745322 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'version_check': 'True', 'warn_error': 'None', 'log_path': 'logs', 'debug': 'False', 'fail_fast': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'introspect': 'True', 'log_format': 'default', 'static_parser': 'True', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:05:52.745677 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:05:52.746101 [debug] [MainThread]: Command `cli parse` failed at 10:05:52.746026 after 0.02 seconds
+[0m10:05:52.746292 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107979fd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108bdbcd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x108bdbb50>]}
+[0m10:05:52.746461 [debug] [MainThread]: Flushing usage events
+[0m10:06:33.348139 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x102fda790>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10420dca0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10423a2b0>]}
+
+
+============================== 10:06:33.351212 | fbef1c17-fbe3-4d68-8f9f-0b5d7316d3fa ==============================
+[0m10:06:33.351212 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:06:33.351590 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'version_check': 'True', 'debug': 'False', 'log_path': 'logs', 'fail_fast': 'False', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'log_format': 'default', 'introspect': 'True', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:06:33.351934 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:06:33.352371 [debug] [MainThread]: Command `cli parse` failed at 10:06:33.352302 after 0.02 seconds
+[0m10:06:33.352591 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x102fda790>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10423adc0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10423ac40>]}
+[0m10:06:33.352780 [debug] [MainThread]: Flushing usage events
+[0m10:06:58.578932 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107e69760>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1096c1c10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1096ee220>]}
+
+
+============================== 10:06:58.581353 | 0443431a-7b4e-4143-be38-d3779792fc87 ==============================
+[0m10:06:58.581353 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:06:58.581705 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'debug': 'False', 'version_check': 'True', 'log_path': 'logs', 'profiles_dir': '/Users/jordanstein/.dbt', 'fail_fast': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'introspect': 'True', 'static_parser': 'True', 'log_format': 'default', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:06:58.582037 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:06:58.582460 [debug] [MainThread]: Command `cli parse` failed at 10:06:58.582388 after 0.01 seconds
+[0m10:06:58.582667 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107e69760>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1096eed30>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1096eebb0>]}
+[0m10:06:58.582837 [debug] [MainThread]: Flushing usage events
+[0m10:15:11.611858 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104e60460>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1101def40>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x11020a130>]}
+
+
+============================== 10:15:11.614589 | 01ff9f3a-465b-4925-867a-66f12ca6aee1 ==============================
+[0m10:15:11.614589 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:15:11.614976 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'debug': 'False', 'warn_error': 'None', 'log_path': 'logs', 'version_check': 'True', 'fail_fast': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'introspect': 'True', 'log_format': 'default', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:15:11.615259 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:15:11.615635 [debug] [MainThread]: Command `cli parse` failed at 10:15:11.615574 after 0.02 seconds
+[0m10:15:11.615819 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104e60460>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1101de670>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1101de130>]}
+[0m10:15:11.616002 [debug] [MainThread]: Flushing usage events
+[0m10:19:00.206092 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1031b37f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104e012e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104e2d130>]}
+
+
+============================== 10:19:00.208762 | 90252049-eb40-4918-8dc5-95d6634102ec ==============================
+[0m10:19:00.208762 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:19:00.209150 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'debug': 'False', 'warn_error': 'None', 'log_path': 'logs', 'version_check': 'True', 'fail_fast': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'log_format': 'default', 'introspect': 'True', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:19:00.209443 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:19:00.209904 [debug] [MainThread]: Command `cli parse` failed at 10:19:00.209770 after 0.02 seconds
+[0m10:19:00.210080 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1031b37f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104e01af0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x104e01a00>]}
+[0m10:19:00.210244 [debug] [MainThread]: Flushing usage events
+[0m10:21:35.088881 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105993a30>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1076816d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1076818b0>]}
+
+
+============================== 10:21:35.091799 | c0aaa7b3-cf66-45ef-b7ec-b6b57c041c1b ==============================
+[0m10:21:35.091799 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:21:35.092151 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'debug': 'False', 'version_check': 'True', 'log_path': 'logs', 'fail_fast': 'False', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'static_parser': 'True', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:21:35.092429 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:21:35.092793 [debug] [MainThread]: Command `cli parse` failed at 10:21:35.092737 after 0.02 seconds
+[0m10:21:35.092963 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105993a30>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x107698160>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1076982b0>]}
+[0m10:21:35.093138 [debug] [MainThread]: Flushing usage events
+[0m10:22:54.473919 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103598760>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105258e50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105284040>]}
+
+
+============================== 10:22:54.476319 | 629d0340-423e-43b0-a488-41108623dc40 ==============================
+[0m10:22:54.476319 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:22:54.476668 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'debug': 'False', 'fail_fast': 'False', 'log_path': 'logs', 'version_check': 'True', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:22:54.476940 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:22:54.477398 [debug] [MainThread]: Command `cli parse` failed at 10:22:54.477251 after 0.02 seconds
+[0m10:22:54.477575 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x103598760>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105258790>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105258820>]}
+[0m10:22:54.477745 [debug] [MainThread]: Flushing usage events
+[0m10:23:10.335627 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1077fdb80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1094ccb80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1094ccd60>]}
+
+
+============================== 10:23:10.338441 | a7df8ce8-82e1-44b1-8042-5bea5a0b6925 ==============================
+[0m10:23:10.338441 [info ] [MainThread]: Running with dbt=1.5.0
+[0m10:23:10.338808 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/jordanstein/.dbt', 'fail_fast': 'False', 'debug': 'False', 'log_path': 'logs', 'warn_error': 'None', 'version_check': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'log_format': 'default', 'introspect': 'True', 'target_path': 'None', 'send_anonymous_usage_stats': 'True'}
+[0m10:23:10.339104 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/jordanstein/Dev/dbt-converter/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:23:10.339486 [debug] [MainThread]: Command `cli parse` failed at 10:23:10.339429 after 0.02 seconds
+[0m10:23:10.339660 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1077fdb80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1094ccb80>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1094cc340>]}
+[0m10:23:10.339825 [debug] [MainThread]: Flushing usage events
