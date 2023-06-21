@@ -1,8 +1,8 @@
-from spec_upgrade import to_yaml_mutli_file, MetricFLowConfig
-from dbt_metrics_to_semantic_model_converter import get_model, write_semantic_models, write_metrics, delete_json_files
+from converter.spec_upgrade import MetricFLowConfig, to_yaml_mutli_file
+from converter.dbt_metrics_to_semantic_model_converter import write_semantic_models, write_metrics, delete_json_files, get_model
 
 def main():
-    model = get_model()
+    model = get_model('test_dbt_project')
     write_semantic_models(model)
     write_metrics(model)
 

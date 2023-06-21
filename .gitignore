@@ -1,3 +1,4 @@
 .DS_store
 venv
+__pycache__
 

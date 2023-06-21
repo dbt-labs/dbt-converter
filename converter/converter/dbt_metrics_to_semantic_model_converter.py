@@ -12,8 +12,8 @@ from metricflow_parsing.dbt_dir_to_model import parse_dbt_project_to_model
 #2. Create all data source in that model as seperate yaml files name data_source_name.yaml
 #3. Create all metrics in a metrics folder called metrics.yaml. Each metric is a seperate yaml document ---
 
-def get_model() -> SemanticManifestBuildResult:
-    return parse_dbt_project_to_model('/Users/jordanstein/Dev/dbt-converter/test_dbt_project')
+def get_model(dbt_project_dir: str) -> SemanticManifestBuildResult:
+    return parse_dbt_project_to_model(dbt_project_dir)
 
 def write_metrics(model: SemanticManifestBuildResult):
 
@@ -44,12 +44,14 @@ def write_semantic_models(model: SemanticManifestBuildResult):
     creates a yaml file for each data source in the ModelBuildResult.
     """
     if os.path.exists('data_source'):
+        print('data_source exists')
         os.system('rm -rf data_source')
         os.mkdir('data_source')
     else:
         os.mkdir('data_source')
     
     if os.path.exists('semantic_models'):
+        print('semantic_models exists')
         os.system('rm -rf semantic_models')
         os.mkdir('semantic_models')
     else:
@@ -64,7 +66,7 @@ def write_semantic_models(model: SemanticManifestBuildResult):
             configuration = json.load(file)
         with open(f'semantic_models/{data_source.name}.yaml', "w") as file:
             ruamel.yaml.dump(configuration,file, Dumper=ruamel.yaml.RoundTripDumper)
-    return "Success! Semantic Models Created"
+    return print("Success! Semantic Models Created")
 
 def delete_json_files(model_dir_path: str):
     json_configs = glob.glob(f'{model_dir_path}/*.json')

@@ -49,6 +49,7 @@ class MetricFLowConfig:
                     # print(metric)
                     del metric["type_params"]["measure"]
     
+
 def to_yaml_monofile(config: MetricFLowConfig):
     config.update_sql_table()
     config.filter_format()
@@ -89,11 +90,6 @@ def to_yaml_mutli_file(config: MetricFLowConfig):
         metrics["metrics"] =  metric_list #next all models under the semantic models key
         with open(f'metrics/{metric["name"]}.yaml', 'w') as stream:
           yaml.dump(metrics,stream, )
-
-
-
-configs = MetricFLowConfig('/Users/jordanstein/Dev/dbt-converter/semantic_models','/Users/jordanstein/Dev/dbt-converter/metrics')
-to_yaml_mutli_file(config=configs)
 
 #{'name': 'semantic_layer_enabled_accounts', 'description': 'The sum of all active dbt Cloud accounts with the Semantic Layer enabled in their environment.', 'type': 'measure_proxy', 'type_params': {'measure': {'name': 'semantic_layer_enabled_accounts'}},
 #  'constraint': {'where': 'has_successful_semantic_layer_run = 1 AND is_primary_cloud_account = true AND is_partner_training_acct = false', 'linkable_names': ['has_successful_semantic_layer_run', 'is_primary_cloud_account', 'is_partner_training_acct'], 'sql_params': {'param_items': []}}}
