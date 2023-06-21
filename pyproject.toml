@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "dbt-converter"
+version = "0.1.0"
+description = "Easily convert out of date, or unsported metrics spec into the latest suported metrics spec in dbt"
+authors = ["Jordan Stein <jordan.stein77@gmail.com>"]
+readme = "README.md"
+packages = [{include = "dbt_converter"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+metricflow = "0.200.0.dev4"
+dbt-semantic-interfaces = "0.1.0.dev4"
+dbt-core = "^1.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

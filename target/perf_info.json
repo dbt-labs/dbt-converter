@@ -5,8 +5,8 @@
     "static_analysis_parsed_path_count": 0,
     "is_partial_parse_enabled": true,
     "is_static_analysis_enabled": true,
-    "read_files_elapsed": 0.0304909160000002,
-    "load_all_elapsed": 0.059634584000000324,
+    "read_files_elapsed": 0.03665804099999992,
+    "load_all_elapsed": 0.06577112499999993,
     "projects": [
         {
             "project_name": "jaffle_shop_metrics",

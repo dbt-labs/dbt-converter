@@ -3,10 +3,6 @@ semantic_models:
     description: This table has basic information about orders, as well as some derived
       facts based on payments
     measures:
-      - name: average_order_amount
-        agg: average
-        expr: amount
-        agg_time_dimension: order_date
       - name: revenue
         agg: sum
         expr: amount
@@ -15,18 +11,22 @@ semantic_models:
         agg: sum
         expr: amount / 4
         agg_time_dimension: order_date
+      - name: average_order_amount
+        agg: average
+        expr: amount
+        agg_time_dimension: order_date
     dimensions:
-      - name: status
-        type: categorical
-      - name: had_credit_card_payment
+      - name: had_bank_transfer_payment
         type: categorical
       - name: had_coupon_payment
         type: categorical
-      - name: customer_status
-        type: categorical
       - name: had_gift_card_payment
         type: categorical
-      - name: had_bank_transfer_payment
+      - name: customer_status
+        type: categorical
+      - name: had_credit_card_payment
+        type: categorical
+      - name: status
         type: categorical
       - name: order_date
         type: time
