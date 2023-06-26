@@ -1,0 +1,24 @@
+name: average_order_amount
+description: The average size of a jaffle order
+type: simple
+type_params:
+  measure:
+    name: average_order_amount
+---
+name: revenue
+description: The total revenue of our jaffle business
+type: simple
+type_params:
+  measure:
+    name: revenue
+filter:
+  where_sql_template: "{{dimension('status')}} = 'completed'"
+---
+name: expenses
+description: The total expenses of our jaffle business
+type: simple
+type_params:
+  measure:
+    name: expenses
+filter:
+  where_sql_template: "{{dimension('status')}} = 'completed'"

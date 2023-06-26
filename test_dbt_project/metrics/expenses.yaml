@@ -1,0 +1,9 @@
+metrics:
+  - name: expenses
+    description: The total expenses of our jaffle business
+    type: simple
+    type_params:
+      measures:
+        - expenses
+    filter: "{{dimension('status')}} = 'completed'"
+    label: ' '
