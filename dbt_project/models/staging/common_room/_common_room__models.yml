@@ -1,8 +1,0 @@
-version: 2
-
-models:
-  - name: base__common_room_activities
-    description: Unions all weekly manual csv exports from Common Room into a single table.
-  
-  - name: stg_common_room__activities
-    description: Dedupes data loaded from CommonRoom, ensures one record per unique activity.

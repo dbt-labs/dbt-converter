@@ -1,9 +1,0 @@
-metrics:
-  - name: revenue
-    description: The total revenue of our jaffle business
-    type: simple
-    type_params:
-      measures:
-        - revenue
-    filter: "{{dimension('status')}} = 'completed'"
-    label: ' '
