@@ -1,8 +1,0 @@
-metrics:
-  - name: average_order_amount
-    description: The average size of a jaffle order
-    type: simple
-    type_params:
-      measures:
-        - average_order_amount
-    label: ' '

@@ -1,9 +1,0 @@
-fct_name,column_name,id_to_exclude,comment
-fct_source_fanout,parent,snowplow.event,"snowplow.events and its 3-model entrypoint into our project constitute historical dbt practices that pre-date today's best practices. Refactoring of this pipeline is underway as part of a larger reevaluation of our events pipeline, but consitutes its own project."
-fct_unused_sources,parent,adp.person_communication,"Fivetran forces us to ingest this highly sensitive data. We leave the unused source to ensure the data is masked so it is never available to anyone."
-fct_unused_sources,parent,adp.person_government_id,"Fivetran forces us to ingest this highly sensitive data. We leave the unused source to ensure the data is masked so it is never available to anyone."
-fct_unused_sources,parent,data_masking_example.fake_pii_sample,"An in-project example of our masking policy that can be made available to any user on request."
-fct_unused_sources,parent,xactly.payments,"Temporary exclusion for loading secure views."
-fct_root_models,child,base__common_room_activities,"We use a novel ingestion strategy for Common Room data - data is loaded from a Google Drive filled with weekly data extracts and then unioned together. Properly leveraging dbt sources would require one new source table per-week."
-fct_root_models,child,all_days,"dbt-utils generated date spine which is truly source-less."
-fct_root_models,child,all_months,"dbt-utils generated date spine which is truly source-less."

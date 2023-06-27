@@ -1,4 +1,5 @@
 .DS_store
 venv
 __pycache__
-
+dist
+.tool-versions

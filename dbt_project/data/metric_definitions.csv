@@ -1,2 +1,0 @@
-METRIC_NAME,METRIC_DESCRIPTION
-new dbt WAPs,"The daily number of new dbt weekly active projects, defined by whether the user had an invocation within the last trailing 7 days. This daily metric can be positive or negative, but it is most useful when we look at the cumulative total."
