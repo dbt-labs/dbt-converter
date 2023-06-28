@@ -3,15 +3,13 @@ from converter.dbt_metrics_to_semantic_model_converter import write_semantic_mod
 import click
 import os
 
-@click.group()
+@click.group(help='Convert dbt models and metrics to semantic models')
 def cli():
     pass
 
-@cli.command()
+@cli.command(help= 'Given a dbt project path, converts metrics defined in the spec prior to dbt v1.6 to the spec defined in dbt v1.6')
 @click.option('--dbt-project-path', default= os.getcwd(), help='Path to dbt project containing models and metrics')
-def convert(dbt_project_path: str):
-    # from converter.spec_upgrade import MetricFLowConfig, to_yaml_mutli_file
-
+def convert_metrics(dbt_project_path: str):
     try:
         model = get_model(dbt_project_path)
     except Exception as e:

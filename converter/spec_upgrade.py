@@ -3,6 +3,7 @@ import ruamel.yaml
 import glob
 from typing import List, Dict
 import textwrap
+import os
 
 
 class MetricFLowConfig:
@@ -41,19 +42,17 @@ class MetricFLowConfig:
         for metric in self.metrics:
             if "type" in metric.keys():
                 if metric["type"] == "simple":
-                    measures = []
-                    for measure in metric["type_params"]["measure"]:
-                        measures.append(metric["type_params"]["measure"]["name"])
+                    # measures = []
                     # print(measures)
-                    metric["type_params"]["measures"] = measures
+                    metric["type_params"]["measure"] = metric["type_params"]["measure"]["name"]
                     # print(metric)
-                    del metric["type_params"]["measure"]
+                    # del metric["type_params"]["measure"]
     
 
 def to_yaml_monofile(config: MetricFLowConfig):
     config.update_sql_table()
     config.filter_format()
-    config.nest_measures()
+    # config.nest_measures()
     config.add_label()
     
     yaml = ruamel.yaml.YAML()
@@ -87,9 +86,8 @@ def to_yaml_mutli_file(config: MetricFLowConfig):
         metric_list=[]
         metric_list.append(metric) #need to nest metric under a metrics key
         metrics = {}
-        metrics["metrics"] =  metric_list #next all models under the semantic models key
+        metrics["metrics"] =  metric_list #nest all models under the semantic models key
         with open(f'metrics/{metric["name"]}.yaml', 'w') as stream:
           yaml.dump(metrics,stream, )
+    os.remove('metrics/metrics.yaml') # Remove metrics.yaml file after spec upgrade
 
-#{'name': 'semantic_layer_enabled_accounts', 'description': 'The sum of all active dbt Cloud accounts with the Semantic Layer enabled in their environment.', 'type': 'measure_proxy', 'type_params': {'measure': {'name': 'semantic_layer_enabled_accounts'}},
-#  'constraint': {'where': 'has_successful_semantic_layer_run = 1 AND is_primary_cloud_account = true AND is_partner_training_acct = false', 'linkable_names': ['has_successful_semantic_layer_run', 'is_primary_cloud_account', 'is_partner_training_acct'], 'sql_params': {'param_items': []}}}
