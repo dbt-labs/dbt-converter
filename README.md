@@ -3,7 +3,7 @@ The dbt converter is a CLI tool that simplifies the process of migrating from th
 **Installing dbt converter**
 
 ```sql
-pip install dbt-converter
+pip install dbt-metrics-converter
 ```
 
 **Upgrading to dbt v1.6 spec**
