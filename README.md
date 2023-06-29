@@ -9,7 +9,7 @@ pip install dbt-metrics-converter
 **Upgrading to dbt v1.6 spec**
 
 1. Navigate to the root of your dbt project.
-2. Install the `dbt-converter` package using pip. Note that the converter requires `dbt-core==1.5`. You may need to update the version range for the `dbt_metrics` package.
+2. `pip install dbt-metrics-converter`. Note that the converter requires dbt-core==1.5. You may need to update the version range for the dbt_metrics package.
 3. Run `dc convert-metrics`. The converter assumes you are in the root of your dbt project. Optionally, you can pass the project path `-dbt-project-path path/to/dbt_project`. NOTE: All metrics must have a timestamp for the upgrade to run. If your metrics do not have a timestamp, add one before running the converter.
 4. Semantic models and metrics files will be created in the `semantic_models` and `metrics` directories. Move these folders into your model path.
 5. Delete the `metrics` package, move the old metrics configs out of your model path, or delete them.
