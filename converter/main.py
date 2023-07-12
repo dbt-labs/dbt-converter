@@ -13,8 +13,7 @@ def convert_metrics(dbt_project_path: str):
     try:
         model = get_model(dbt_project_path)
     except Exception as e:
-        print(f'{e}. Please check if the path to dbt project is correct: {dbt_project_path}')
-        return
+        return print(e)
     write_semantic_models(model)
     write_metrics(model)
 
