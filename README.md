@@ -26,4 +26,6 @@ pip install dbt-metrics-converter
 **Gotchas:**
 
 - Some packages, like fivetran/ad_reporting have metrics defined in them using the v1.5 spec, this may cause an error if you try to run your project after upgrading to v1.6
-- Make sure to delete any calls of `metrics.calculate` or `metrics.develop` they won’t work without the dbt_metrics package
+- Derived metrics are not supported. These will need to be ported manually.
+- Make sure to delete any calls of `metrics.calculate` or `metrics.develop` after you've run the conversion script they won’t work without the dbt_metrics package
+- Dimension refrences in filters require you to refrence the primary entity i.e {{Dimension('primary_entity__dimension_name')}} However, primary entities we're not part of the old metrics spec so will need to be specified manually. You can learn about [how to add entities to semantic models here](https://docs.getdbt.com/docs/build/entities)
