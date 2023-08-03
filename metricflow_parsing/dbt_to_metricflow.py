@@ -226,7 +226,7 @@ class DbtManifestTransformer:
             TODO: We could probably replace this with whatever method dbt uses to
             build the statement.
         """
-        clauses = [f"{{{{dimension(\'{filter.field}\')}}}} {filter.operator} {filter.value}" for filter in filters]
+        clauses = [f"{{{{Dimension(\'{filter.field}\')}}}} {filter.operator} {filter.value}" for filter in filters]
         return " AND ".join(clauses)
 
     def build_proxy_metric(self, dbt_metric: DbtMetric) -> PydanticMetric:
