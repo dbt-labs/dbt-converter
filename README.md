@@ -25,7 +25,7 @@ pip install dbt-metrics-converter
 
 **SQL syntax**
 
-Refer to [Querying the API for metric metadata](/docs/dbt-cloud-apis/sl-jdbc#querying-the-api-for-metric-metadata) to access the built-in metadata calls to query metrics and dimensions using the [dbt Semantic Layer API](/docs/dbt-cloud-apis/sl-api-overview).
+Refer to [Querying the API for metric metadata](https://docs.getdbt.com/docs/dbt-cloud-apis/sl-jdbc#querying-the-api-for-metric-metadata) to access the built-in metadata calls to query metrics and dimensions using the [dbt Semantic Layer API](https://docs.getdbt.com/docs/dbt-cloud-apis/sl-api-overview).
 
 **Gotchas:**
 
