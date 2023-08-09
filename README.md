@@ -10,7 +10,7 @@ pip install dbt-metrics-converter
 
 1. Navigate to the root of your dbt project.
 2. `pip install dbt-metrics-converter`. Note that the converter requires dbt-core==1.5. You may need to update the version range for the dbt_metrics package.
-3. Run `dbtc convert-metrics`. The converter assumes you are in the root of your dbt project. Optionally, you can pass the project path `-dbt-project-path path/to/dbt_project`. NOTE: All metrics must have a timestamp for the upgrade to run. If your metrics do not have a timestamp, add one before running the converter.
+3. Run `dbtc convert-metrics`. The converter assumes you are at the root of your dbt project. Optionally, you can pass the project path `-dbt-project-path path/to/dbt_project`. NOTE: All metrics must have a timestamp for the upgrade to run. If your metrics do not have a timestamp, add one before running the converter.
 4. Semantic models and metrics files will be created in the `semantic_models` and `metrics` directories. Move these folders into your model path.
 5. Delete the `metrics` package, move the old metrics configs out of your model path, or delete them.
 
@@ -23,9 +23,13 @@ pip install dbt-metrics-converter
 5. Run `mf validate-configs —skip-dw` to validate metrics configs. 
 6. To run a test query, run `mf query --metrics <metric_name>`
 
+**SQL syntax**
+
+Refer to [Querying the API for metric metadata](/docs/dbt-cloud-apis/sl-jdbc#querying-the-api-for-metric-metadata) to access the built-in metadata calls to query metrics and dimensions using the [dbt Semantic Layer API](/docs/dbt-cloud-apis/sl-api-overview).
+
 **Gotchas:**
 
 - Some packages, like fivetran/ad_reporting have metrics defined in them using the v1.5 spec, this may cause an error if you try to run your project after upgrading to v1.6
 - Derived metrics are not supported. These will need to be ported manually.
 - Make sure to delete any calls of `metrics.calculate` or `metrics.develop` after you've run the conversion script they won’t work without the dbt_metrics package
-- Dimension refrences in filters require you to refrence the primary entity i.e {{Dimension('primary_entity__dimension_name')}} However, primary entities we're not part of the old metrics spec so will need to be specified manually. You can learn about [how to add entities to semantic models here](https://docs.getdbt.com/docs/build/entities)
+- Dimension references in filters require you to reference the primary entity i.e {{Dimension('primary_entity__dimension_name')}} However, primary entities we're not part of the old metrics spec so will need to be specified manually. You can learn about [how to add entities to semantic models here](https://docs.getdbt.com/docs/build/entities)
