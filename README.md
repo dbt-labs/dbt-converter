@@ -33,6 +33,19 @@ Refer to [Querying the API for metric metadata](https://docs.getdbt.com/docs/dbt
 - Derived metrics are not supported. These will need to be ported manually.
 - Make sure to delete any calls of `metrics.calculate` or `metrics.develop` after you've run the conversion script they won’t work without the dbt_metrics package
 - Dimension references in filters require you to reference the primary entity i.e {{Dimension('primary_entity__dimension_name')}} However, primary entities we're not part of the old metrics spec so will need to be specified manually. You can learn about [how to add entities to semantic models here](https://docs.getdbt.com/docs/build/entities)
+- Non-standard metric methods abbreviations will cause the script to fail.  In particular, abbreviating `average` as `avg` will cause the following output at the console:
+```
+Performance info: target/perf_info.json
+'avg'
+```
+  - Currently supported `method -> measure` types:
+    -   `count`
+    -   `count_distinct`
+    -   `sum`
+    -   `average`
+    -   `min`
+    -   `max`
+
 
 **Imporant Note for Databricks Users:**
 
