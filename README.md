@@ -49,7 +49,9 @@ Performance info: target/perf_info.json
 
 **Important note for Databricks users**
 
-If you are using the `dbt-databricks` connector in your project, you will need to temporarily change to the `dbt-spark` connector, in order to resolve some incompatible dependency version conflicts.
+If you are using the `dbt-databricks` connector in your project, you will need to temporarily change to the `dbt-spark` connector, in order to resolve some incompatible dependency version conflicts. 
+
+Refer to the [`dbt-spark` adapter documentation](https://docs.getdbt.com/docs/core/connect-data-platform/spark-setup) for more info.
 
 In order to complete that conversion, you will need to:
 1. Open your `~/.dbt/profiles.yml` file.
