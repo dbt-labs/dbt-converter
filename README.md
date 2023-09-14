@@ -82,6 +82,5 @@ your_profile_name:
         "spark.driver.memory": "4g" 
 ```
 
-Documentation for the `dbt-spark` adapter can be found [here](https://docs.getdbt.com/docs/core/connect-data-platform/spark-setup)
 
 REMINDER: Once your conversion is complete, we recommend changing back to the `dbt-databricks` adapter, including reverting all changes to `~/.dbt/profiles.yml`.
