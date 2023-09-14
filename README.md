@@ -86,4 +86,4 @@ your_profile_name:
 ```
 
 
-REMINDER: Once your conversion is complete, we recommend changing back to the `dbt-databricks` adapter, including reverting all changes to `~/.dbt/profiles.yml`.
+3. Once your conversion is complete, we recommend changing back to the `dbt-databricks` adapter, including reverting all changes to `~/.dbt/profiles.yml`.
