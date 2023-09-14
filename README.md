@@ -47,7 +47,7 @@ Performance info: target/perf_info.json
     -   `max`
 
 
-**Imporant Note for Databricks Users:**
+**Important note for Databricks users**
 
 If you are using the `dbt-databricks` connector in your project, you will need to temporarily change to the `dbt-spark` connector, in order to resolve some incompatible dependency version conflicts.
 
