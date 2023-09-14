@@ -60,6 +60,7 @@ In order to complete that conversion, you will need to:
   - On the line after `type` add a key: `method: odbc`
 
 Your final config for each adapter should look like this:
+
 ```
 your_profile_name:
   target: dev
