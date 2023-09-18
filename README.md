@@ -33,3 +33,57 @@ Refer to [Querying the API for metric metadata](https://docs.getdbt.com/docs/dbt
 - Derived metrics are not supported. These will need to be ported manually.
 - Make sure to delete any calls of `metrics.calculate` or `metrics.develop` after you've run the conversion script they won’t work without the dbt_metrics package
 - Dimension references in filters require you to reference the primary entity i.e {{Dimension('primary_entity__dimension_name')}} However, primary entities we're not part of the old metrics spec so will need to be specified manually. You can learn about [how to add entities to semantic models here](https://docs.getdbt.com/docs/build/entities)
+- Non-standard metric methods abbreviations will cause the script to fail.  In particular, abbreviating `average` as `avg` will cause the following output at the console:
+```
+Performance info: target/perf_info.json
+'avg'
+```
+  - Currently supported `method -> measure` types:
+    -   `count`
+    -   `count_distinct`
+    -   `sum`
+    -   `average`
+    -   `min`
+    -   `max`
+
+
+**Important note for Databricks users**
+
+If you are using the `dbt-databricks` connector in your project, you will need to temporarily change to the `dbt-spark` connector, in order to resolve some incompatible dependency version conflicts. 
+
+Refer to the [`dbt-spark` adapter documentation](https://docs.getdbt.com/docs/core/connect-data-platform/spark-setup) for more info.
+
+In order to complete that conversion, you will need to:
+1. Open your `~/.dbt/profiles.yml` file.
+2. Under each adapter:
+  - Change `type: databricks` to `type:spark`
+  - On the line after `type` add a key: `method: odbc`
+
+Your final config for each adapter should look like this:
+
+```
+your_profile_name:
+  target: dev
+  outputs:
+    dev:
+      type: spark
+      method: odbc
+      driver: [path/to/driver]
+      schema: [database/schema name]
+      host: [yourorg.sparkhost.com]
+      organization: [org id]    # Azure Databricks only
+      token: [abc123]
+      
+      # one of:
+      endpoint: [endpoint id]
+      cluster: [cluster id]
+      
+      # optional
+      port: [port]              # default 443
+      user: [user]
+      server_side_parameters:
+        "spark.driver.memory": "4g" 
+```
+
+
+3. Once your conversion is complete, we recommend changing back to the `dbt-databricks` adapter, including reverting all changes to `~/.dbt/profiles.yml`.
