@@ -14,8 +14,12 @@ class MetricFLowConfig:
         """
         initalize MetricFlowConfigs from a directory of semantic models and metrics.
         """
-        model_configs = glob.glob(f'{model_dir_path}/*.yaml')
-        metric_configs = glob.glob(f'{metric_dir_path}/*.yaml')
+        model_configs = glob.glob(f"{model_dir_path}/*.yaml") + glob.glob(
+            f"{model_dir_path}/*.yml"
+        )
+        metric_configs = glob.glob(f"{metric_dir_path}/*.yaml") + glob.glob(
+            f"{metric_dir_path}/*.yml"
+        )
         for model in model_configs:
             with open(model) as stream:
                 self.models.append(yaml.safe_load(stream))
