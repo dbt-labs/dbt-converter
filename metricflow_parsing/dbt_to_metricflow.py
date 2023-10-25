@@ -37,6 +37,7 @@ CALC_METHOD_TO_MEASURE_TYPE: Dict[str, AggregationType] = {
     "average": AggregationType.AVERAGE,
     "min": AggregationType.MIN,
     "max": AggregationType.MAX,
+    "median": AggregationType.MEDIAN,
     # "derived": AggregationType.DERIVED # Derived DBT metrics don't create measures
 }
 

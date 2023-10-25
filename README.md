@@ -45,6 +45,7 @@ Performance info: target/perf_info.json
     -   `average`
     -   `min`
     -   `max`
+    -   `median`
 
 
 **Important note for Databricks users**
