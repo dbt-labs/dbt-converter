@@ -4,7 +4,7 @@ version = "0.1.5.3"
 description = "Easily convert an out of date dbt metrics spec into the latest suported metrics spec in dbt"
 authors = ["Jordan Stein <jordan.stein77@gmail.com>"]
 readme = "README.md"
-packages = [{include = "converter"},{include = "metricflow_parsing"}]
+packages = [{ include = "converter" }, { include = "metricflow_parsing" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.10"
@@ -12,6 +12,7 @@ metricflow = "0.200.0.dev4"
 dbt-semantic-interfaces = "^0.1.0.dev4"
 dbt-core = "^1.5.0"
 click = "^8.1.3"
+lkml = ">=1.3.1"
 
 
 [build-system]
@@ -19,5 +20,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
- dbtc= 'converter.main:cli'
-
+dbtc = 'converter.main:cli'
