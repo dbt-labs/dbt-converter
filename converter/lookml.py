@@ -1,17 +1,7 @@
 from itertools import takewhile
 import os
 import lkml
-from lkml.tree import (
-    BlockNode,
-    ContainerNode,
-    DocumentNode,
-    ListNode,
-    PairNode,
-    SyntaxNode,
-    SyntaxToken,
-    Visitor,
-)
-from typing import Dict, Iterator, List, Optional, Union
+from typing import Iterator, List, Optional
 
 from dbt_semantic_interfaces.parsing.dir_to_model import SemanticManifestBuildResult
 from dbt_semantic_interfaces.implementations.semantic_model import PydanticSemanticModel
@@ -30,8 +20,9 @@ def lookml_to_semantic_manifest(lookml_project_dir: str) -> SemanticManifestBuil
     semantic_models = []
     for path in lookml_file_paths(lookml_project_dir):
         with open(path, "r") as f:
-            lookml_model = lkml.load(f)
+            lookml_model_dict = lkml.load(f)
             # print(json.dumps(lookml_model))
+            lookml_model = LkmlModel.parse_obj(lookml_model_dict)
             semantic_model = parse_view2(lookml_model)
             # print(semantic_model)
             semantic_models.extend(semantic_model)
@@ -49,77 +40,94 @@ def lookml_file_paths(lookml_project_dir: str) -> Iterator[str]:
 
 class LkmlMeasure(BaseModel):
     name: str
-    type: str  # TODO: make this a different type
+    type: Optional[str]  # TODO: make this a different type
 
 
 class LkmlDimension(BaseModel):
     name: str
-    type: str  # TODO: make this a different type
+    type: Optional[str]  # TODO: make this a different type
 
 
-class View(BaseModel):
-    measures: List[LkmlMeasure]
+class LkmlView(BaseModel):
+    sql_table_name: Optional[str]
+    name: str
+    measures: Optional[List[LkmlMeasure]]
     dimensions: List[LkmlDimension]
 
 
-class LookMlModel(BaseModel):
-    sql_table_name: str
-    views: Optional[List[View]]
-    name: str
+class LkmlModel(BaseModel):
+    views: Optional[List[LkmlView]]
 
 
-def load_parse(f):
-    lookml_model = lkml.load(f)
-    # print(json.dumps(lookml_model))
-    return parse_view2(lookml_model)
-
-
-def parse_view2(lookml_model: LookMlModel) -> List[PydanticSemanticModel]:
+def parse_view2(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
     semantic_models = []
     measure_type_map = {
-        "zipcode": AggregationType.COUNT,
-        "string": AggregationType.COUNT,
-        "number": AggregationType.COUNT,  # TODO: sum?
-        "tier": AggregationType.COUNT,
-        "count": AggregationType.COUNT,
-        "yesno": AggregationType.SUM_BOOLEAN,
-        "sum": AggregationType.SUM,
-        "sum_distinct": AggregationType.SUM,
         "average": AggregationType.AVERAGE,
         "average_distinct": AggregationType.AVERAGE,
-        "date": AggregationType.COUNT,
-        "time": AggregationType.COUNT,
+        "count": AggregationType.COUNT,
         "count_distinct": AggregationType.COUNT_DISTINCT,
+        "date": AggregationType.COUNT,
+        "list": AggregationType.COUNT,
+        "max": AggregationType.MAX,
+        "median": AggregationType.MEDIAN,
+        "median_distinct": AggregationType.MEDIAN,
+        "min": AggregationType.MIN,
+        "number": AggregationType.COUNT,  # TODO: sum?
+        "percent_of_previous": AggregationType.PERCENTILE,
+        "percent_of_total": AggregationType.PERCENTILE,
+        "percentile": AggregationType.PERCENTILE,
+        "percentile_distinct": AggregationType.PERCENTILE,
+        "running_total": AggregationType.SUM,
+        "string": AggregationType.COUNT,
+        "sum": AggregationType.SUM,
+        "sum_distinct": AggregationType.SUM,
+        "yesno": AggregationType.SUM_BOOLEAN,
+        "int": AggregationType.COUNT,
     }
     dimension_type_map = {
-        "zipcode": DimensionType.CATEGORICAL,
-        "string": DimensionType.CATEGORICAL,
-        "number": DimensionType.CATEGORICAL,
-        "tier": DimensionType.CATEGORICAL,
-        "count": DimensionType.CATEGORICAL,
-        "yesno": DimensionType.CATEGORICAL,
-        "sum": DimensionType.CATEGORICAL,
-        "sum_distinct": DimensionType.CATEGORICAL,
-        "average": DimensionType.CATEGORICAL,
-        "average_distinct": DimensionType.CATEGORICAL,
+        "bin": DimensionType.CATEGORICAL,
         "date": DimensionType.TIME,
+        "date_time": DimensionType.TIME,
+        "distance": DimensionType.CATEGORICAL,
+        "duration": DimensionType.TIME,
+        "location": DimensionType.CATEGORICAL,
+        "number": DimensionType.CATEGORICAL,
+        "string": DimensionType.CATEGORICAL,
+        "tier": DimensionType.CATEGORICAL,
         "time": DimensionType.TIME,
-        "count_distinct": DimensionType.TIME,
+        "unquoted": DimensionType.CATEGORICAL,
+        "yesno": DimensionType.CATEGORICAL,
+        "zipcode": DimensionType.CATEGORICAL,
+        "int": DimensionType.CATEGORICAL,
     }
-    if "views" not in lookml_model:
+    if not lookml_model.views:
         return []
-    for view in lookml_model["views"]:
-        measures = [
-            PydanticMeasure(
-                name=m["name"], agg=measure_type_map[m["type"]], create_metric=True
+    for view in lookml_model.views:
+        measures = []
+        for measure in view.measures or []:
+            if not measure.type:
+                continue
+            measures.append(
+                PydanticMeasure(
+                    name=measure.name,
+                    agg=measure_type_map[measure.type],
+                    create_metric=True,
+                )
             )
-            for m in view["measures"]
-        ]
-        dimensions = [
-            PydanticDimension(name=d["name"], type=dimension_type_map[d["type"]])
-            for d in view["dimensions"]
-        ]
-        alias = get_alias(view["sql_table_name"])
+        dimensions = []
+        for dimension in view.dimensions:
+            if not dimension.type:
+                continue
+            dimensions.append(
+                PydanticDimension(
+                    name=dimension.name,
+                    type=DimensionType.TIME
+                    if dimension.type.startswith("duration")
+                    or dimension.type.startswith("date")
+                    else dimension_type_map[dimension.type],
+                )
+            )
+        alias = get_alias(view.sql_table_name)
         node_relation = NodeRelation(
             alias=alias,
             schema_name="schema_name",
@@ -129,18 +137,19 @@ def parse_view2(lookml_model: LookMlModel) -> List[PydanticSemanticModel]:
         entities = []
         semantic_models.append(
             PydanticSemanticModel(
-                name=view["name"],
+                name=view.name,
                 dimensions=dimensions,
                 measures=measures,
                 node_relation=node_relation,
                 entities=entities,
             )
         )
-    manifest = PydanticSemanticManifest(semantic_models=semantic_models, metrics=[])
-    return SemanticManifestBuildResult(semantic_manifest=manifest)
+    return semantic_models
 
 
-def get_alias(sql_table_name: str):
+def get_alias(sql_table_name: Optional[str]) -> str:
+    if not sql_table_name:
+        return ""
     # Check if this case is similar to
     # https://discourse.getdbt.com/t/looker-user-attributes-and-if-dev-to-auto-switch-between-dev-prod-schemas/54
     if "-- if prod --" in sql_table_name:
