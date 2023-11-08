@@ -39,10 +39,9 @@ def convert_metrics(dbt_project_path: str):
 
 def convert_lookml(lookml_project_dir: str):
     model = lookml_to_semantic_manifest(lookml_project_dir)
-    print(model)
     manifest_to_project(model)
 
 
 if __name__ == "__main__":
     # cli()
-    convert_lookml("/Users/devonfulcher/git/looker/dbtLabs.model.lkml")
+    convert_lookml("/Users/devonfulcher/git/looker")
