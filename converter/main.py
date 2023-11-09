@@ -12,7 +12,8 @@ def cli():
 
 
 @cli.command(
-    help="Given a dbt project path, converts metrics defined in the spec prior to dbt v1.6 to the spec defined in dbt v1.6"
+    help="Given a dbt project path, converts metrics defined in the spec"
+    + "prior to dbt v1.6 to the spec defined in dbt v1.6"
 )
 @click.option(
     "--dbt-project-path",
@@ -27,21 +28,16 @@ def convert_metrics(dbt_project_path: str):
     manifest_to_project(model)
 
 
-"""
 @cli.command(help="Convert a LookML project to the dbt Semantic Layer")
 @click.option(
     "--lookml-project-path",
     default=os.getcwd(),
-    help="Path to dbt project containing models and metrics",
+    help="Path to LookML project",
 )
-"""
-
-
 def convert_lookml(lookml_project_dir: str):
     model = lookml_to_semantic_manifest(lookml_project_dir)
     manifest_to_project(model)
 
 
 if __name__ == "__main__":
-    # cli()
-    convert_lookml("/Users/devonfulcher/git/looker")
+    cli()
