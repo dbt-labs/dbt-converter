@@ -1,4 +1,4 @@
-from converter.lookml.lookml import lookml_to_semantic_manifest
+from converter.lookml import lookml_to_semantic_manifest
 from converter.manifest_to_project import manifest_to_project
 import click
 import os
