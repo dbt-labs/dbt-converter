@@ -43,7 +43,7 @@ def lookml_file_paths(lookml_project_dir: str) -> Iterator[str]:
 
 class LkmlMeasure(BaseModel):
     name: str
-    type: Optional[str]  # TODO: make this a different type
+    type: Optional[str]
 
 
 class LkmlView(BaseModel):
