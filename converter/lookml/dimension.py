@@ -1,11 +1,16 @@
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 from dbt_semantic_interfaces.type_enums.time_granularity import TimeGranularity
 from dbt_semantic_interfaces.implementations.elements.dimension import (
     PydanticDimensionTypeParams,
 )
 from dbt_semantic_interfaces.type_enums.dimension_type import DimensionType
+from dbt_semantic_interfaces.implementations.elements.dimension import (
+    PydanticDimension,
+)
 from pydantic import BaseModel
+
+from converter.lookml.model import LkmlView
 
 DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
 
@@ -13,6 +18,22 @@ DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
 class LkmlDimension(BaseModel):
     name: str
     type: Optional[str]
+
+
+def get_dimensions(view: LkmlView) -> List[LkmlDimension]:
+    dimensions = []
+    for dimension in view.dimensions:
+        if not dimension.type:
+            continue
+        dim_type, dim_type_param = get_dimension_type(dimension)
+        dimensions.append(
+            PydanticDimension(
+                name=dimension.name,
+                type=dim_type,
+                type_params=dim_type_param,
+            )
+        )
+    return dimensions
 
 
 def get_dimension_type(
