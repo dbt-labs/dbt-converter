@@ -1,7 +1,7 @@
 from itertools import takewhile
 import os
 import lkml
-from typing import Iterator, List, Optional, Tuple
+from typing import Iterator, List, Optional
 
 from dbt_semantic_interfaces.parsing.dir_to_model import SemanticManifestBuildResult
 from dbt_semantic_interfaces.implementations.semantic_model import PydanticSemanticModel

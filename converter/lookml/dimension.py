@@ -1,22 +1,10 @@
-from itertools import takewhile
-import os
-import lkml
-from typing import Iterator, List, Optional, Tuple
+from typing import Optional, Tuple
 
-from dbt_semantic_interfaces.parsing.dir_to_model import SemanticManifestBuildResult
-from dbt_semantic_interfaces.implementations.semantic_model import PydanticSemanticModel
 from dbt_semantic_interfaces.type_enums.time_granularity import TimeGranularity
 from dbt_semantic_interfaces.implementations.elements.dimension import (
-    PydanticDimension,
     PydanticDimensionTypeParams,
 )
-from dbt_semantic_interfaces.type_enums.dimension_type import DimensionType
-from dbt_semantic_interfaces.type_enums.aggregation_type import AggregationType
-from dbt_semantic_interfaces.implementations.semantic_manifest import (
-    PydanticSemanticManifest,
-)
-from dbt_semantic_interfaces.implementations.semantic_model import NodeRelation
-from dbt_semantic_interfaces.implementations.elements.measure import PydanticMeasure
+from dbt_semantic_interfaces.type_enums.dimension_type import DimensionType 
 from pydantic import BaseModel
 
 DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
