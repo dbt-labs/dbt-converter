@@ -11,8 +11,10 @@ from dbt_semantic_interfaces.implementations.semantic_manifest import (
 )
 from dbt_semantic_interfaces.implementations.semantic_model import NodeRelation
 
-from converter.lookml.dimension import get_dimensions
-from converter.lookml.measure import get_measures
+from tqdm import tqdm
+
+from converter.lookml.dimension import to_sl_dimensions
+from converter.lookml.measure import to_sl_measures
 from converter.lookml.model import LkmlModel
 
 DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
@@ -20,7 +22,7 @@ DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
 
 def lookml_to_semantic_manifest(lookml_project_dir: str) -> SemanticManifestBuildResult:
     all_semantic_models = []
-    for path in lookml_file_paths(lookml_project_dir):
+    for path in tqdm(list(lookml_file_paths(lookml_project_dir))):
         with open(path, "r") as f:
             lookml_model_dict = lkml.load(f)
             lookml_model = LkmlModel.parse_obj(lookml_model_dict)
@@ -43,8 +45,8 @@ def parse_model(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
     if not lookml_model.views:
         return []
     for view in lookml_model.views:
-        measures = get_measures(view)
-        dimensions = get_dimensions(view)
+        measures = to_sl_measures(view.measures)
+        dimensions = to_sl_dimensions(view.dimensions)
         alias = get_alias(view.sql_table_name)
         node_relation = NodeRelation(
             alias=alias,

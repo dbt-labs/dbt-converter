@@ -10,8 +10,6 @@ from dbt_semantic_interfaces.implementations.elements.dimension import (
 )
 from pydantic import BaseModel
 
-from converter.lookml.model import LkmlView
-
 DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
 
 
@@ -20,20 +18,20 @@ class LkmlDimension(BaseModel):
     type: Optional[str]
 
 
-def get_dimensions(view: LkmlView) -> List[LkmlDimension]:
-    dimensions = []
-    for dimension in view.dimensions:
+def to_sl_dimensions(dimensions: List[LkmlDimension]) -> List[PydanticDimension]:
+    sl_dimensions: List[PydanticDimension] = []
+    for dimension in dimensions:
         if not dimension.type:
             continue
         dim_type, dim_type_param = get_dimension_type(dimension)
-        dimensions.append(
+        sl_dimensions.append(
             PydanticDimension(
                 name=dimension.name,
                 type=dim_type,
                 type_params=dim_type_param,
             )
         )
-    return dimensions
+    return sl_dimensions
 
 
 def get_dimension_type(

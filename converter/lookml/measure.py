@@ -3,15 +3,13 @@ from dbt_semantic_interfaces.implementations.elements.measure import PydanticMea
 from dbt_semantic_interfaces.type_enums.aggregation_type import AggregationType
 from pydantic import BaseModel
 
-from converter.lookml.model import LkmlView
-
 
 class LkmlMeasure(BaseModel):
     name: str
     type: Optional[str]
 
 
-def get_measures(view: LkmlView) -> List[LkmlMeasure]:
+def to_sl_measures(measures: Optional[List[LkmlMeasure]]) -> List[PydanticMeasure]:
     measure_type_map = {
         "average": AggregationType.AVERAGE,
         "average_distinct": AggregationType.AVERAGE,
@@ -35,15 +33,15 @@ def get_measures(view: LkmlView) -> List[LkmlMeasure]:
         "yesno": AggregationType.SUM_BOOLEAN,
         "int": AggregationType.COUNT,
     }
-    measures = []
-    for measure in view.measures or []:
+    sl_measures: List[PydanticMeasure] = []
+    for measure in measures or []:
         if not measure.type:
             continue
-        measures.append(
+        sl_measures.append(
             PydanticMeasure(
                 name=measure.name,
                 agg=measure_type_map[measure.type],
                 create_metric=True,
             )
         )
-    return measures
+    return sl_measures
