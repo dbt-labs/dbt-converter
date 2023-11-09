@@ -1,4 +1,4 @@
-from converter.lookml import lookml_to_semantic_manifest
+from converter.lookml.lookml import lookml_to_semantic_manifest
 from converter.manifest_to_project import manifest_to_project
 import click
 import os
@@ -34,8 +34,8 @@ def convert_metrics(dbt_project_path: str):
     default=os.getcwd(),
     help="Path to LookML project",
 )
-def convert_lookml(lookml_project_dir: str):
-    model = lookml_to_semantic_manifest(lookml_project_dir)
+def convert_lookml(lookml_project_path: str):
+    model = lookml_to_semantic_manifest(lookml_project_path)
     manifest_to_project(model)
 
 

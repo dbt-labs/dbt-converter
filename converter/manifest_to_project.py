@@ -44,7 +44,6 @@ def write_semantic_models(model: SemanticManifestBuildResult):
             configuration = json.load(file)
         with open(f"semantic_models/{data_source.name}.yaml", "w") as file:
             ruamel.yaml.dump(configuration, file, Dumper=ruamel.yaml.RoundTripDumper)
-    # print("Success! Semantic Models and Metrics Created")
 
 
 def write_metrics(model: SemanticManifestBuildResult):
