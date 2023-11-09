@@ -1,11 +1,15 @@
 from itertools import takewhile
 import os
 import lkml
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, Tuple
 
 from dbt_semantic_interfaces.parsing.dir_to_model import SemanticManifestBuildResult
 from dbt_semantic_interfaces.implementations.semantic_model import PydanticSemanticModel
-from dbt_semantic_interfaces.implementations.elements.dimension import PydanticDimension
+from dbt_semantic_interfaces.type_enums.time_granularity import TimeGranularity
+from dbt_semantic_interfaces.implementations.elements.dimension import (
+    PydanticDimension,
+    PydanticDimensionTypeParams,
+)
 from dbt_semantic_interfaces.type_enums.dimension_type import DimensionType
 from dbt_semantic_interfaces.type_enums.aggregation_type import AggregationType
 from dbt_semantic_interfaces.implementations.semantic_manifest import (
@@ -15,18 +19,17 @@ from dbt_semantic_interfaces.implementations.semantic_model import NodeRelation
 from dbt_semantic_interfaces.implementations.elements.measure import PydanticMeasure
 from pydantic import BaseModel
 
+DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
+
 
 def lookml_to_semantic_manifest(lookml_project_dir: str) -> SemanticManifestBuildResult:
     semantic_models = []
     for path in lookml_file_paths(lookml_project_dir):
         with open(path, "r") as f:
             lookml_model_dict = lkml.load(f)
-            # print(json.dumps(lookml_model))
             lookml_model = LkmlModel.parse_obj(lookml_model_dict)
-            semantic_model = parse_view2(lookml_model)
-            # print(semantic_model)
+            semantic_model = parse_model(lookml_model)
             semantic_models.extend(semantic_model)
-    print(len(semantic_models))
     manifest = PydanticSemanticManifest(semantic_models=semantic_models, metrics=[])
     return SemanticManifestBuildResult(semantic_manifest=manifest)
 
@@ -59,7 +62,7 @@ class LkmlModel(BaseModel):
     views: Optional[List[LkmlView]]
 
 
-def parse_view2(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
+def parse_model(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
     semantic_models = []
     measure_type_map = {
         "average": AggregationType.AVERAGE,
@@ -84,22 +87,7 @@ def parse_view2(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
         "yesno": AggregationType.SUM_BOOLEAN,
         "int": AggregationType.COUNT,
     }
-    dimension_type_map = {
-        "bin": DimensionType.CATEGORICAL,
-        "date": DimensionType.TIME,
-        "date_time": DimensionType.TIME,
-        "distance": DimensionType.CATEGORICAL,
-        "duration": DimensionType.TIME,
-        "location": DimensionType.CATEGORICAL,
-        "number": DimensionType.CATEGORICAL,
-        "string": DimensionType.CATEGORICAL,
-        "tier": DimensionType.CATEGORICAL,
-        "time": DimensionType.TIME,
-        "unquoted": DimensionType.CATEGORICAL,
-        "yesno": DimensionType.CATEGORICAL,
-        "zipcode": DimensionType.CATEGORICAL,
-        "int": DimensionType.CATEGORICAL,
-    }
+
     if not lookml_model.views:
         return []
     for view in lookml_model.views:
@@ -118,13 +106,12 @@ def parse_view2(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
         for dimension in view.dimensions:
             if not dimension.type:
                 continue
+            dim_type, dim_type_param = get_dimension_type(dimension)
             dimensions.append(
                 PydanticDimension(
                     name=dimension.name,
-                    type=DimensionType.TIME
-                    if dimension.type.startswith("duration")
-                    or dimension.type.startswith("date")
-                    else dimension_type_map[dimension.type],
+                    type=dim_type,
+                    type_params=dim_type_param,
                 )
             )
         alias = get_alias(view.sql_table_name)
@@ -145,6 +132,66 @@ def parse_view2(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
             )
         )
     return semantic_models
+
+
+def get_dimension_type(
+    lkmlDimension: LkmlDimension,
+) -> Tuple[DimensionType, Optional[PydanticDimensionTypeParams]]:
+    dimension_type_map = {
+        "bin": DimensionType.CATEGORICAL,
+        "date": DimensionType.TIME,
+        "date_time": DimensionType.TIME,
+        "distance": DimensionType.CATEGORICAL,
+        "duration": DimensionType.TIME,
+        "location": DimensionType.CATEGORICAL,
+        "number": DimensionType.CATEGORICAL,
+        "string": DimensionType.CATEGORICAL,
+        "tier": DimensionType.CATEGORICAL,
+        "time": DimensionType.TIME,
+        "unquoted": DimensionType.CATEGORICAL,
+        "yesno": DimensionType.CATEGORICAL,
+        "zipcode": DimensionType.CATEGORICAL,
+        "int": DimensionType.CATEGORICAL,
+    }
+
+    def get_duration_grain(lkmlDimension: LkmlDimension) -> TimeGranularity:
+        split = lkmlDimension.type.split("_")
+        if len(split) == 1:
+            return DEFAULT_TIME_GRANULARITY
+        grain = split[1]
+        if grain == "hour" or grain == "minute" or grain == "second":
+            return TimeGranularity.DAY
+        return TimeGranularity.for_name(
+            grain.upper()
+        )  # TODO: make upper unnecessary here in for_name
+
+    def get_date_grain(lkmlDimension: LkmlDimension) -> TimeGranularity:
+        if any([t in lkmlDimension.type for t in ["second", "hour", "day"]]):
+            return TimeGranularity.DAY
+        if "week" in lkmlDimension.type:
+            return TimeGranularity.WEEK
+        if "month" in lkmlDimension.type:
+            return TimeGranularity.MONTH
+        if "quarter" in lkmlDimension.type:
+            return TimeGranularity.QUARTER
+        if "year" in lkmlDimension.type:
+            return TimeGranularity.YEAR
+        return DEFAULT_TIME_GRANULARITY
+
+    def get_grain(lkmlDimension: LkmlDimension) -> TimeGranularity:
+        if lkmlDimension.type.startswith("duration"):
+            return get_duration_grain(lkmlDimension)
+        elif lkmlDimension.type.startswith("date"):
+            return get_date_grain(lkmlDimension)
+
+    if lkmlDimension.type.startswith("duration") or lkmlDimension.type.startswith(
+        "date"
+    ):
+        return (
+            DimensionType.TIME,
+            PydanticDimensionTypeParams(time_granularity=get_grain(lkmlDimension)),
+        )
+    return dimension_type_map[lkmlDimension.type], None
 
 
 def get_alias(sql_table_name: Optional[str]) -> str:
