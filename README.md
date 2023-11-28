@@ -94,6 +94,7 @@ your_profile_name:
 
 ### Migrate from LookML
 
+Use these instructions to migrate from LookML to the dbt Semantic Layer. Currently, this tool can only help with the migration and leaves many manual steps to the user to complete themselves.
 1. Navigate to the root of your LookML project.
 2. `pip install dbt-metrics-converter`. Note that the converter requires dbt-core==1.5.
 3. Run `dbtc convert-lookml`. The converter assumes you are at the root of your LookML project. Optionally, you can pass the project path `--lookml-project-path path/to/dbt_project`.
