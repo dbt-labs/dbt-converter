@@ -1,20 +1,24 @@
-The dbt converter is a CLI tool that simplifies the process of migrating from the metrics spec supported in dbt v1.5 and earlier to the metrics specification supported in dbt ≥v1.6.
+# dbt Converter
 
-**Installing dbt converter**
+The dbt converter is a CLI tool to convert code for usage in a dbt Project. Currently, this tool is able help [Upgrade to dbt v1.6 spec](#upgrade-to-dbt-v16-spec) and [Migrate from LookML](#migrate-from-lookml).
 
-```sql
+## Installing dbt converter
+
+```shell
 pip install dbt-metrics-converter
 ```
 
-**Upgrading to dbt v1.6 spec**
+### Upgrade to dbt v1.6 spec
+
+This simplifies the process of migrating from the metrics spec supported in dbt v1.5 and earlier to the metrics specification supported in dbt ≥v1.6.
 
 1. Navigate to the root of your dbt project.
 2. `pip install dbt-metrics-converter`. Note that the converter requires dbt-core==1.5. You may need to update the version range for the dbt_metrics package.
-3. Run `dbtc convert-metrics`. The converter assumes you are at the root of your dbt project. Optionally, you can pass the project path `-dbt-project-path path/to/dbt_project`. NOTE: All metrics must have a timestamp for the upgrade to run. If your metrics do not have a timestamp, add one before running the converter.
+3. Run `dbtc convert-metrics`. The converter assumes you are at the root of your dbt project. Optionally, you can pass the project path `--dbt-project-path path/to/dbt_project`. NOTE: All metrics must have a timestamp for the upgrade to run. If your metrics do not have a timestamp, add one before running the converter.
 4. Semantic models and metrics files will be created in the `semantic_models` and `metrics` directories. Move these folders into your model path.
 5. Delete the `metrics` package, move the old metrics configs out of your model path, or delete them.
 
-**Testing your metrics in dbt v1.6**
+#### Testing your metrics in dbt v1.6
 
 1. Upgrade to dbt v1.6, and `pip install dbt-metricflow`
 2. Remove the old metrics package from your `dbt_packages` and run `dbt clean && dbt deps`. 
@@ -23,11 +27,11 @@ pip install dbt-metrics-converter
 5. Run `mf validate-configs —skip-dw` to validate metrics configs. 
 6. To run a test query, run `mf query --metrics <metric_name>`
 
-**SQL syntax**
+#### SQL syntax
 
 Refer to [Querying the API for metric metadata](https://docs.getdbt.com/docs/dbt-cloud-apis/sl-jdbc#querying-the-api-for-metric-metadata) to access the built-in metadata calls to query metrics and dimensions using the [dbt Semantic Layer API](https://docs.getdbt.com/docs/dbt-cloud-apis/sl-api-overview).
 
-**Gotchas:**
+#### Gotchas
 
 - Some packages, like fivetran/ad_reporting have metrics defined in them using the v1.5 spec, this may cause an error if you try to run your project after upgrading to v1.6
 - Derived metrics are not supported. These will need to be ported manually.
@@ -47,7 +51,7 @@ Performance info: target/perf_info.json
     -   `max`
 
 
-**Important note for Databricks users**
+#### Important note for Databricks users
 
 If you are using the `dbt-databricks` connector in your project, you will need to temporarily change to the `dbt-spark` connector, in order to resolve some incompatible dependency version conflicts. 
 
@@ -87,3 +91,10 @@ your_profile_name:
 
 
 3. Once your conversion is complete, we recommend changing back to the `dbt-databricks` adapter, including reverting all changes to `~/.dbt/profiles.yml`.
+
+### Migrate from LookML
+
+1. Navigate to the root of your LookML project.
+2. `pip install dbt-metrics-converter`. Note that the converter requires dbt-core==1.5.
+3. Run `dbtc convert-lookml`. The converter assumes you are at the root of your LookML project. Optionally, you can pass the project path `--lookml-project-path path/to/dbt_project`.
+4. Semantic models and metrics files will be created in the `semantic_models` directory.
