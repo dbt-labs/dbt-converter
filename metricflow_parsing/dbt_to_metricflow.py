@@ -1,13 +1,10 @@
 from collections import defaultdict
 from dataclasses import dataclass
-import inspect
-from operator import xor
 import traceback
 from typing import DefaultDict, Dict, List, Optional, Set
 from dbt.contracts.graph.nodes import Metric as DbtMetric
 from dbt.contracts.graph.nodes import ModelNode as DbtModelNode
 from dbt.contracts.graph.unparsed import MetricFilter as DbtMetricFilter
-# from dbt.exceptions import ref_invalid_args
 from dbt.contracts.graph.manifest import Manifest as DbtManifest
 from dbt_semantic_interfaces.type_enums.aggregation_type import AggregationType
 from dbt_semantic_interfaces.type_enums.dimension_type import DimensionType
