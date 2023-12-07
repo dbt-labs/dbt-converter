@@ -5,7 +5,6 @@ from typing import Iterator, List, Optional
 
 from dbt_semantic_interfaces.parsing.dir_to_model import SemanticManifestBuildResult
 from dbt_semantic_interfaces.implementations.semantic_model import PydanticSemanticModel
-from dbt_semantic_interfaces.type_enums.time_granularity import TimeGranularity
 from dbt_semantic_interfaces.implementations.semantic_manifest import (
     PydanticSemanticManifest,
 )
@@ -15,9 +14,7 @@ from tqdm import tqdm
 
 from converter.lookml.dimension import to_sl_dimensions
 from converter.lookml.measure import to_sl_measures
-from converter.lookml.model import LkmlModel
-
-DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
+from converter.lookml.model import LookMLModel
 
 
 def lookml_to_semantic_manifest(lookml_project_dir: str) -> SemanticManifestBuildResult:
@@ -25,7 +22,7 @@ def lookml_to_semantic_manifest(lookml_project_dir: str) -> SemanticManifestBuil
     for path in tqdm(list(lookml_file_paths(lookml_project_dir))):
         with open(path, "r") as f:
             lookml_model_dict = lkml.load(f)
-            lookml_model = LkmlModel.parse_obj(lookml_model_dict)
+            lookml_model = LookMLModel.parse_obj(lookml_model_dict)
             semantic_models = parse_model(lookml_model)
             all_semantic_models.extend(semantic_models)
     manifest = PydanticSemanticManifest(semantic_models=all_semantic_models, metrics=[])
@@ -39,7 +36,7 @@ def lookml_file_paths(lookml_project_dir: str) -> Iterator[str]:
                 yield os.path.join(dirpath, f)
 
 
-def parse_model(lookml_model: LkmlModel) -> List[PydanticSemanticModel]:
+def parse_model(lookml_model: LookMLModel) -> List[PydanticSemanticModel]:
     semantic_models = []
 
     if not lookml_model.views:

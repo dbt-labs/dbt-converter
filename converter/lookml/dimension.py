@@ -8,22 +8,43 @@ from dbt_semantic_interfaces.type_enums.dimension_type import DimensionType
 from dbt_semantic_interfaces.implementations.elements.dimension import (
     PydanticDimension,
 )
+from metricflow.specs.specs import DEFAULT_TIME_GRANULARITY
 from pydantic import BaseModel
 
-DEFAULT_TIME_GRANULARITY = TimeGranularity.DAY
 
-
-class LkmlDimension(BaseModel):
+class LookMLDimension(BaseModel):
     name: str
     type: Optional[str]
 
+    def _get_grain(self) -> TimeGranularity:
+        if any([t in self.type for t in ["second", "hour"]]):
+            return TimeGranularity.DAY
+        granularities = [
+            granularity
+            for granularity in TimeGranularity
+            if granularity.value.lower() in self.type
+        ]
+        if granularities:
+            return granularities[0]
+        return DEFAULT_TIME_GRANULARITY
 
-def to_sl_dimensions(dimensions: List[LkmlDimension]) -> List[PydanticDimension]:
+    def get_dimension_type(
+        self,
+    ) -> Tuple[DimensionType, Optional[PydanticDimensionTypeParams]]:
+        if any([self.type.startswith(t) for t in ["duration", "date", "time"]]):
+            return (
+                DimensionType.TIME,
+                PydanticDimensionTypeParams(time_granularity=self._get_grain()),
+            )
+        return DimensionType.CATEGORICAL, None
+
+
+def to_sl_dimensions(dimensions: List[LookMLDimension]) -> List[PydanticDimension]:
     sl_dimensions: List[PydanticDimension] = []
     for dimension in dimensions:
         if not dimension.type:
             continue
-        dim_type, dim_type_param = get_dimension_type(dimension)
+        dim_type, dim_type_param = dimension.get_dimension_type()
         sl_dimensions.append(
             PydanticDimension(
                 name=dimension.name,
@@ -32,27 +53,3 @@ def to_sl_dimensions(dimensions: List[LkmlDimension]) -> List[PydanticDimension]
             )
         )
     return sl_dimensions
-
-
-def get_dimension_type(
-    lkmlDimension: LkmlDimension,
-) -> Tuple[DimensionType, Optional[PydanticDimensionTypeParams]]:
-    def get_grain(lkmlDimension: LkmlDimension) -> TimeGranularity:
-        if any([t in lkmlDimension.type for t in ["second", "hour", "day"]]):
-            return TimeGranularity.DAY
-        if "week" in lkmlDimension.type:
-            return TimeGranularity.WEEK
-        if "month" in lkmlDimension.type:
-            return TimeGranularity.MONTH
-        if "quarter" in lkmlDimension.type:
-            return TimeGranularity.QUARTER
-        if "year" in lkmlDimension.type:
-            return TimeGranularity.YEAR
-        return DEFAULT_TIME_GRANULARITY
-
-    if any([lkmlDimension.type.startswith(t) for t in ["duration", "date", "time"]]):
-        return (
-            DimensionType.TIME,
-            PydanticDimensionTypeParams(time_granularity=get_grain(lkmlDimension)),
-        )
-    return DimensionType.CATEGORICAL, None

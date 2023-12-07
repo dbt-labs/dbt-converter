@@ -1,17 +1,17 @@
 from typing import List, Optional
 
 from pydantic import BaseModel
-from converter.lookml.dimension import LkmlDimension
+from converter.lookml.dimension import LookMLDimension
 
-from converter.lookml.measure import LkmlMeasure
+from converter.lookml.measure import LookMLMeasure
 
 
-class LkmlView(BaseModel):
+class LookMLView(BaseModel):
     sql_table_name: Optional[str]
     name: str
-    measures: Optional[List[LkmlMeasure]]
-    dimensions: List[LkmlDimension]
+    measures: Optional[List[LookMLMeasure]]
+    dimensions: List[LookMLDimension]
 
 
-class LkmlModel(BaseModel):
-    views: Optional[List[LkmlView]]
+class LookMLModel(BaseModel):
+    views: Optional[List[LookMLView]]

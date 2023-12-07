@@ -4,14 +4,14 @@ from dbt_semantic_interfaces.type_enums.aggregation_type import AggregationType
 from pydantic import BaseModel
 
 
-class LkmlMeasure(BaseModel):
+class LookMLMeasure(BaseModel):
     name: str
     type: Optional[str]
     filters: Optional[Dict[str, str]]
     sql: Optional[str]
 
 
-def to_sl_measures(measures: Optional[List[LkmlMeasure]]) -> List[PydanticMeasure]:
+def to_sl_measures(measures: Optional[List[LookMLMeasure]]) -> List[PydanticMeasure]:
     measure_type_map = {
         "average": AggregationType.AVERAGE,
         "average_distinct": AggregationType.AVERAGE,
@@ -38,12 +38,19 @@ def to_sl_measures(measures: Optional[List[LkmlMeasure]]) -> List[PydanticMeasur
     sl_measures: List[PydanticMeasure] = []
     for measure in measures or []:
         if not measure.type:
+            print(f"Skipping measure {measure.name} because no type was found.")
             continue
         # measures with filters aren't currently supported
         if measure.filters:
+            print(
+                f"Skipping measure {measure.name} because filters aren't supported yet."
+            )
             continue
         # measures with non-simple sql statements are not supported
         if not is_simple_sql_property(measure.sql):
+            print(
+                f"Skipping measure {measure.name} it has a SQL property that isn't simple."
+            )
             continue
         sl_measures.append(
             PydanticMeasure(
